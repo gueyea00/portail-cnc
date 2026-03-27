@@ -2,26 +2,24 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import Breadcrumb from "@/components/layout/Breadcrumb";
 import { articles } from "@/lib/data";
-import { ArrowRight, FileText } from "lucide-react";
+import { ArrowRight, Calendar, Newspaper } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const categories = ["Tous", "decision", "communique", "enquete", "evenement"];
-const catLabels: Record<string, string> = {
-  Tous: "Tous",
-  decision: "Décisions",
+const categories = ["Tous", "communique", "enquete", "evenement"];
+const categoryLabels: Record<string, string> = {
+  Tous: "Toutes les actualités",
   communique: "Communiqués",
   enquete: "Enquêtes",
   evenement: "Événements",
 };
 
 const catBadge = (cat: string) => {
-  const colors: Record<string, string> = {
-    decision: "bg-primary/10 text-primary",
+  const categoryColors: Record<string, string> = {
     communique: "bg-green-100 text-green-700",
     enquete: "bg-orange-100 text-orange-700",
     evenement: "bg-purple-100 text-purple-700",
   };
-  return colors[cat] || "";
+  return categoryColors[cat] || "";
 };
 
 export default function ActualitesPage() {
@@ -37,8 +35,11 @@ export default function ActualitesPage() {
     <div>
       <section className="page-hero">
         <div className="container-page">
-          <h1 className="text-3xl md:text-4xl font-bold">Actualités & Communiqués</h1>
-          <p className="mt-2 opacity-90 text-lg">Suivez l'actualité du Conseil National de la Concurrence</p>
+          <h1 className="text-3xl md:text-4xl font-bold flex items-center justify-center md:justify-start gap-4">
+            <Newspaper className="w-8 h-8 md:w-10 md:h-10 text-gold" />
+            ActualitÃ©s & CommuniquÃ©s
+          </h1>
+          <p className="mt-2 opacity-90 text-lg">Suivez l'actualitÃ© du Conseil National de la Concurrence</p>
         </div>
       </section>
       <Breadcrumb />
@@ -56,7 +57,7 @@ export default function ActualitesPage() {
                   : "bg-surface text-foreground border-border hover:border-primary"
               }`}
             >
-              {catLabels[c]}
+              {categoryLabels[c]}
             </button>
           ))}
         </div>
@@ -64,21 +65,33 @@ export default function ActualitesPage() {
         {/* Grille */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {displayed.map((a) => (
-            <div key={a.slug} className="bg-surface rounded-lg border border-border overflow-hidden card-hover">
-              <div className="h-40 bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center">
-                <FileText className="w-12 h-12 text-primary/30" />
-              </div>
-              <div className="p-5">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className={`text-xs font-medium px-2 py-1 rounded-full ${catBadge(a.categorie)}`}>
-                    {catLabels[a.categorie]}
+            <div key={a.slug} className="bg-surface rounded-2xl shadow-soft overflow-hidden group flex flex-col border border-border/50 hover:shadow-md transition-all">
+              <Link to={`/actualites/${a.slug}`} className="block h-48 overflow-hidden relative">
+                <img 
+                  src={a.image || "/hero-bg.jpg"} 
+                  alt={a.titre} 
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+                />
+                <div className="absolute top-3 right-3">
+                  <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-sm backdrop-blur-md bg-white/90 ${
+                    a.categorie === 'communique' ? 'text-green-700' :
+                    a.categorie === 'enquete' ? 'text-orange-700' : 'text-purple-700'
+                  }`}>
+                    {categoryLabels[a.categorie]}
                   </span>
-                  <span className="text-xs text-muted-foreground">{new Date(a.date).toLocaleDateString("fr-FR")}</span>
                 </div>
-                <h3 className="font-semibold text-foreground mb-2 line-clamp-2 text-sm">{a.titre}</h3>
-                <p className="text-sm text-muted-foreground line-clamp-2 mb-4">{a.extrait}</p>
-                <Link to={`/actualites/${a.slug}`} className="text-sm font-medium text-primary hover:text-secondary transition-colors inline-flex items-center gap-1">
-                  Lire la suite <ArrowRight className="w-3 h-3" />
+              </Link>
+              <div className="p-6 flex flex-col flex-grow">
+                <div className="flex items-center gap-2 mb-3 text-xs text-muted-foreground font-medium">
+                  <Calendar className="w-3.5 h-3.5" />
+                  <span>{new Date(a.date).toLocaleDateString("fr-FR", { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                </div>
+                <h3 className="font-bold text-foreground mb-3 line-clamp-2 text-base leading-snug group-hover:text-primary transition-colors">
+                  <Link to={`/actualites/${a.slug}`}>{a.titre}</Link>
+                </h3>
+                <p className="text-sm text-muted-foreground line-clamp-3 mb-5 flex-grow">{a.extrait}</p>
+                <Link to={`/actualites/${a.slug}`} className="text-sm font-semibold text-primary hover:text-secondary transition-colors inline-flex items-center gap-1.5 mt-auto">
+                  Lire l'article <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
             </div>
@@ -93,7 +106,7 @@ export default function ActualitesPage() {
                 key={i}
                 onClick={() => setPage(i + 1)}
                 className={`w-10 h-10 rounded-lg text-sm font-medium transition-colors ${
-                  page === i + 1 ? "bg-primary text-primary-foreground" : "bg-surface border border-border text-foreground hover:bg-muted"
+                  page === i + 1 ? "bg-primary text-primary-foreground" : "bg-surface shadow-sm text-foreground hover:bg-muted"
                 }`}
               >
                 {i + 1}
@@ -105,3 +118,4 @@ export default function ActualitesPage() {
     </div>
   );
 }
+

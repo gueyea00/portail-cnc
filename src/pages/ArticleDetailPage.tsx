@@ -5,10 +5,9 @@ import { ArrowLeft, Calendar, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const catLabels: Record<string, string> = {
-  decision: "Décision",
-  communique: "Communiqué",
-  enquete: "Enquête",
-  evenement: "Événement",
+  communique: "CommuniquÃ©",
+  enquete: "EnquÃªte",
+  evenement: "Ã‰vÃ©nement",
 };
 
 export default function ArticleDetailPage() {
@@ -18,8 +17,8 @@ export default function ArticleDetailPage() {
   if (!article) {
     return (
       <div className="container-page py-16 text-center">
-        <h1 className="text-2xl font-bold text-foreground mb-4">Article non trouvé</h1>
-        <Link to="/actualites"><Button>Retour aux actualités</Button></Link>
+        <h1 className="text-2xl font-bold text-foreground mb-4">Article non trouvÃ©</h1>
+        <Link to="/actualites"><Button>Retour aux actualitÃ©s</Button></Link>
       </div>
     );
   }
@@ -39,11 +38,21 @@ export default function ArticleDetailPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Article */}
           <div className="lg:col-span-2">
-            <Link to="/actualites" className="inline-flex items-center gap-2 text-sm text-primary hover:text-secondary mb-6 transition-colors">
-              <ArrowLeft className="w-4 h-4" /> Retour aux actualités
+            <Link to="/actualites" className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:text-secondary mb-6 transition-colors">
+              <ArrowLeft className="w-4 h-4" /> Retour aux actualitÃ©s
             </Link>
-            <div className="flex items-center gap-3 mb-6">
-              <span className="inline-flex items-center gap-1 text-sm text-muted-foreground">
+
+            {/* Image de couverture principale */}
+            <div className="w-full h-[250px] md:h-[400px] rounded-2xl overflow-hidden mb-8 shadow-sm">
+              <img 
+                src={article.image || "/hero-bg.jpg"} 
+                alt={article.titre} 
+                className="w-full h-full object-cover"
+              />
+            </div>
+
+            <div className="flex gap-4 items-center flex-wrap mb-6 pb-6 border-b border-border/60">
+              <span className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
                 <Calendar className="w-4 h-4" /> {new Date(article.date).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
               </span>
               <span className="inline-flex items-center gap-1 text-sm text-primary bg-primary/10 px-2 py-0.5 rounded-full">
@@ -59,8 +68,8 @@ export default function ArticleDetailPage() {
 
           {/* Sidebar */}
           <aside className="space-y-6">
-            <div className="bg-surface rounded-lg border border-border p-6">
-              <h3 className="font-semibold text-foreground mb-4">Articles récents</h3>
+            <div className="bg-surface rounded-2xl shadow-soft p-8">
+              <h3 className="font-semibold text-foreground mb-4">Articles rÃ©cents</h3>
               <ul className="space-y-3">
                 {recents.map((a) => (
                   <li key={a.slug}>
@@ -73,7 +82,7 @@ export default function ArticleDetailPage() {
               </ul>
             </div>
             <div className="bg-surface rounded-lg border border-border p-6">
-              <h3 className="font-semibold text-foreground mb-4">Catégories</h3>
+              <h3 className="font-semibold text-foreground mb-4">CatÃ©gories</h3>
               <ul className="space-y-2">
                 {Object.entries(catLabels).map(([key, label]) => (
                   <li key={key}>
@@ -90,3 +99,4 @@ export default function ArticleDetailPage() {
     </div>
   );
 }
+

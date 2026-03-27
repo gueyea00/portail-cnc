@@ -2,13 +2,12 @@ import { Link, useLocation } from "react-router-dom";
 import { ChevronRight, Home } from "lucide-react";
 
 const routeLabels: Record<string, string> = {
-  presentation: "Présentation",
+  presentation: "PrÃ©sentation",
   missions: "Missions & Attributions",
-  actualites: "Actualités",
-  decisions: "Décisions & Jurisprudence",
+  actualites: "ActualitÃ©s",
   documents: "Documents officiels",
   services: "Services en ligne",
-  plainte: "Dépôt de plainte",
+  plainte: "DÃ©pÃ´t de plainte",
   signalement: "Signalement anonyme",
   contact: "Contact",
   faq: "FAQ",
@@ -52,3 +51,4 @@ export default function Breadcrumb() {
     </nav>
   );
 }
+

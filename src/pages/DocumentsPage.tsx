@@ -1,4 +1,4 @@
-import Breadcrumb from "@/components/layout/Breadcrumb";
+﻿import Breadcrumb from "@/components/layout/Breadcrumb";
 import { documents, categoriesDocuments } from "@/lib/data";
 import { Download, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -9,8 +9,11 @@ export default function DocumentsPage() {
     <div>
       <section className="page-hero">
         <div className="container-page">
-          <h1 className="text-3xl md:text-4xl font-bold">Documents officiels</h1>
-          <p className="mt-2 opacity-90 text-lg">Lois, règlements, rapports et guides pratiques</p>
+          <h1 className="text-3xl md:text-4xl font-bold flex items-center justify-center md:justify-start gap-4">
+            <FileText className="w-8 h-8 md:w-10 md:h-10 text-gold" />
+            Documents officiels
+          </h1>
+          <p className="mt-2 opacity-90 text-lg">Lois, rÃ¨glements, rapports et guides pratiques</p>
         </div>
       </section>
       <Breadcrumb />
@@ -27,21 +30,21 @@ export default function DocumentsPage() {
               </h2>
               <div className="space-y-2">
                 {docs.map((d) => (
-                  <div key={d.titre} className="bg-surface p-4 rounded-lg border border-border flex items-center justify-between gap-4 hover:shadow-sm transition-shadow">
+                  <div key={d.titre} className="bg-surface p-6 rounded-2xl shadow-sm flex items-center justify-between gap-4 hover:shadow-md transition-shadow">
                     <div className="flex-1 min-w-0">
                       <h3 className="text-sm font-medium text-foreground truncate">{d.titre}</h3>
                       <p className="text-xs text-muted-foreground mt-0.5">
-                        {new Date(d.date).toLocaleDateString("fr-FR")} • {d.taille} • {d.type}
+                        {new Date(d.date).toLocaleDateString("fr-FR")} â€¢ {d.taille} â€¢ {d.type}
                       </p>
                     </div>
                     <Button
                       variant="outline"
                       size="sm"
                       className="shrink-0 gap-1"
-                      onClick={() => toast.info("Le téléchargement sera disponible prochainement.")}
+                      onClick={() => toast.info("Le tÃ©lÃ©chargement sera disponible prochainement.")}
                     >
                       <Download className="w-3.5 h-3.5" />
-                      <span className="hidden sm:inline">Télécharger</span>
+                      <span className="hidden sm:inline">TÃ©lÃ©charger</span>
                     </Button>
                   </div>
                 ))}
@@ -53,3 +56,4 @@ export default function DocumentsPage() {
     </div>
   );
 }
+

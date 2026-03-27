@@ -9,7 +9,6 @@ import PresentationPage from "./pages/PresentationPage";
 import MissionsPage from "./pages/MissionsPage";
 import ActualitesPage from "./pages/ActualitesPage";
 import ArticleDetailPage from "./pages/ArticleDetailPage";
-import DecisionsPage from "./pages/DecisionsPage";
 import DocumentsPage from "./pages/DocumentsPage";
 import ServicesPage from "./pages/ServicesPage";
 import PlaintePage from "./pages/PlaintePage";
@@ -34,7 +33,6 @@ const App = () => (
             <Route path="/missions" element={<MissionsPage />} />
             <Route path="/actualites" element={<ActualitesPage />} />
             <Route path="/actualites/:slug" element={<ArticleDetailPage />} />
-            <Route path="/decisions" element={<DecisionsPage />} />
             <Route path="/documents" element={<DocumentsPage />} />
             <Route path="/services" element={<ServicesPage />} />
             <Route path="/plainte" element={<PlaintePage />} />
@@ -51,3 +49,4 @@ const App = () => (
 );
 
 export default App;
+

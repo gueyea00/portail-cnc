@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { ArrowUp } from "lucide-react";
 import Header from "./Header";
@@ -35,3 +35,4 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
+
