@@ -35,7 +35,7 @@ export default function Header() {
       <header className="bg-surface shadow-sm sticky top-0 z-50 border-b border-border">
         <div className="w-full px-4 md:px-8">
           <div className="flex items-center justify-between h-20 md:h-24">
-            {/* Logo section â€” Armoiries | Titre | Logo CNC */}
+            {/* Logo section — Armoiries | Titre | Logo CNC */}
             <Link to="/" className="flex items-center gap-3 shrink-0">
               {/* Armoiries du Tchad */}
               <img

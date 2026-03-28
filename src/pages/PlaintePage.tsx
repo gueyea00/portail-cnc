@@ -44,16 +44,41 @@ export default function PlaintePage() {
   const onStep1 = form1.handleSubmit((d) => { setData1(d); setStep(1); });
   const onStep2 = form2.handleSubmit((d) => { setData2(d); setStep(2); });
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     if (!honneur) { toast.error("Veuillez cocher la déclaration sur l'honneur."); return; }
+    if (!data1 || !data2) return;
+
     setLoading(true);
-    setTimeout(() => {
-      const ref = `CNC/PLT/${new Date().getFullYear()}/${String(Math.floor(Math.random() * 9000) + 1000)}`;
-      setReference(ref);
+    try {
+      const response = await fetch("/api/plaintes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nom: data1.nom,
+          prenom: data1.prenom,
+          email: data1.email,
+          telephone: data1.telephone,
+          qualite: data1.qualite,
+          type_pratique: data2.typePratique,
+          description: data2.description,
+          entreprise_concernee: data2.entreprise,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Erreur lors de l'envoi de la plainte");
+      }
+
+      const resData = await response.json();
+      setReference(resData.reference);
       setSubmitted(true);
-      setLoading(false);
       toast.success("Plainte déposée avec succès !");
-    }, 2000);
+    } catch (error) {
+      console.error(error);
+      toast.error("Une erreur est survenue. Veuillez réessayer plus tard.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (submitted) {
@@ -109,7 +134,7 @@ export default function PlaintePage() {
           ))}
         </div>
 
-        {/* Ã‰tape 1 */}
+        {/* Étape 1 */}
         {step === 0 && (
           <form onSubmit={onStep1} className="space-y-4">
             <h2 className="text-xl font-bold text-foreground mb-4">Identité du plaignant</h2>
@@ -168,7 +193,7 @@ export default function PlaintePage() {
           </form>
         )}
 
-        {/* Ã‰tape 3 */}
+        {/* Étape 3 */}
         {step === 2 && (
           <div className="space-y-4">
             <h2 className="text-xl font-bold text-foreground mb-4">Pièces jointes</h2>
@@ -197,7 +222,7 @@ export default function PlaintePage() {
           </div>
         )}
 
-        {/* Ã‰tape 4 â€” Récapitulatif */}
+        {/* Étape 4 — Récapitulatif */}
         {step === 3 && data1 && data2 && (
           <div className="space-y-6">
             <h2 className="text-xl font-bold text-foreground mb-4">Récapitulatif</h2>
