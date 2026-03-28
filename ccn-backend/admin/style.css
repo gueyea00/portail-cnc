@@ -219,7 +219,10 @@ body { font-family: 'Inter', system-ui, sans-serif; color: var(--text); backgrou
   background: var(--surface); border-radius: 16px; width: 560px;
   max-width: calc(100vw - 32px); max-height: calc(100vh - 64px);
   overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,.3);
+  transition: width 0.3s ease;
 }
+.modal-lg { width: 850px; }
+.modal-xl { width: 1100px; }
 .modal-header {
   display: flex; justify-content: space-between; align-items: center;
   padding: 20px 24px; border-bottom: 1px solid var(--border);

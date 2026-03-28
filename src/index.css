@@ -80,14 +80,7 @@
 }
 
 @layer components {
-  .flag-stripe {
-    background: linear-gradient(to right,
-        hsl(var(--primary)) 33.33%,
-        hsl(var(--gold)) 33.33%,
-        hsl(var(--gold)) 66.66%,
-        hsl(var(--destructive)) 66.66%);
-    height: 4px;
-  }
+
 
 
 

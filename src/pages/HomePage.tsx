@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import { Shield, GitMerge, Scale, FileText, BarChart3, Users, ArrowRight, Quote, Camera, ExternalLink, PenSquare, Gavel, FileSignature, ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { articles, membres, galerieItems } from "@/lib/data";
 import { FadeIn } from "@/components/ui/fade-in";
+import { useQuery } from "@tanstack/react-query";
 
 const missionsPreview = [
   { titre: "Contrôle des pratiques anticoncurrentielles", desc: "Identifier et sanctionner les ententes et abus de position dominante.", icone: <Shield className="w-8 h-8" /> },
@@ -30,12 +30,32 @@ const categorieBadge = (cat: string) => {
     enquete: "Enquête",
     evenement: "Événement",
   };
-  return <span className={`text-xs font-medium px-2 py-1 rounded-full ${colors[cat]}`}>{labels[cat]}</span>;
+  const color = colors[cat] || "bg-gray-100 text-gray-700";
+  const label = labels[cat] || cat;
+  return <span className={`text-xs font-medium px-2 py-1 rounded-full ${color}`}>{label}</span>;
+};
+
+const getImgUrl = (path: string | null | undefined, fallback: string) => {
+  if (!path) return fallback;
+  if (path.startsWith('http')) return path;
+  return `http://localhost:3000/${path}`;
 };
 
 export default function HomePage() {
-  const recentArticles = articles.slice(0, 3);
-  const galeriePreview = galerieItems.slice(0, 6);
+  const { data: recentArticles = [] } = useQuery({
+    queryKey: ["articles", "home"],
+    queryFn: () => fetch("http://localhost:3000/api/articles?limit=3").then(res => res.json())
+  });
+
+  const { data: galeriePreview = [] } = useQuery({
+    queryKey: ["galerie", "home"],
+    queryFn: () => fetch("http://localhost:3000/api/galerie").then(res => res.json()).then(data => data.slice(0, 6))
+  });
+
+  const { data: presidentData } = useQuery({
+    queryKey: ["president"],
+    queryFn: () => fetch("http://localhost:3000/api/parametres").then(res => res.json())
+  });
 
   return (
     <div>
@@ -111,7 +131,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <div className="flag-stripe" />
+
 
       {/* Accès rapide */}
       <section className="py-24 bg-primary text-primary-foreground border-y border-white/5 relative overflow-hidden">
@@ -142,7 +162,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <div className="flag-stripe" />
+
 
       {/* Mot du Président */}
       <section className="py-20 bg-muted border-t border-border">
@@ -151,20 +171,18 @@ export default function HomePage() {
             <div className="max-w-5xl mx-auto">
               <div className="bg-surface rounded-2xl border border-border overflow-hidden md:flex shadow-xl">
                 <div className="md:w-2/5 bg-primary p-0 flex flex-col relative overflow-hidden h-[400px] md:h-auto">
-                  <img src="/president.jpg" alt="M. Vissia Baranga" className="absolute inset-0 w-full h-full object-cover z-0 object-top" onError={(e) => { e.currentTarget.src = 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=800'; }} />
+                  <img src={getImgUrl(presidentData?.president_photo_path, "/president.jpg")} alt={presidentData?.president_nom || "M. Vissia Baranga"} className="absolute inset-0 w-full h-full object-cover z-0 object-top" onError={(e) => { e.currentTarget.src = 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=800'; }} />
                   <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/60 to-transparent z-10" />
                   
                   <div className="relative z-20 mt-auto p-8 text-center w-full">
-                    <h3 className="text-2xl font-bold text-white mb-1">M. Vissia Baranga</h3>
-                    <p className="text-md text-secondary font-medium">Président du CNC</p>
+                    <h3 className="text-2xl font-bold text-white mb-1">{presidentData?.president_nom || "M. Vissia Baranga"}</h3>
+                    <p className="text-md text-secondary font-medium">{presidentData?.president_titre || "Président du CNC"}</p>
                   </div>
                 </div>
                 <div className="md:w-3/5 p-10 md:p-12 border-l-4 border-l-secondary relative flex flex-col justify-center">
                   <Quote className="w-16 h-16 text-secondary/20 absolute top-8 left-8" />
                   <blockquote className="text-foreground text-lg md:text-xl italic leading-relaxed mb-8 relative z-10 pt-6 pl-6">
-                    « Le Conseil National de la Concurrence œuvre sans relâche pour garantir un marché équitable
-                    où chaque opérateur économique peut prospérer dans le respect des règles. Notre mission est
-                    de bâtir un environnement de confiance propice au développement économique de notre nation. »
+                    « {presidentData?.president_message || "Le Conseil National de la Concurrence œuvre sans relâche pour garantir un marché équitable où chaque opérateur économique peut prospérer dans le respect des règles. Notre mission est de bâtir un environnement de confiance propice au développement économique de notre nation."}  »
                   </blockquote>
                   <div className="relative z-10 pl-6">
                     <Link to="/presentation">
@@ -191,28 +209,32 @@ export default function HomePage() {
             </div>
           </FadeIn>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {recentArticles.map((a, i) => (
-              <FadeIn key={a.slug} delay={i * 100}>
-                <div className="bg-background rounded-xl border border-border overflow-hidden card-hover shadow-soft h-full flex flex-col">
-                  {/* Image cover for news */}
-                  <div className="h-48 bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center relative overflow-hidden group">
-                    <img src={`https://images.unsplash.com/photo-${i===0?'1507679799987-c7cf7ee3face':i===1?'1557804506-669a67965ba0':'1454165804606-c3d57bc86b40'}?auto=format&fit=crop&q=80&w=800`} alt={a.titre} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                    <div className="absolute inset-0 bg-primary/20 group-hover:bg-transparent transition-colors duration-500" />
-                  </div>
-                  <div className="p-6 flex flex-col flex-grow">
-                    <div className="flex items-center gap-3 mb-4">
-                      {categorieBadge(a.categorie)}
-                      <span className="text-sm font-medium text-muted-foreground">{new Date(a.date).toLocaleDateString("fr-FR")}</span>
+            {recentArticles.length === 0 ? (
+              <p className="text-center col-span-3 text-muted-foreground">Aucune actualité récente pour le moment.</p>
+            ) : (
+              recentArticles.map((a: any, i: number) => (
+                <FadeIn key={a.slug || a.id} delay={i * 100}>
+                  <div className="bg-background rounded-xl border border-border overflow-hidden card-hover shadow-soft h-full flex flex-col">
+                    {/* Image cover for news */}
+                    <div className="h-48 bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center relative overflow-hidden group">
+                      <img src={getImgUrl(a.image_url, `https://images.unsplash.com/photo-${i===0?'1507679799987-c7cf7ee3face':i===1?'1557804506-669a67965ba0':'1454165804606-c3d57bc86b40'}?auto=format&fit=crop&q=80&w=800`)} alt={a.titre} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                      <div className="absolute inset-0 bg-primary/20 group-hover:bg-transparent transition-colors duration-500" />
                     </div>
-                    <h3 className="text-lg font-bold text-foreground mb-3 line-clamp-2">{a.titre}</h3>
-                    <p className="text-base text-muted-foreground line-clamp-3 mb-6 flex-grow">{a.extrait}</p>
-                    <Link to={`/actualites/${a.slug}`} className="text-sm font-bold text-primary hover:text-secondary transition-colors inline-flex items-center gap-2 mt-auto group">
-                      Lire la suite <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </Link>
+                    <div className="p-6 flex flex-col flex-grow">
+                      <div className="flex items-center gap-3 mb-4">
+                        {categorieBadge(a.categorie || 'autre')}
+                        <span className="text-sm font-medium text-muted-foreground">{(a.date_publication || a.created_at || '').slice(0, 10)}</span>
+                      </div>
+                      <h3 className="text-lg font-bold text-foreground mb-3 line-clamp-2">{a.titre}</h3>
+                      <p className="text-base text-muted-foreground line-clamp-3 mb-6 flex-grow">{a.extrait}</p>
+                      <Link to={`/actualites/${a.slug}`} className="text-sm font-bold text-primary hover:text-secondary transition-colors inline-flex items-center gap-2 mt-auto group">
+                        Lire la suite <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                      </Link>
+                    </div>
                   </div>
-                </div>
-              </FadeIn>
-            ))}
+                </FadeIn>
+              ))
+            )}
           </div>
           <FadeIn delay={300}>
             <div className="text-center mt-12">
@@ -227,8 +249,6 @@ export default function HomePage() {
         </div>
       </section>
 
-
-
       {/* Galerie aperçu */}
       <section className="py-20 bg-surface border-t border-border">
         <div className="container-page">
@@ -239,18 +259,22 @@ export default function HomePage() {
             </div>
           </FadeIn>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {galeriePreview.map((item, i) => (
-              <FadeIn key={item.id} delay={i * 50}>
-                <div className={`relative h-56 rounded-xl bg-gradient-to-br ${item.gradient} flex items-center justify-center group overflow-hidden card-hover shadow-soft`}>
-                  <img src={`https://images.unsplash.com/photo-${1550000000000 + i * 1000000}?auto=format&fit=crop&q=80&w=600`} alt={item.titre} className="absolute inset-0 w-full h-full object-cover mix-blend-overlay opacity-30 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" />
-                  <Camera className="w-12 h-12 text-white/50 group-hover:text-white/0 transition-colors duration-300 relative z-10" />
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/50 transition-all duration-500 z-0" />
-                  <div className="absolute inset-0 flex items-end p-6 z-20">
-                    <p className="text-white text-base font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300 translate-y-4 group-hover:translate-y-0 shadow-sm">{item.titre}</p>
+            {galeriePreview.length === 0 ? (
+              <p className="text-center col-span-3 text-muted-foreground">Aucune photo dans la galerie pour le moment.</p>
+            ) : (
+              galeriePreview.map((item: any, i: number) => (
+                <FadeIn key={item.id} delay={i * 50}>
+                  <div className={`relative h-56 rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center group overflow-hidden card-hover shadow-soft`}>
+                    <img src={getImgUrl(item.image_path, `https://images.unsplash.com/photo-${1550000000000 + i * 1000000}?auto=format&fit=crop&q=80&w=600`)} alt={item.titre} className="absolute inset-0 w-full h-full object-cover mix-blend-overlay opacity-30 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" />
+                    <Camera className="w-12 h-12 text-white/50 group-hover:text-white/0 transition-colors duration-300 relative z-10" />
+                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/50 transition-all duration-500 z-0" />
+                    <div className="absolute inset-0 flex items-end p-6 z-20">
+                      <p className="text-white text-base font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300 translate-y-4 group-hover:translate-y-0 shadow-sm">{item.titre}</p>
+                    </div>
                   </div>
-                </div>
-              </FadeIn>
-            ))}
+                </FadeIn>
+              ))
+            )}
           </div>
           <FadeIn delay={300}>
             <div className="text-center mt-12">

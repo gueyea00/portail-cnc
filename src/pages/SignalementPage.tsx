@@ -11,24 +11,24 @@ export default function SignalementPage() {
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (form.description.length < 20) { toast.error("La description doit contenir au moins 20 caractÃ¨res."); return; }
+    if (form.description.length < 20) { toast.error("La description doit contenir au moins 20 caractères."); return; }
     setLoading(true);
     setTimeout(() => {
       setSubmitted(true);
       setLoading(false);
-      toast.success("Signalement enregistrÃ© de maniÃ¨re anonyme.");
+      toast.success("Signalement enregistré de manière anonyme.");
     }, 1500);
   };
 
   if (submitted) {
     return (
       <div>
-        <section className="page-hero"><div className="container-page"><h1 className="text-3xl font-bold">Signalement enregistrÃ©</h1></div></section>
+        <section className="page-hero"><div className="container-page"><h1 className="text-3xl font-bold">Signalement enregistré</h1></div></section>
         <div className="container-page py-16 text-center">
           <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-foreground mb-2">Signalement anonyme enregistrÃ©</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-2">Signalement anonyme enregistré</h2>
           <p className="text-muted-foreground max-w-md mx-auto mb-8">
-            Votre signalement a Ã©tÃ© enregistrÃ© de maniÃ¨re anonyme. Les services du CNC analyseront les informations communiquÃ©es.
+            Votre signalement a été enregistré de manière anonyme. Les services du CNC analyseront les informations communiquées.
           </p>
           <Button onClick={() => { setSubmitted(false); setForm({ description: "", secteur: "", entreprises: "" }); }}>
             Effectuer un autre signalement
@@ -48,7 +48,7 @@ export default function SignalementPage() {
             <ShieldAlert className="w-8 h-8 md:w-10 md:h-10 text-gold" />
             Signalement anonyme
           </h1>
-          <p className="mt-2 opacity-90 text-lg">Signalez une pratique suspecte en toute confidentialitÃ©</p>
+          <p className="mt-2 opacity-90 text-lg">Signalez une pratique suspecte en toute confidentialité</p>
         </div>
       </section>
       <Breadcrumb />
@@ -57,25 +57,25 @@ export default function SignalementPage() {
         <div className="bg-muted/50 border border-border rounded-lg p-4 flex gap-3 mb-8">
           <ShieldAlert className="w-5 h-5 text-primary shrink-0 mt-0.5" />
           <p className="text-sm text-foreground">
-            Ce formulaire vous permet de signaler une pratique anticoncurrentielle de maniÃ¨re anonyme.
-            Aucune information personnelle n'est requise ni collectÃ©e.
+            Ce formulaire vous permet de signaler une pratique anticoncurrentielle de manière anonyme.
+            Aucune information personnelle n'est requise ni collectée.
           </p>
         </div>
 
         <form onSubmit={onSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-foreground mb-1">Description de la pratique suspecte *</label>
-            <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={5} className={inputClass} placeholder="DÃ©crivez la pratique que vous souhaitez signaler..." />
+            <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={5} className={inputClass} placeholder="Décrivez la pratique que vous souhaitez signaler..." />
           </div>
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1">Secteur d'activitÃ© concernÃ©</label>
+            <label className="block text-sm font-medium text-foreground mb-1">Secteur d'activité concerné</label>
             <select value={form.secteur} onChange={(e) => setForm({ ...form, secteur: e.target.value })} className={inputClass}>
-              <option value="">SÃ©lectionnez...</option>
-              <option>TÃ©lÃ©communications</option>
+              <option value="">Sélectionnez...</option>
+              <option>Télécommunications</option>
               <option>Hydrocarbures</option>
               <option>Agroalimentaire</option>
-              <option>BTP / MatÃ©riaux</option>
-              <option>SantÃ© / Pharmacie</option>
+              <option>BTP / Matériaux</option>
+              <option>Santé / Pharmacie</option>
               <option>Transport</option>
               <option>Commerce</option>
               <option>Banque / Finance</option>
@@ -83,7 +83,7 @@ export default function SignalementPage() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1">Entreprise(s) concernÃ©e(s)</label>
+            <label className="block text-sm font-medium text-foreground mb-1">Entreprise(s) concernée(s)</label>
             <input value={form.entreprises} onChange={(e) => setForm({ ...form, entreprises: e.target.value })} className={inputClass} placeholder="Nom des entreprises (optionnel)" />
           </div>
           <div className="pt-4">

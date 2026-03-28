@@ -4,7 +4,7 @@ import { Facebook, Linkedin, Twitter, Mail, Phone, MapPin, Send, ChevronRight } 
 export default function Footer() {
   return (
     <footer className="bg-primary text-primary-foreground pt-0 pb-8 relative overflow-hidden">
-      <div className="flag-stripe" />
+
       {/* Abstract SVG Pattern Background */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden opacity-100">
         <svg
@@ -37,7 +37,7 @@ export default function Footer() {
       <div className="container-page relative z-10 pt-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
 
-          {/* Col 1 â€” Logo & Desc */}
+          {/* Col 1 — Logo & Desc */}
           <div className="space-y-6">
             <div className="flex items-center gap-3">
               <img src="/armoiries-tchad.png" alt="Armoiries du Tchad" className="w-12 h-14 object-contain bg-white rounded p-1 shadow-sm" />
@@ -47,7 +47,7 @@ export default function Footer() {
               </div>
             </div>
             <p className="text-sm text-white/60 leading-relaxed">
-              AutoritÃ© administrative indÃ©pendante chargÃ©e de veiller au respect des rÃ¨gles de la concurrence en RÃ©publique du Tchad.
+              Autorité administrative indépendante chargée de veiller au respect des règles de la concurrence en République du Tchad.
             </p>
             <div className="flex gap-3 pt-2">
               <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/80 hover:bg-gold hover:text-primary hover:-translate-y-1 transition-all duration-300 shadow-sm" aria-label="Facebook">
@@ -62,16 +62,16 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Col 2 â€” Liens rapides */}
+          {/* Col 2 — Liens rapides */}
           <div>
             <h3 className="font-bold text-lg mb-6 flex items-center gap-3">
               Liens rapides
             </h3>
             <ul className="space-y-3 text-sm text-white/70">
               {[
-                { label: "PrÃ©sentation", path: "/presentation" },
+                { label: "Présentation", path: "/presentation" },
                 { label: "Missions & Attributions", path: "/missions" },
-                { label: "ActualitÃ©s", path: "/actualites" },
+                { label: "Actualités", path: "/actualites" },
                 { label: "Ressources & Documents", path: "/documents" },
                 { label: "Foire Aux Questions", path: "/faq" },
               ].map((link) => (
@@ -85,14 +85,14 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Col 3 â€” Services */}
+          {/* Col 3 — Services */}
           <div>
             <h3 className="font-bold text-lg mb-6 flex items-center gap-3">
               Services
             </h3>
             <ul className="space-y-3 text-sm text-white/70">
               {[
-                { label: "DÃ©poser une plainte", path: "/plainte" },
+                { label: "Déposer une plainte", path: "/plainte" },
                 { label: "Signalement anonyme", path: "/signalement" },
                 { label: "Tous les services", path: "/services" },
                 { label: "Galerie institutionnelle", path: "/galerie" },
@@ -107,7 +107,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Col 4 â€” Contact & Newsletter */}
+          {/* Col 4 — Contact & Newsletter */}
           <div className="space-y-8">
             <div>
               <h3 className="font-bold text-lg mb-6 flex items-center gap-3">
@@ -137,8 +137,8 @@ export default function Footer() {
 
             {/* Champ Newsletter (Input + Button) */}
             <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
-              <p className="text-sm font-semibold mb-3 text-white">S'abonner Ã  la Newsletter</p>
-              <form className="relative flex items-center" onSubmit={(e) => { e.preventDefault(); alert("Abonnement rÃ©ussi !"); }}>
+              <p className="text-sm font-semibold mb-3 text-white">S'abonner à la Newsletter</p>
+              <form className="relative flex items-center" onSubmit={(e) => { e.preventDefault(); alert("Abonnement réussi !"); }}>
                 <input
                   type="email"
                   placeholder="Votre adresse email..."
@@ -157,20 +157,20 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Ligne de sÃ©paration visuelle */}
+        {/* Ligne de séparation visuelle */}
         <div className="w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent mb-8" />
 
         {/* Liens institutionnels & Copyright */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-6 text-xs text-white/50">
           <div className="flex flex-wrap justify-center md:justify-start gap-x-6 gap-y-3">
-            <a href="#" className="hover:text-gold transition-colors">MinistÃ¨re du Commerce</a>
+            <a href="#" className="hover:text-gold transition-colors">Ministère du Commerce</a>
             <a href="#" className="hover:text-gold transition-colors">Gouvernement du Tchad</a>
             <a href="#" className="hover:text-gold transition-colors">CEMAC</a>
             <a href="#" className="hover:text-gold transition-colors">UEMOA</a>
           </div>
           <div className="text-center md:text-right">
             <p>&copy; {new Date().getFullYear()} Conseil National de la Concurrence.</p>
-            <p className="mt-1">RÃ©alisation : <span className="text-white/70">Ebenyx Technologies SA-CA</span></p>
+            <p className="mt-1">Réalisation : <span className="text-white/70">Ebenyx Technologies SA-CA</span></p>
           </div>
         </div>
       </div>

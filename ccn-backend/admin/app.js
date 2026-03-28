@@ -59,6 +59,10 @@ function refreshIcons() {
 
 // ---- Modal ----
 function openModal(type, data = null) {
+  const modalBox = document.querySelector('.modal-box');
+  modalBox.classList.remove('modal-lg', 'modal-xl');
+  if (type === 'article') modalBox.classList.add('modal-lg');
+
   document.getElementById('modal').style.display = 'flex';
   const title = document.getElementById('modalTitle');
   const body = document.getElementById('modalBody');
@@ -67,11 +71,12 @@ function openModal(type, data = null) {
     title.textContent = data ? 'Modifier l\'article' : 'Nouvel article';
     body.innerHTML = `
       <form id="articleForm" class="form" enctype="multipart/form-data">
-        <div class="form-group"><label>Titre *</label><input name="titre" value="${data?.titre || ''}" required /></div>
-        <div class="form-group"><label>Slug (ex: mon-article) *</label><input name="slug" value="${data?.slug || ''}" required /></div>
-        <div class="form-group"><label>Extrait</label><textarea name="extrait" rows="2">${data?.extrait || ''}</textarea></div>
-        <div class="form-group"><label>Contenu</label><textarea name="contenu" rows="6">${data?.contenu || ''}</textarea></div>
         <div class="form-row">
+          <div class="form-group"><label>Titre de l'article *</label><input name="titre" value="${data?.titre || ''}" placeholder="Titre accrocheur..." required /></div>
+          <div class="form-group"><label>Lien permanent (Slug) *</label><input name="slug" value="${data?.slug || ''}" placeholder="ex: reunion-conseil-2025" required /></div>
+        </div>
+        
+        <div class="form-row" style="grid-template-columns: 1fr 1fr 1fr;">
           <div class="form-group"><label>Catégorie</label>
             <select name="categorie">
               <option value="communique" ${data?.categorie === 'communique' ? 'selected' : ''}>Communiqué</option>
@@ -86,61 +91,45 @@ function openModal(type, data = null) {
               <option value="archive" ${data?.statut === 'archive' ? 'selected' : ''}>Archivé</option>
             </select>
           </div>
+          <div class="form-group"><label>Date de publication</label>
+            <input type="date" name="date_publication" value="${data?.date_publication?.slice(0, 10) || ''}" />
+          </div>
         </div>
-        <div class="form-group"><label>Image URL</label><input name="image_url" value="${data?.image_url || ''}" placeholder="https://..." /></div>
-        <div class="form-group"><label>Date de publication</label><input type="date" name="date_publication" value="${data?.date_publication?.slice(0,10) || ''}" /></div>
+
+        <div class="form-group"><label>Résumé court (Extrait)</label><textarea name="extrait" rows="2" placeholder="Une brève introduction pour la liste des actualités...">${data?.extrait || ''}</textarea></div>
+        <div class="form-group"><label>Contenu complet de l'article</label><textarea name="contenu" rows="10" placeholder="Écrivez votre article ici...">${data?.contenu || ''}</textarea></div>
+        
+        <div class="form-card" style="padding: 16px; margin-bottom: 20px; background: #f8fafc; border-style: dashed;">
+          <div class="form-row">
+            <div class="form-group"><label>Image via URL</label><input name="image_url" value="${data?.image_url || ''}" placeholder="https://image-externe.com/photo.jpg" /></div>
+            <div class="form-group"><label>Ou Télécharger un fichier</label><input type="file" name="image" accept="image/*" /></div>
+          </div>
+          ${data?.image_path ? `
+          <div style="margin-top:10px;">
+            <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:4px;">Image actuelle :</p>
+            <img src="/${data.image_path}" style="max-height:120px; border-radius:8px; border: 1px solid var(--border);" />
+          </div>` : ''}
+        </div>
+
         <div class="modal-actions">
           <button type="button" class="btn btn-ghost" onclick="closeModal()">Annuler</button>
-          <button type="submit" class="btn btn-primary">
-            <i data-lucide="${data ? 'save' : 'plus'}" class="icon-sm" style="margin-right: 6px;"></i> ${data ? 'Mettre à jour' : 'Créer'}
+          <button type="submit" class="btn btn-primary" style="padding: 12px 24px;">
+            <i data-lucide="${data ? 'save' : 'plus'}" class="icon-sm" style="margin-right: 8px;"></i> ${data ? 'Enregistrer les modifications' : 'Publier l\'article'}
           </button>
         </div>
       </form>`;
     document.getElementById('articleForm').onsubmit = async (e) => {
       e.preventDefault();
       const fd = new FormData(e.target);
-      const body = Object.fromEntries(fd.entries());
       const url = data ? `/api/articles/admin/${data.id}` : '/api/articles/admin';
       const method = data ? 'PUT' : 'POST';
-      const res = await apiFetch(url, { method, headers: headers(), body: JSON.stringify(body) });
+      const res = await apiFetch(url, { method, headers: { Authorization: `Bearer ${token}` }, body: fd });
       if (res?.ok) { showToast(data ? 'Article mis à jour !' : 'Article créé !'); closeModal(); loadArticles(); }
       else showToast('Erreur lors de l\'enregistrement', true);
     };
   }
 
-  if (type === 'decision') {
-    title.textContent = data ? 'Modifier la décision' : 'Nouvelle décision';
-    body.innerHTML = `
-      <form id="decisionForm" enctype="multipart/form-data">
-        <div class="form-row">
-          <div class="form-group"><label>Référence *</label><input name="reference" value="${data?.reference || ''}" placeholder="CNC/DEC/2025/001" required /></div>
-          <div class="form-group"><label>Date</label><input type="date" name="date_decision" value="${data?.date_decision?.slice(0,10) || ''}" /></div>
-        </div>
-        <div class="form-group"><label>Titre *</label><input name="titre" value="${data?.titre || ''}" required /></div>
-        <div class="form-group"><label>Résumé</label><textarea name="resume" rows="3">${data?.resume || ''}</textarea></div>
-        <div class="form-group"><label>Secteur</label><input name="secteur" value="${data?.secteur || ''}" placeholder="Télécommunications, Ciment..." /></div>
-        <div class="form-group"><label>PDF *</label><input type="file" name="pdf" accept=".pdf" /></div>
-        <div class="form-group">
-          <label><input type="checkbox" name="publie" value="true" ${data?.publie ? 'checked' : ''} /> Publier immédiatement</label>
-        </div>
-        <div class="modal-actions">
-          <button type="button" class="btn btn-ghost" onclick="closeModal()">Annuler</button>
-          <button type="submit" class="btn btn-primary">
-            <i data-lucide="${data ? 'save' : 'plus'}" class="icon-sm" style="margin-right: 6px;"></i> ${data ? 'Mettre à jour' : 'Créer'}
-          </button>
-        </div>
-      </form>`;
-    document.getElementById('decisionForm').onsubmit = async (e) => {
-      e.preventDefault();
-      const fd = new FormData(e.target);
-      if (!fd.get('publie')) fd.set('publie', 'false');
-      const url = data ? `/api/decisions/admin/${data.id}` : '/api/decisions/admin';
-      const method = data ? 'PUT' : 'POST';
-      const res = await apiFetch(url, { method, headers: { Authorization: `Bearer ${token}` }, body: fd });
-      if (res?.ok) { showToast('Décision enregistrée !'); closeModal(); loadDecisions(); }
-      else showToast('Erreur', true);
-    };
-  }
+
 
   if (type === 'document') {
     title.textContent = data ? 'Modifier le document' : 'Nouveau document';
@@ -323,27 +312,7 @@ async function loadArticles() {
   refreshIcons();
 }
 
-async function loadDecisions() {
-  const res = await apiFetch('/api/decisions/admin/all', { headers: headers() });
-  if (!res) return;
-  const items = await res.json();
-  const tb = document.getElementById('decisionsTableBody');
-  if (!tb) return;
-  tb.innerHTML = items.length === 0 ? `<tr><td colspan="6" class="loading">Aucune décision</td></tr>` :
-    items.map(d => `<tr>
-      <td><code>${d.reference}</code></td>
-      <td>${d.titre}</td>
-      <td>${formatDate(d.date_decision)}</td>
-      <td>${d.secteur || '—'}</td>
-      <td>${d.pdf_path ? `<a href="/${d.pdf_path}" target="_blank" class="btn btn-ghost btn-sm"><i data-lucide="file-text" class="icon-sm" style="margin-right: 4px;"></i> PDF</a>` : '—'}</td>
-      <td>
-        <button class="btn btn-ghost btn-sm" onclick='openModal("decision", ${JSON.stringify(d).replace(/'/g, "&#39;")})' title="Modifier"><i data-lucide="edit-2" class="icon-sm"></i></button>
-        <button class="btn btn-danger btn-sm" onclick="deleteItem('decisions', ${d.id})" title="Supprimer"><i data-lucide="trash-2" class="icon-sm"></i></button>
-      </td>
-    </tr>`).join('');
-    
-  refreshIcons();
-}
+
 
 async function loadDocuments() {
   const res = await apiFetch('/api/documents', { headers: headers() });
@@ -493,7 +462,7 @@ async function deleteItem(resource, id) {
   const res = await apiFetch(`/api/${resource}/admin/${id}`, { method: 'DELETE', headers: headers() });
   if (res?.ok || res?.status === 204) {
     showToast('Supprimé !');
-    const loaders = { articles: loadArticles, decisions: loadDecisions, documents: loadDocuments, galerie: loadGalerie, membres: loadMembres, admins: loadAdmins };
+    const loaders = { articles: loadArticles, documents: loadDocuments, galerie: loadGalerie, membres: loadMembres, admins: loadAdmins };
     loaders[resource]?.();
   } else showToast('Erreur lors de la suppression', true);
 }
@@ -511,7 +480,6 @@ function navigateTo(section) {
   const loaders = {
     accueil: loadStats,
     actualites: loadArticles,
-    decisions: loadDecisions,
     documents: loadDocuments,
     galerie: loadGalerie,
     president: loadPresident,

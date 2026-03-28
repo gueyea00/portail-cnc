@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS articles (
   contenu         TEXT,
   categorie       TEXT CHECK (categorie IN ('communique','enquete','evenement')),
   image_url       TEXT,
+  image_path      TEXT,
   statut          TEXT DEFAULT 'brouillon' CHECK (statut IN ('publie','brouillon','archive')),
   date_publication DATE DEFAULT CURRENT_DATE,
   created_at      TIMESTAMPTZ DEFAULT NOW(),

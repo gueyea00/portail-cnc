@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import Breadcrumb from "@/components/layout/Breadcrumb";
-import { articles } from "@/lib/data";
 import { ArrowRight, Calendar, Newspaper } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
 
 const categories = ["Tous", "communique", "enquete", "evenement"];
 const categoryLabels: Record<string, string> = {
@@ -11,15 +10,13 @@ const categoryLabels: Record<string, string> = {
   communique: "Communiqués",
   enquete: "Enquêtes",
   evenement: "Événements",
+  autre: "Autre"
 };
 
-const catBadge = (cat: string) => {
-  const categoryColors: Record<string, string> = {
-    communique: "bg-green-100 text-green-700",
-    enquete: "bg-orange-100 text-orange-700",
-    evenement: "bg-purple-100 text-purple-700",
-  };
-  return categoryColors[cat] || "";
+const getImgUrl = (path: string | null | undefined, fallback: string) => {
+  if (!path) return fallback;
+  if (path.startsWith('http')) return path;
+  return `http://localhost:3000/${path}`;
 };
 
 export default function ActualitesPage() {
@@ -27,7 +24,12 @@ export default function ActualitesPage() {
   const [page, setPage] = useState(1);
   const perPage = 6;
 
-  const filtered = filtre === "Tous" ? articles : articles.filter((a) => a.categorie === filtre);
+  const { data: articles = [], isLoading } = useQuery({
+    queryKey: ["articles"],
+    queryFn: () => fetch("http://localhost:3000/api/articles").then(res => res.json())
+  });
+
+  const filtered = filtre === "Tous" ? articles : articles.filter((a: any) => (a.categorie || 'autre') === filtre);
   const totalPages = Math.ceil(filtered.length / perPage);
   const displayed = filtered.slice((page - 1) * perPage, page * perPage);
 
@@ -37,9 +39,9 @@ export default function ActualitesPage() {
         <div className="container-page">
           <h1 className="text-3xl md:text-4xl font-bold flex items-center justify-center md:justify-start gap-4">
             <Newspaper className="w-8 h-8 md:w-10 md:h-10 text-gold" />
-            ActualitÃ©s & CommuniquÃ©s
+            Actualités & Communiqués
           </h1>
-          <p className="mt-2 opacity-90 text-lg">Suivez l'actualitÃ© du Conseil National de la Concurrence</p>
+          <p className="mt-2 opacity-90 text-lg">Suivez l'actualité du Conseil National de la Concurrence</p>
         </div>
       </section>
       <Breadcrumb />
@@ -57,65 +59,72 @@ export default function ActualitesPage() {
                   : "bg-surface text-foreground border-border hover:border-primary"
               }`}
             >
-              {categoryLabels[c]}
+              {categoryLabels[c] || c}
             </button>
           ))}
         </div>
 
-        {/* Grille */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {displayed.map((a) => (
-            <div key={a.slug} className="bg-surface rounded-2xl shadow-soft overflow-hidden group flex flex-col border border-border/50 hover:shadow-md transition-all">
-              <Link to={`/actualites/${a.slug}`} className="block h-48 overflow-hidden relative">
-                <img 
-                  src={a.image || "/hero-bg.jpg"} 
-                  alt={a.titre} 
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
-                />
-                <div className="absolute top-3 right-3">
-                  <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-sm backdrop-blur-md bg-white/90 ${
-                    a.categorie === 'communique' ? 'text-green-700' :
-                    a.categorie === 'enquete' ? 'text-orange-700' : 'text-purple-700'
-                  }`}>
-                    {categoryLabels[a.categorie]}
-                  </span>
+        {isLoading ? (
+          <div className="text-center py-20 text-muted-foreground">Chargement des actualités...</div>
+        ) : filtered.length === 0 ? (
+          <div className="text-center py-20 text-muted-foreground">Aucune actualité trouvée.</div>
+        ) : (
+          <>
+            {/* Grille */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {displayed.map((a: any, i: number) => (
+                <div key={a.slug || a.id} className="bg-surface rounded-2xl shadow-soft overflow-hidden group flex flex-col border border-border/50 hover:shadow-md transition-all">
+                  <Link to={`/actualites/${a.slug}`} className="block h-48 overflow-hidden relative bg-muted">
+                    <img 
+                      src={getImgUrl(a.image_path || a.image_url, `https://images.unsplash.com/photo-${i%3===0?'1507679799987-c7cf7ee3face':i%3===1?'1557804506-669a67965ba0':'1454165804606-c3d57bc86b40'}?auto=format&fit=crop&q=80&w=800`)}
+                      alt={a.titre} 
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+                    />
+                    <div className="absolute top-3 right-3">
+                      <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-sm backdrop-blur-md bg-white/90 ${
+                        a.categorie === 'communique' ? 'text-green-700' :
+                        a.categorie === 'enquete' ? 'text-orange-700' : 'text-purple-700'
+                      }`}>
+                        {categoryLabels[a.categorie || 'autre']}
+                      </span>
+                    </div>
+                  </Link>
+                  <div className="p-6 flex flex-col flex-grow">
+                    <div className="flex items-center gap-2 mb-3 text-xs text-muted-foreground font-medium">
+                      <Calendar className="w-3.5 h-3.5" />
+                      <span>{new Date(a.date_publication || a.created_at).toLocaleDateString("fr-FR", { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                    </div>
+                    <h3 className="font-bold text-foreground mb-3 line-clamp-2 text-base leading-snug group-hover:text-primary transition-colors">
+                      <Link to={`/actualites/${a.slug}`}>{a.titre}</Link>
+                    </h3>
+                    <p className="text-sm text-muted-foreground line-clamp-3 mb-5 flex-grow">{a.extrait}</p>
+                    <Link to={`/actualites/${a.slug}`} className="text-sm font-semibold text-primary hover:text-secondary transition-colors inline-flex items-center gap-1.5 mt-auto">
+                      Lire l'article <ArrowRight className="w-4 h-4" />
+                    </Link>
+                  </div>
                 </div>
-              </Link>
-              <div className="p-6 flex flex-col flex-grow">
-                <div className="flex items-center gap-2 mb-3 text-xs text-muted-foreground font-medium">
-                  <Calendar className="w-3.5 h-3.5" />
-                  <span>{new Date(a.date).toLocaleDateString("fr-FR", { day: 'numeric', month: 'long', year: 'numeric' })}</span>
-                </div>
-                <h3 className="font-bold text-foreground mb-3 line-clamp-2 text-base leading-snug group-hover:text-primary transition-colors">
-                  <Link to={`/actualites/${a.slug}`}>{a.titre}</Link>
-                </h3>
-                <p className="text-sm text-muted-foreground line-clamp-3 mb-5 flex-grow">{a.extrait}</p>
-                <Link to={`/actualites/${a.slug}`} className="text-sm font-semibold text-primary hover:text-secondary transition-colors inline-flex items-center gap-1.5 mt-auto">
-                  Lire l'article <ArrowRight className="w-4 h-4" />
-                </Link>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex justify-center gap-2 mt-8">
-            {Array.from({ length: totalPages }, (_, i) => (
-              <button
-                key={i}
-                onClick={() => setPage(i + 1)}
-                className={`w-10 h-10 rounded-lg text-sm font-medium transition-colors ${
-                  page === i + 1 ? "bg-primary text-primary-foreground" : "bg-surface shadow-sm text-foreground hover:bg-muted"
-                }`}
-              >
-                {i + 1}
-              </button>
-            ))}
-          </div>
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex justify-center gap-2 mt-8">
+                {Array.from({ length: totalPages }, (_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setPage(i + 1)}
+                    className={`w-10 h-10 rounded-lg text-sm font-medium transition-colors ${
+                      page === i + 1 ? "bg-primary text-primary-foreground" : "bg-surface shadow-sm text-foreground hover:bg-muted"
+                    }`}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
   );
 }
-

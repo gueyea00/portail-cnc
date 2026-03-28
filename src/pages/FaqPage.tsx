@@ -3,7 +3,7 @@ import Breadcrumb from "@/components/layout/Breadcrumb";
 import { faqData } from "@/lib/data";
 import { ChevronDown, HelpCircle } from "lucide-react";
 
-const themes = ["Tous", "GÃ©nÃ©ralitÃ©s", "Plaintes", "ProcÃ©dures", "Sanctions"];
+const themes = ["Tous", "Généralités", "Plaintes", "Procédures", "Sanctions"];
 
 export default function FaqPage() {
   const [filtre, setFiltre] = useState("Tous");
@@ -19,7 +19,7 @@ export default function FaqPage() {
             <HelpCircle className="w-8 h-8 md:w-10 md:h-10 text-gold" />
             Foire aux questions
           </h1>
-          <p className="mt-2 opacity-90 text-lg">Trouvez les rÃ©ponses Ã  vos questions</p>
+          <p className="mt-2 opacity-90 text-lg">Trouvez les réponses à vos questions</p>
         </div>
       </section>
       <Breadcrumb />
@@ -42,7 +42,7 @@ export default function FaqPage() {
           ))}
         </div>
 
-        {/* AccordÃ©on */}
+        {/* Accordéon */}
         <div className="space-y-3">
           {filtered.map((q, i) => (
             <div key={i} className="bg-surface rounded-2xl shadow-sm overflow-hidden mb-4">

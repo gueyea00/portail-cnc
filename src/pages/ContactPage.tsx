@@ -14,7 +14,7 @@ export default function ContactPage() {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      toast.success("Message envoyÃ© avec succÃ¨s !");
+      toast.success("Message envoyé avec succès !");
       setForm({ nom: "", email: "", objet: "", message: "" });
     }, 1500);
   };
@@ -27,7 +27,7 @@ export default function ContactPage() {
         <div className="container-page">
           <h1 className="text-3xl md:text-4xl font-bold flex items-center justify-center md:justify-start gap-4">
             <PhoneCall className="w-8 h-8 md:w-10 md:h-10 text-gold" />
-            Contact & AccÃ¨s
+            Contact & Accès
           </h1>
           <p className="mt-2 opacity-90 text-lg">Prenez contact avec le CNC</p>
         </div>
@@ -39,14 +39,14 @@ export default function ContactPage() {
           {/* Infos */}
           <div className="space-y-6">
             <div className="bg-surface p-8 rounded-2xl shadow-soft space-y-4">
-              <h2 className="text-xl font-bold text-foreground">CoordonnÃ©es</h2>
+              <h2 className="text-xl font-bold text-foreground">Coordonnées</h2>
               <div className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                <div><p className="text-sm font-medium text-foreground">Adresse</p><p className="text-sm text-muted-foreground">Avenue Charles de Gaulle, N'Djamena, RÃ©publique du Tchad</p></div>
+                <div><p className="text-sm font-medium text-foreground">Adresse</p><p className="text-sm text-muted-foreground">Avenue Charles de Gaulle, N'Djamena, République du Tchad</p></div>
               </div>
               <div className="flex items-start gap-3">
                 <Phone className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                <div><p className="text-sm font-medium text-foreground">TÃ©lÃ©phone</p><p className="text-sm text-muted-foreground">+235 22 52 XX XX</p></div>
+                <div><p className="text-sm font-medium text-foreground">Téléphone</p><p className="text-sm text-muted-foreground">+235 22 52 XX XX</p></div>
               </div>
               <div className="flex items-start gap-3">
                 <Mail className="w-5 h-5 text-primary shrink-0 mt-0.5" />
@@ -58,15 +58,15 @@ export default function ContactPage() {
               </div>
             </div>
 
-            {/* Plan d'accÃ¨s placeholder */}
+            {/* Plan d'accès placeholder */}
             <div className="bg-gradient-to-br from-primary/5 to-secondary/5 rounded-2xl shadow-inner h-64 flex items-center justify-center">
               <div className="text-center">
                 <MapPin className="w-10 h-10 text-primary/30 mx-auto mb-2" />
-                <p className="text-sm text-muted-foreground">Plan d'accÃ¨s â€” N'Djamena, Tchad</p>
+                <p className="text-sm text-muted-foreground">Plan d'accès â€” N'Djamena, Tchad</p>
               </div>
             </div>
 
-            {/* RÃ©seaux sociaux */}
+            {/* Réseaux sociaux */}
             <div className="bg-surface p-8 rounded-2xl shadow-soft">
               <h3 className="font-semibold text-foreground mb-3">Suivez-nous</h3>
               <div className="flex gap-3">

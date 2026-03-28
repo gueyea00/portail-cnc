@@ -23,7 +23,7 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 
 // Créer les dossiers uploads si inexistants
-['uploads', 'uploads/decisions', 'uploads/documents', 'uploads/galerie', 'uploads/membres', 'uploads/president'].forEach(dir => {
+['uploads', 'uploads/decisions', 'uploads/documents', 'uploads/galerie', 'uploads/membres', 'uploads/president', 'uploads/articles'].forEach(dir => {
   mkdirSync(join(__dirname, '..', dir), { recursive: true });
 });
 

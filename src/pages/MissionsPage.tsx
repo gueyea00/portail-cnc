@@ -46,7 +46,7 @@ export default function MissionsPage() {
           ))}
         </div>
 
-        <div className="flag-stripe mt-16" />
+
       </div>
 
       {/* Timeline des interventions */}
@@ -82,7 +82,7 @@ export default function MissionsPage() {
         </div>
       </section>
 
-      <div className="flag-stripe" />
+
     </div>
   );
 }

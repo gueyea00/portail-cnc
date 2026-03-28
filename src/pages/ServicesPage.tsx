@@ -22,7 +22,7 @@ export default function ServicesPage() {
             <Laptop className="w-8 h-8 md:w-10 md:h-10 text-gold" />
             Services en ligne
           </h1>
-          <p className="mt-2 opacity-90 text-lg">AccÃ©dez Ã  l'ensemble des services du CNC</p>
+          <p className="mt-2 opacity-90 text-lg">Accédez à l'ensemble des services du CNC</p>
         </div>
       </section>
       <Breadcrumb />
@@ -38,7 +38,7 @@ export default function ServicesPage() {
               <p className="text-sm text-muted-foreground flex-1 mb-4">{s.description}</p>
               <Link to={s.lien}>
                 <Button variant="outline" size="sm" className="gap-2 w-full">
-                  AccÃ©der au service
+                  Accéder au service
                   <ArrowRight className="w-3 h-3" />
                 </Button>
               </Link>
