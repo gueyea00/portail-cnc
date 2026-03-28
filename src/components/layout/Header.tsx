@@ -32,30 +32,6 @@ export default function Header() {
 
   return (
     <>
-      {/* Bandeau institutionnel supérieur — Couleurs du drapeau (Bleu, Jaune, Rouge) */}
-      <div className="relative text-[11px] py-1.5 hidden md:block overflow-hidden">
-        {/* Background Stripes */}
-        <div className="absolute inset-0 flex">
-          <div className="flex-1 bg-[#002664]"></div> {/* Bleu de Prusse */}
-          <div className="flex-1 bg-[#FECB00]"></div> {/* Jaune Or */}
-          <div className="flex-1 bg-[#C60C30]"></div> {/* Rouge */}
-        </div>
-        
-        {/* Overlay pour la lisibilité si besoin, mais ici on va jouer sur les couleurs de texte */}
-        <div className="relative z-10 container-page flex items-center justify-between font-medium">
-          <span className="text-white drop-shadow-sm">République du Tchad — Portail officiel du Conseil National de la Concurrence</span>
-          <div className="flex items-center gap-4 text-white">
-            <span className="flex items-center gap-1.5">
-              <span className="opacity-80">07h30 – 15h30</span>
-            </span>
-            <span className="opacity-50">•</span>
-            <span className="flex items-center gap-1.5">
-              <span className="opacity-80">N'Djamena, Tchad</span>
-            </span>
-          </div>
-        </div>
-      </div>
-
       <header className="bg-surface shadow-sm sticky top-0 z-50 border-b border-border">
         <div className="w-full px-4 md:px-8">
           <div className="flex items-center justify-between h-20 md:h-24">

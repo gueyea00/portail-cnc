@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Shield, GitMerge, Scale, FileText, BarChart3, Users, ArrowRight, Quote, Camera, ExternalLink, PenSquare, Gavel, FileSignature, ShieldAlert } from "lucide-react";
+import { Shield, GitMerge, Scale, FileText, BarChart3, Users, ArrowRight, Quote, Camera, ExternalLink, PenSquare, Gavel, FileSignature, ShieldAlert, Clock, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FadeIn } from "@/components/ui/fade-in";
 import { useQuery } from "@tanstack/react-query";
@@ -70,6 +70,24 @@ export default function HomePage() {
           <div className="absolute bottom-10 left-10 w-48 h-48 rounded-full bg-destructive/20 blur-3xl animate-pulse" />
         </div>
         <div className="w-full px-4 md:px-12 relative z-10">
+          {/* Informations flottantes sur l'image */}
+          <div className="absolute top-0 right-4 md:right-12 hidden md:flex items-center gap-6">
+            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2 rounded-2xl shadow-xl">
+              <Clock className="w-4 h-4 text-secondary" />
+              <div className="text-right">
+                <p className="text-[10px] uppercase tracking-wider text-white/60 font-medium">Horaires d'ouverture</p>
+                <p className="text-xs font-bold text-white">07h30 – 15h30</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2 rounded-2xl shadow-xl">
+              <MapPin className="w-4 h-4 text-destructive" />
+              <div className="text-right">
+                <p className="text-[10px] uppercase tracking-wider text-white/60 font-medium">Siège Social</p>
+                <p className="text-xs font-bold text-white">N'Djamena, Tchad</p>
+              </div>
+            </div>
+          </div>
+
           <FadeIn>
             <div className="max-w-3xl">
               <div className="inline-flex items-center gap-2 bg-background/10 rounded-full px-4 py-1.5 text-sm mb-6 border border-white/10">
