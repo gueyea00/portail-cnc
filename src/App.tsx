@@ -17,6 +17,9 @@ import ContactPage from "./pages/ContactPage";
 import FaqPage from "./pages/FaqPage";
 import GaleriePage from "./pages/GaleriePage";
 import NotFound from "./pages/NotFound";
+import AdminLoginPage from "./pages/admin/AdminLoginPage";
+import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
+import ProtectedRoute from "./components/admin/ProtectedRoute";
 
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
@@ -54,6 +57,18 @@ const App = () => {
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/faq" element={<FaqPage />} />
             <Route path="/galerie" element={<GaleriePage />} />
+            
+            {/* Admin Routes */}
+            <Route path="/admin/login" element={<AdminLoginPage />} />
+            <Route 
+              path="/admin" 
+              element={
+                <ProtectedRoute>
+                  <AdminDashboardPage />
+                </ProtectedRoute>
+              } 
+            />
+
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Layout>

@@ -1,16 +1,16 @@
 {
   "rewrites": [
     {
-      "source": "/api/:path*",
-      "destination": "http://148.230.124.48:8080/api/:path*"
+      "source": "/api/(.*)",
+      "destination": "http://148.230.124.48:8080/api/$1"
     },
     {
-      "source": "/admin/:path*",
-      "destination": "http://148.230.124.48:8080/admin/:path*"
+      "source": "/uploads/(.*)",
+      "destination": "http://148.230.124.48:8080/uploads/$1"
     },
     {
-      "source": "/uploads/:path*",
-      "destination": "http://148.230.124.48:8080/uploads/:path*"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }

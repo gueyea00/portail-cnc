@@ -32,12 +32,8 @@ app.use(cors({ origin: process.env.CORS_ORIGIN || '*' }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Fichiers statiques : uploads et interface admin
+// Fichiers statiques : uploads uniquement (l'admin est gérée par React/Frontend)
 app.use('/uploads', express.static(join(__dirname, '../uploads')));
-app.use('/admin', express.static(join(__dirname, '../admin')));
-
-// Redirection /admin → /admin/login.html
-app.get('/admin', (req, res) => res.redirect('/admin/login.html'));
 
 // ============================================================
 // Routes API
