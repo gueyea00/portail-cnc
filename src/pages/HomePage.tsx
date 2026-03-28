@@ -190,11 +190,11 @@ export default function HomePage() {
             <div className="max-w-5xl mx-auto">
               <div className="bg-surface rounded-2xl border border-border overflow-hidden md:flex shadow-xl">
                 <div className="md:w-2/5 bg-primary p-0 flex flex-col relative overflow-hidden h-[400px] md:h-auto">
-                  <img src={getImgUrl(presidentData?.president_photo_path, "/president.jpg")} alt={presidentData?.president_nom || "M. Vissia Baranga"} className="absolute inset-0 w-full h-full object-cover z-0 object-top" onError={(e) => { e.currentTarget.src = 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=800'; }} />
+                  <img src={getImgUrl(presidentData?.president_photo_path, "/president.png")} alt={presidentData?.president_nom || "M. Vissia Bouranga"} className="absolute inset-0 w-full h-full object-cover z-0 object-top" onError={(e) => { e.currentTarget.src = '/president.png'; }} />
                   <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/60 to-transparent z-10" />
                   
                   <div className="relative z-20 mt-auto p-8 text-center w-full">
-                    <h3 className="text-2xl font-bold text-white mb-1">{presidentData?.president_nom || "M. Vissia Baranga"}</h3>
+                    <h3 className="text-2xl font-bold text-white mb-1">{presidentData?.president_nom || "M. Vissia Bouranga"}</h3>
                     <p className="text-md text-secondary font-medium">{presidentData?.president_titre || "Président du CNC"}</p>
                   </div>
                 </div>
