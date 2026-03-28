@@ -1,0 +1,573 @@
+// ============================================================
+// CNC Tchad — Admin CMS JavaScript
+// ============================================================
+
+const API = '';
+let token = localStorage.getItem('cnc_token');
+let currentAdmin = JSON.parse(localStorage.getItem('cnc_admin') || '{}');
+
+// ---- Auth Guard ----
+if (!token && !window.location.pathname.includes('login')) {
+  window.location.href = '/admin/login.html';
+}
+
+// ---- Helpers ----
+function headers(isJson = true) {
+  const h = { Authorization: `Bearer ${token}` };
+  if (isJson) h['Content-Type'] = 'application/json';
+  return h;
+}
+
+async function apiFetch(url, options = {}) {
+  const res = await fetch(API + url, options);
+  if (res.status === 401 || res.status === 403) {
+    logout();
+    return null;
+  }
+  return res;
+}
+
+function showToast(msg, isError = false) {
+  const t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.className = 'toast' + (isError ? ' error' : '');
+  t.style.display = 'block';
+  setTimeout(() => { t.style.display = 'none'; }, 3000);
+}
+
+function statusBadge(statut) {
+  return `<span class="badge-statut badge-${statut}">${statut.replace('_', ' ')}</span>`;
+}
+
+function formatDate(d) {
+  if (!d) return '—';
+  return new Date(d).toLocaleDateString('fr-FR');
+}
+
+function logout() {
+  localStorage.removeItem('cnc_token');
+  localStorage.removeItem('cnc_admin');
+  window.location.href = '/admin/login.html';
+}
+
+function refreshIcons() {
+  if (typeof lucide !== 'undefined') {
+    lucide.createIcons();
+  }
+}
+
+// ---- Modal ----
+function openModal(type, data = null) {
+  document.getElementById('modal').style.display = 'flex';
+  const title = document.getElementById('modalTitle');
+  const body = document.getElementById('modalBody');
+
+  if (type === 'article') {
+    title.textContent = data ? 'Modifier l\'article' : 'Nouvel article';
+    body.innerHTML = `
+      <form id="articleForm" class="form" enctype="multipart/form-data">
+        <div class="form-group"><label>Titre *</label><input name="titre" value="${data?.titre || ''}" required /></div>
+        <div class="form-group"><label>Slug (ex: mon-article) *</label><input name="slug" value="${data?.slug || ''}" required /></div>
+        <div class="form-group"><label>Extrait</label><textarea name="extrait" rows="2">${data?.extrait || ''}</textarea></div>
+        <div class="form-group"><label>Contenu</label><textarea name="contenu" rows="6">${data?.contenu || ''}</textarea></div>
+        <div class="form-row">
+          <div class="form-group"><label>Catégorie</label>
+            <select name="categorie">
+              <option value="communique" ${data?.categorie === 'communique' ? 'selected' : ''}>Communiqué</option>
+              <option value="enquete" ${data?.categorie === 'enquete' ? 'selected' : ''}>Enquête</option>
+              <option value="evenement" ${data?.categorie === 'evenement' ? 'selected' : ''}>Événement</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Statut</label>
+            <select name="statut">
+              <option value="brouillon" ${data?.statut === 'brouillon' ? 'selected' : ''}>Brouillon</option>
+              <option value="publie" ${data?.statut === 'publie' ? 'selected' : ''}>Publié</option>
+              <option value="archive" ${data?.statut === 'archive' ? 'selected' : ''}>Archivé</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group"><label>Image URL</label><input name="image_url" value="${data?.image_url || ''}" placeholder="https://..." /></div>
+        <div class="form-group"><label>Date de publication</label><input type="date" name="date_publication" value="${data?.date_publication?.slice(0,10) || ''}" /></div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" onclick="closeModal()">Annuler</button>
+          <button type="submit" class="btn btn-primary">
+            <i data-lucide="${data ? 'save' : 'plus'}" class="icon-sm" style="margin-right: 6px;"></i> ${data ? 'Mettre à jour' : 'Créer'}
+          </button>
+        </div>
+      </form>`;
+    document.getElementById('articleForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const body = Object.fromEntries(fd.entries());
+      const url = data ? `/api/articles/admin/${data.id}` : '/api/articles/admin';
+      const method = data ? 'PUT' : 'POST';
+      const res = await apiFetch(url, { method, headers: headers(), body: JSON.stringify(body) });
+      if (res?.ok) { showToast(data ? 'Article mis à jour !' : 'Article créé !'); closeModal(); loadArticles(); }
+      else showToast('Erreur lors de l\'enregistrement', true);
+    };
+  }
+
+  if (type === 'decision') {
+    title.textContent = data ? 'Modifier la décision' : 'Nouvelle décision';
+    body.innerHTML = `
+      <form id="decisionForm" enctype="multipart/form-data">
+        <div class="form-row">
+          <div class="form-group"><label>Référence *</label><input name="reference" value="${data?.reference || ''}" placeholder="CNC/DEC/2025/001" required /></div>
+          <div class="form-group"><label>Date</label><input type="date" name="date_decision" value="${data?.date_decision?.slice(0,10) || ''}" /></div>
+        </div>
+        <div class="form-group"><label>Titre *</label><input name="titre" value="${data?.titre || ''}" required /></div>
+        <div class="form-group"><label>Résumé</label><textarea name="resume" rows="3">${data?.resume || ''}</textarea></div>
+        <div class="form-group"><label>Secteur</label><input name="secteur" value="${data?.secteur || ''}" placeholder="Télécommunications, Ciment..." /></div>
+        <div class="form-group"><label>PDF *</label><input type="file" name="pdf" accept=".pdf" /></div>
+        <div class="form-group">
+          <label><input type="checkbox" name="publie" value="true" ${data?.publie ? 'checked' : ''} /> Publier immédiatement</label>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" onclick="closeModal()">Annuler</button>
+          <button type="submit" class="btn btn-primary">
+            <i data-lucide="${data ? 'save' : 'plus'}" class="icon-sm" style="margin-right: 6px;"></i> ${data ? 'Mettre à jour' : 'Créer'}
+          </button>
+        </div>
+      </form>`;
+    document.getElementById('decisionForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      if (!fd.get('publie')) fd.set('publie', 'false');
+      const url = data ? `/api/decisions/admin/${data.id}` : '/api/decisions/admin';
+      const method = data ? 'PUT' : 'POST';
+      const res = await apiFetch(url, { method, headers: { Authorization: `Bearer ${token}` }, body: fd });
+      if (res?.ok) { showToast('Décision enregistrée !'); closeModal(); loadDecisions(); }
+      else showToast('Erreur', true);
+    };
+  }
+
+  if (type === 'document') {
+    title.textContent = data ? 'Modifier le document' : 'Nouveau document';
+    body.innerHTML = `
+      <form id="documentForm" enctype="multipart/form-data">
+        <div class="form-group"><label>Titre *</label><input name="titre" value="${data?.titre || ''}" required /></div>
+        <div class="form-group"><label>Catégorie</label>
+          <select name="categorie">
+            <option>Lois & Règlements</option><option>Rapports annuels</option>
+            <option>Études économiques</option><option>Guides pratiques</option>
+            <option>Formulaires</option><option>Avis</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Fichier (PDF, Word, Excel)</label><input type="file" name="fichier" accept=".pdf,.doc,.docx,.xls,.xlsx" /></div>
+        <div class="form-group"><label>Date</label><input type="date" name="date_publication" value="${data?.date_publication?.slice(0,10) || ''}" /></div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" onclick="closeModal()">Annuler</button>
+          <button type="submit" class="btn btn-primary">
+            <i data-lucide="${data ? 'save' : 'upload'}" class="icon-sm" style="margin-right: 6px;"></i> ${data ? 'Mettre à jour' : 'Uploader'}
+          </button>
+        </div>
+      </form>`;
+    document.getElementById('documentForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const url = data ? `/api/documents/admin/${data.id}` : '/api/documents/admin';
+      const method = data ? 'PUT' : 'POST';
+      const res = await apiFetch(url, { method, headers: { Authorization: `Bearer ${token}` }, body: fd });
+      if (res?.ok) { showToast('Document enregistré !'); closeModal(); loadDocuments(); }
+      else showToast('Erreur', true);
+    };
+  }
+
+  if (type === 'galerie') {
+    title.textContent = data ? 'Modifier la photo' : 'Nouvelle photo';
+    body.innerHTML = `
+      <form id="galerieForm" enctype="multipart/form-data">
+        <div class="form-group"><label>Titre *</label><input name="titre" value="${data?.titre || ''}" required /></div>
+        <div class="form-group"><label>Description</label><textarea name="description" rows="2">${data?.description || ''}</textarea></div>
+        <div class="form-row">
+          <div class="form-group"><label>Catégorie</label>
+            <select name="categorie">
+              <option>Réunions du Conseil</option><option>Sessions de sensibilisation</option>
+              <option>Partenariats</option><option>Événements</option><option>Enquêtes & Investigations</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Date</label><input type="date" name="date_evenement" value="${data?.date_evenement?.slice(0,10) || ''}" /></div>
+        </div>
+        <div class="form-group"><label>Image</label><input type="file" name="image" accept="image/*" /></div>
+        <div class="form-group"><label>Ordre d'affichage</label><input type="number" name="ordre" value="${data?.ordre || 0}" /></div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" onclick="closeModal()">Annuler</button>
+          <button type="submit" class="btn btn-primary">
+            <i data-lucide="${data ? 'save' : 'plus'}" class="icon-sm" style="margin-right: 6px;"></i> ${data ? 'Mettre à jour' : 'Ajouter'}
+          </button>
+        </div>
+      </form>`;
+    document.getElementById('galerieForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const url = data ? `/api/galerie/admin/${data.id}` : '/api/galerie/admin';
+      const method = data ? 'PUT' : 'POST';
+      const res = await apiFetch(url, { method, headers: { Authorization: `Bearer ${token}` }, body: fd });
+      if (res?.ok) { showToast('Photo enregistrée !'); closeModal(); loadGalerie(); }
+      else showToast('Erreur', true);
+    };
+  }
+
+  if (type === 'membre') {
+    title.textContent = data ? 'Modifier le membre' : 'Nouveau membre';
+    body.innerHTML = `
+      <form id="membreForm" enctype="multipart/form-data">
+        <div class="form-group"><label>Nom complet *</label><input name="nom" value="${data?.nom || ''}" required /></div>
+        <div class="form-group"><label>Fonction</label><input name="fonction" value="${data?.fonction || ''}" /></div>
+        <div class="form-group"><label>Biographie</label><textarea name="bio" rows="3">${data?.bio || ''}</textarea></div>
+        <div class="form-row">
+          <div class="form-group"><label>Initiales</label><input name="initiales" value="${data?.initiales || ''}" maxlength="3" /></div>
+          <div class="form-group"><label>Ordre</label><input type="number" name="ordre" value="${data?.ordre || 0}" /></div>
+        </div>
+        <div class="form-group"><label>Photo</label><input type="file" name="photo" accept="image/*" /></div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" onclick="closeModal()">Annuler</button>
+          <button type="submit" class="btn btn-primary">
+            <i data-lucide="${data ? 'save' : 'plus'}" class="icon-sm" style="margin-right: 6px;"></i> ${data ? 'Mettre à jour' : 'Ajouter'}
+          </button>
+        </div>
+      </form>`;
+    document.getElementById('membreForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const url = data ? `/api/membres/admin/${data.id}` : '/api/membres/admin';
+      const method = data ? 'PUT' : 'POST';
+      const res = await apiFetch(url, { method, headers: { Authorization: `Bearer ${token}` }, body: fd });
+      if (res?.ok) { showToast('Membre enregistré !'); closeModal(); loadMembres(); }
+      else showToast('Erreur', true);
+    };
+  }
+
+  if (type === 'plainte-detail') {
+    title.textContent = `Plainte — ${data.reference}`;
+    body.innerHTML = `
+      <div class="form-group"><strong>Plaignant :</strong> ${data.prenom || ''} ${data.nom || 'Anonyme'}</div>
+      <div class="form-group"><strong>Email :</strong> ${data.email || '—'} | <strong>Tél :</strong> ${data.telephone || '—'}</div>
+      <div class="form-group"><strong>Entreprise concernée :</strong> ${data.entreprise_concernee || '—'}</div>
+      <div class="form-group"><strong>Description :</strong><br/><p style="margin-top:6px; line-height:1.6">${data.description}</p></div>
+      <div class="form-group"><strong>Statut :</strong>
+        <select id="detailStatut" class="form-select-sm" style="margin-left:8px">
+          <option value="recue" ${data.statut === 'recue' ? 'selected' : ''}>Reçue</option>
+          <option value="en_cours" ${data.statut === 'en_cours' ? 'selected' : ''}>En cours</option>
+          <option value="traitee" ${data.statut === 'traitee' ? 'selected' : ''}>Traitée</option>
+          <option value="classee" ${data.statut === 'classee' ? 'selected' : ''}>Classée</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Note interne</label><textarea id="detailNote" rows="3">${data.note_interne || ''}</textarea></div>
+      <div class="modal-actions">
+        ${data.email ? `<a href="mailto:${data.email}?subject=Votre plainte ${data.reference}" class="btn btn-ghost"><i data-lucide="mail" class="icon-sm" style="margin-right: 6px;"></i> Répondre par email</a>` : ''}
+        <button class="btn btn-primary" onclick="savePlainte(${data.id})">
+          <i data-lucide="save" class="icon-sm" style="margin-right: 6px;"></i> Enregistrer
+        </button>
+      </div>`;
+  }
+
+  if (type === 'admin') {
+    title.textContent = 'Nouveau compte administrateur';
+    body.innerHTML = `
+      <form id="adminForm">
+        <div class="form-group"><label>Identifiant *</label><input name="username" required /></div>
+        <div class="form-group"><label>Email</label><input type="email" name="email" /></div>
+        <div class="form-group"><label>Mot de passe *</label><input type="password" name="password" required /></div>
+        <div class="form-group"><label>Rôle</label>
+          <select name="role">
+            <option value="editeur">Éditeur</option>
+            <option value="lecteur">Lecteur</option>
+            <option value="super_admin">Super Admin</option>
+          </select>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" onclick="closeModal()">Annuler</button>
+          <button type="submit" class="btn btn-primary">
+            <i data-lucide="plus" class="icon-sm" style="margin-right: 6px;"></i> Créer
+          </button>
+        </div>
+      </form>`;
+    document.getElementById('adminForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const body = Object.fromEntries(fd.entries());
+      const res = await apiFetch('/api/admin/admins', { method: 'POST', headers: headers(), body: JSON.stringify(body) });
+      if (res?.ok) { showToast('Compte créé !'); closeModal(); loadAdmins(); }
+      else showToast('Erreur', true);
+    };
+  }
+  
+  refreshIcons();
+}
+
+function closeModal() {
+  document.getElementById('modal').style.display = 'none';
+}
+
+// ---- Data Loaders ----
+async function loadArticles() {
+  const res = await apiFetch('/api/articles/admin/all', { headers: headers() });
+  if (!res) return;
+  const articles = await res.json();
+  const tb = document.getElementById('articlesTableBody');
+  if (!tb) return;
+  tb.innerHTML = articles.length === 0 ? `<tr><td colspan="5" class="loading">Aucun article</td></tr>` :
+    articles.map(a => `<tr>
+      <td><strong>${a.titre}</strong></td>
+      <td>${a.categorie || '—'}</td>
+      <td>${formatDate(a.date_publication)}</td>
+      <td>${statusBadge(a.statut)}</td>
+      <td>
+        <button class="btn btn-ghost btn-sm" onclick='openModal("article", ${JSON.stringify(a).replace(/'/g, "&#39;")})' title="Modifier"><i data-lucide="edit-2" class="icon-sm"></i></button>
+        <button class="btn btn-danger btn-sm" onclick="deleteItem('articles', ${a.id})" title="Supprimer"><i data-lucide="trash-2" class="icon-sm"></i></button>
+      </td>
+    </tr>`).join('');
+    
+  refreshIcons();
+}
+
+async function loadDecisions() {
+  const res = await apiFetch('/api/decisions/admin/all', { headers: headers() });
+  if (!res) return;
+  const items = await res.json();
+  const tb = document.getElementById('decisionsTableBody');
+  if (!tb) return;
+  tb.innerHTML = items.length === 0 ? `<tr><td colspan="6" class="loading">Aucune décision</td></tr>` :
+    items.map(d => `<tr>
+      <td><code>${d.reference}</code></td>
+      <td>${d.titre}</td>
+      <td>${formatDate(d.date_decision)}</td>
+      <td>${d.secteur || '—'}</td>
+      <td>${d.pdf_path ? `<a href="/${d.pdf_path}" target="_blank" class="btn btn-ghost btn-sm"><i data-lucide="file-text" class="icon-sm" style="margin-right: 4px;"></i> PDF</a>` : '—'}</td>
+      <td>
+        <button class="btn btn-ghost btn-sm" onclick='openModal("decision", ${JSON.stringify(d).replace(/'/g, "&#39;")})' title="Modifier"><i data-lucide="edit-2" class="icon-sm"></i></button>
+        <button class="btn btn-danger btn-sm" onclick="deleteItem('decisions', ${d.id})" title="Supprimer"><i data-lucide="trash-2" class="icon-sm"></i></button>
+      </td>
+    </tr>`).join('');
+    
+  refreshIcons();
+}
+
+async function loadDocuments() {
+  const res = await apiFetch('/api/documents', { headers: headers() });
+  if (!res) return;
+  const items = await res.json();
+  const tb = document.getElementById('documentsTableBody');
+  if (!tb) return;
+  tb.innerHTML = items.length === 0 ? `<tr><td colspan="5" class="loading">Aucun document</td></tr>` :
+    items.map(d => `<tr>
+      <td>${d.titre}</td>
+      <td>${d.categorie || '—'}</td>
+      <td><span class="badge-statut badge-publie"><i data-lucide="file" class="icon-sm" style="vertical-align: middle; margin-right: 4px;"></i> ${d.type_fichier}</span></td>
+      <td>${formatDate(d.date_publication)}</td>
+      <td>
+        <button class="btn btn-ghost btn-sm" onclick='openModal("document", ${JSON.stringify(d).replace(/'/g, "&#39;")})' title="Modifier"><i data-lucide="edit-2" class="icon-sm"></i></button>
+        <button class="btn btn-danger btn-sm" onclick="deleteItem('documents', ${d.id})" title="Supprimer"><i data-lucide="trash-2" class="icon-sm"></i></button>
+      </td>
+    </tr>`).join('');
+    
+  refreshIcons();
+}
+
+async function loadGalerie() {
+  const res = await apiFetch('/api/galerie/admin/all', { headers: headers() });
+  if (!res) return;
+  const items = await res.json();
+  const grid = document.getElementById('galerieGrid');
+  if (!grid) return;
+  grid.innerHTML = items.length === 0 ? '<p class="loading">Aucune photo</p>' :
+    items.map(g => `
+      <div class="galerie-card">
+        <div class="galerie-thumb">
+          ${g.image_path ? `<img src="/${g.image_path}" alt="${g.titre}" />` : '<i data-lucide="image" style="width: 48px; height: 48px; opacity: 0.5;"></i>'}
+        </div>
+        <div class="galerie-info">
+          <p>${g.titre}</p>
+          <span>${g.categorie || '—'}</span>
+          <div style="margin-top:8px; display:flex; gap:6px;">
+            <button class="btn btn-ghost btn-sm" onclick='openModal("galerie", ${JSON.stringify(g).replace(/'/g, "&#39;")})'><i data-lucide="edit-2" class="icon-sm"></i></button>
+            <button class="btn btn-danger btn-sm" onclick="deleteItem('galerie', ${g.id})"><i data-lucide="trash-2" class="icon-sm"></i></button>
+          </div>
+        </div>
+      </div>`).join('');
+      
+  refreshIcons();
+}
+
+async function loadPlaintes() {
+  const statut = document.getElementById('filtrePlaintes')?.value;
+  const url = '/api/plaintes/admin/all' + (statut ? `?statut=${statut}` : '');
+  const res = await apiFetch(url, { headers: headers() });
+  if (!res) return;
+  const items = await res.json();
+  const tb = document.getElementById('plaintesTableBody');
+  if (!tb) return;
+  document.getElementById('badgePlaintes').textContent = items.filter(p => p.statut === 'recue').length;
+  tb.innerHTML = items.length === 0 ? `<tr><td colspan="5" class="loading">Aucune plainte</td></tr>` :
+    items.map(p => `<tr>
+      <td><code>${p.reference}</code></td>
+      <td>${p.prenom || ''} ${p.nom || 'Anonyme'}</td>
+      <td>${formatDate(p.created_at)}</td>
+      <td>${statusBadge(p.statut)}</td>
+      <td><button class="btn btn-ghost btn-sm" onclick='openModal("plainte-detail", ${JSON.stringify(p).replace(/'/g, "&#39;")})'><i data-lucide="eye" class="icon-sm" style="margin-right: 4px;"></i> Voir</button></td>
+    </tr>`).join('');
+    
+  refreshIcons();
+}
+
+async function savePlainte(id) {
+  const statut = document.getElementById('detailStatut').value;
+  const note = document.getElementById('detailNote').value;
+  await apiFetch(`/api/plaintes/admin/${id}/statut`, { method: 'PATCH', headers: headers(), body: JSON.stringify({ statut }) });
+  await apiFetch(`/api/plaintes/admin/${id}/note`, { method: 'PUT', headers: headers(), body: JSON.stringify({ note_interne: note }) });
+  showToast('Plainte mise à jour !');
+  closeModal();
+  loadPlaintes();
+}
+
+async function loadMembres() {
+  const res = await apiFetch('/api/membres', {});
+  if (!res) return;
+  const items = await res.json();
+  const tb = document.getElementById('membresTableBody');
+  if (!tb) return;
+  tb.innerHTML = items.length === 0 ? `<tr><td colspan="5" class="loading">Aucun membre</td></tr>` :
+    items.map(m => `<tr>
+      <td>${m.nom}</td>
+      <td>${m.fonction || '—'}</td>
+      <td>${m.ordre}</td>
+      <td>${m.actif ? '<i data-lucide="check-circle" class="icon-sm" style="color: var(--success);"></i>' : '<i data-lucide="x-circle" class="icon-sm" style="color: var(--danger);"></i>'}</td>
+      <td>
+        <button class="btn btn-ghost btn-sm" onclick='openModal("membre", ${JSON.stringify(m).replace(/'/g, "&#39;")})' title="Modifier"><i data-lucide="edit-2" class="icon-sm"></i></button>
+        <button class="btn btn-danger btn-sm" onclick="deleteItem('membres', ${m.id})" title="Supprimer"><i data-lucide="trash-2" class="icon-sm"></i></button>
+      </td>
+    </tr>`).join('');
+    
+  refreshIcons();
+}
+
+async function loadPresident() {
+  const res = await apiFetch('/api/parametres', {});
+  if (!res) return;
+  const data = await res.json();
+  const f = id => document.getElementById(id);
+  if (f('presidentNom')) f('presidentNom').value = data.president_nom || '';
+  if (f('presidentTitre')) f('presidentTitre').value = data.president_titre || '';
+  if (f('presidentMessage')) f('presidentMessage').value = data.president_message || '';
+}
+
+async function loadAdmins() {
+  const res = await apiFetch('/api/admin/admins', { headers: headers() });
+  if (!res) return;
+  const items = await res.json();
+  const tb = document.getElementById('adminsTableBody');
+  if (!tb) return;
+  tb.innerHTML = items.map(a => `<tr>
+    <td><strong>${a.username}</strong></td>
+    <td>${a.email || '—'}</td>
+    <td><span class="badge-statut ${a.role === 'super_admin' ? 'badge-publie' : 'badge-brouillon'}">${a.role}</span></td>
+    <td>${a.actif ? '<i data-lucide="check-circle" class="icon-sm" style="color: var(--success); vertical-align: middle; margin-right: 4px;"></i> Actif' : '<i data-lucide="x-circle" class="icon-sm" style="color: var(--danger); vertical-align: middle; margin-right: 4px;"></i> Désactivé'}</td>
+    <td>${a.derniere_connexion ? formatDate(a.derniere_connexion) : 'Jamais'}</td>
+    <td>
+      <button class="btn btn-danger btn-sm" onclick="deleteItem('admins', ${a.id})"><i data-lucide="user-x" class="icon-sm" style="margin-right: 4px;"></i> Désactiver</button>
+    </td>
+  </tr>`).join('');
+  
+  refreshIcons();
+}
+
+async function loadStats() {
+  const [arts, gal, docs] = await Promise.all([
+    apiFetch('/api/articles?limit=100').then(r => r?.json()).catch(() => []),
+    apiFetch('/api/galerie').then(r => r?.json()).catch(() => []),
+    apiFetch('/api/documents').then(r => r?.json()).catch(() => []),
+  ]);
+  const plaints = await apiFetch('/api/plaintes/admin/all', { headers: headers() }).then(r => r?.json()).catch(() => []);
+  const f = id => document.getElementById(id);
+  if (f('statArticles')) f('statArticles').textContent = (arts || []).length;
+  if (f('statGalerie')) f('statGalerie').textContent = (gal || []).length;
+  if (f('statDocuments')) f('statDocuments').textContent = (docs || []).length;
+  if (f('statPlaintes')) f('statPlaintes').textContent = (plaints || []).length;
+  if (f('badgePlaintes')) f('badgePlaintes').textContent = (plaints || []).filter(p => p.statut === 'recue').length;
+}
+
+async function deleteItem(resource, id) {
+  if (!confirm('Confirmer la suppression ?')) return;
+  const res = await apiFetch(`/api/${resource}/admin/${id}`, { method: 'DELETE', headers: headers() });
+  if (res?.ok || res?.status === 204) {
+    showToast('Supprimé !');
+    const loaders = { articles: loadArticles, decisions: loadDecisions, documents: loadDocuments, galerie: loadGalerie, membres: loadMembres, admins: loadAdmins };
+    loaders[resource]?.();
+  } else showToast('Erreur lors de la suppression', true);
+}
+
+// ---- Navigation ----
+function navigateTo(section) {
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.content-section').forEach(el => el.classList.remove('active'));
+  const nav = document.querySelector(`[data-section="${section}"]`);
+  if (nav) nav.classList.add('active');
+  const sec = document.getElementById(`section-${section}`);
+  if (sec) sec.classList.add('active');
+  document.getElementById('pageTitle').textContent = nav?.textContent.trim() || 'Tableau de bord';
+
+  const loaders = {
+    accueil: loadStats,
+    actualites: loadArticles,
+    decisions: loadDecisions,
+    documents: loadDocuments,
+    galerie: loadGalerie,
+    president: loadPresident,
+    membres: loadMembres,
+    plaintes: loadPlaintes,
+    admins: loadAdmins,
+  };
+  loaders[section]?.();
+}
+
+// ---- Init Dashboard ----
+if (!window.location.pathname.includes('login')) {
+  // Afficher les infos admin
+  const adminNameEl = document.getElementById('adminName');
+  const adminRoleEl = document.getElementById('adminRole');
+  if (adminNameEl) adminNameEl.textContent = currentAdmin.username || 'Admin';
+  if (adminRoleEl) adminRoleEl.textContent = currentAdmin.role || '';
+
+  // Afficher les éléments super_admin
+  if (currentAdmin.role === 'super_admin') {
+    document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex');
+  }
+
+  // Navigation
+  document.querySelectorAll('.nav-item').forEach(el => {
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
+      navigateTo(el.dataset.section);
+    });
+  });
+
+  // Déconnexion
+  document.getElementById('logoutBtn')?.addEventListener('click', logout);
+
+  // Formulaire Président
+  document.getElementById('presidentForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const res = await apiFetch('/api/parametres/admin', {
+      method: 'PUT', headers: { Authorization: `Bearer ${token}` }, body: fd
+    });
+    if (res?.ok) showToast('Paramètres enregistrés !');
+    else showToast('Erreur', true);
+  });
+
+  // Filtre plaintes
+  document.getElementById('filtrePlaintes')?.addEventListener('change', loadPlaintes);
+
+  // Chargement initial
+  navigateTo('accueil');
+
+  // Fermer modal via overlay
+  document.getElementById('modal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'modal') closeModal();
+  });
+  
+  // Rendu initial des icônes
+  refreshIcons();
+}

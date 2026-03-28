@@ -227,41 +227,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Membres du Conseil */}
-      <section className="py-20 bg-muted border-t border-border">
-        <div className="container-page">
-          <FadeIn>
-            <div className="text-center mb-16">
-              <h2 className="section-title">Les membres du Conseil</h2>
-              <p className="section-subtitle">L'équipe dirigeante du CNC</p>
-            </div>
-          </FadeIn>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {membres.map((m, index) => (
-              <FadeIn key={m.nom} delay={index * 100}>
-                <div className="bg-surface p-8 rounded-xl border border-border text-center card-hover shadow-soft relative overflow-hidden h-full flex flex-col items-center justify-center">
-                  <div className={`absolute top-0 left-0 w-full h-1.5 ${index % 3 === 0 ? 'bg-primary' : index % 3 === 1 ? 'bg-secondary' : 'bg-destructive'}`} />
-                  <div className={`w-20 h-20 rounded-full ${m.couleur} text-primary-foreground flex items-center justify-center mx-auto mb-5 shadow-md`}>
-                    <span className="font-bold text-2xl">{m.initiales}</span>
-                  </div>
-                  <h3 className="text-lg font-bold text-foreground mb-1">{m.nom}</h3>
-                  <p className="text-sm font-medium text-muted-foreground">{m.fonction}</p>
-                </div>
-              </FadeIn>
-            ))}
-          </div>
-          <FadeIn delay={300}>
-            <div className="text-center mt-12">
-              <Link to="/presentation">
-                <Button variant="outline" size="lg" className="gap-2 border-border hover:bg-muted">
-                  Voir tous les membres
-                  <ArrowRight className="w-4 h-4" />
-                </Button>
-              </Link>
-            </div>
-          </FadeIn>
-        </div>
-      </section>
+
 
       {/* Galerie aperçu */}
       <section className="py-20 bg-surface border-t border-border">

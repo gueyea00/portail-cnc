@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CNC Tchad — Administration</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="login-page">
+
+  <div class="login-card">
+    <div class="login-header">
+      <div class="flag-stripe-h"></div>
+      <img src="/armoiries-tchad.png" alt="Armoiries" class="login-logo" onerror="this.style.display='none'" />
+      <h1>Conseil National de la Concurrence</h1>
+      <p class="login-subtitle">Panneau d'administration</p>
+    </div>
+
+    <form id="loginForm" class="login-form">
+      <div class="form-group">
+        <label for="username">Identifiant</label>
+        <input type="text" id="username" placeholder="admin" required autocomplete="username" />
+      </div>
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <input type="password" id="password" placeholder="••••••••" required autocomplete="current-password" />
+      </div>
+      <div id="loginError" class="error-msg" style="display:none"></div>
+      <button type="submit" class="btn btn-primary btn-full" id="loginBtn">
+        Se connecter
+      </button>
+    </form>
+  </div>
+
+  <script>
+    // Rediriger si déjà connecté
+    if (localStorage.getItem('cnc_token')) {
+      window.location.href = '/admin/dashboard.html';
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('loginBtn');
+      const err = document.getElementById('loginError');
+      btn.textContent = 'Connexion...';
+      btn.disabled = true;
+      err.style.display = 'none';
+
+      try {
+        const res = await fetch('/api/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: document.getElementById('username').value,
+            password: document.getElementById('password').value
+          })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Erreur de connexion');
+
+        localStorage.setItem('cnc_token', data.token);
+        localStorage.setItem('cnc_admin', JSON.stringify(data.admin));
+        window.location.href = '/admin/dashboard.html';
+      } catch (error) {
+        err.textContent = error.message;
+        err.style.display = 'block';
+        btn.textContent = 'Se connecter';
+        btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

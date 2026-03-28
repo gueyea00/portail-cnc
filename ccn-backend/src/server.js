@@ -1,98 +1,78 @@
-﻿import express from "express";
-import cors from "cors";
-import dotenv from "dotenv";
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+import { mkdirSync } from 'fs';
+
+// Routes
+import authRoutes from './routes/auth.js';
+import articlesRoutes from './routes/articles.js';
+import decisionsRoutes from './routes/decisions.js';
+import documentsRoutes from './routes/documents.js';
+import galerieRoutes from './routes/galerie.js';
+import membresRoutes from './routes/membres.js';
+import plaintesRoutes from './routes/plaintes.js';
+import parametresRoutes from './routes/parametres.js';
+import adminsRoutes from './routes/admins.js';
 
 dotenv.config();
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
-const PORT = process.env.PORT || 4000;
-const CORS_ORIGIN = process.env.CORS_ORIGIN || "*";
+const PORT = process.env.PORT || 8080;
 
-app.use(cors({ origin: CORS_ORIGIN }));
+// Créer les dossiers uploads si inexistants
+['uploads', 'uploads/decisions', 'uploads/documents', 'uploads/galerie', 'uploads/membres', 'uploads/president'].forEach(dir => {
+  mkdirSync(join(__dirname, '..', dir), { recursive: true });
+});
+
+// Middlewares
+app.use(cors({ origin: process.env.CORS_ORIGIN || '*' }));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-const items = new Map();
-let nextId = 1;
+// Fichiers statiques : uploads et interface admin
+app.use('/uploads', express.static(join(__dirname, '../uploads')));
+app.use('/admin', express.static(join(__dirname, '../admin')));
 
-app.get("/health", (req, res) => {
-  res.json({ status: "ok", time: new Date().toISOString() });
-});
+// Redirection /admin → /admin/login.html
+app.get('/admin', (req, res) => res.redirect('/admin/login.html'));
 
-app.get("/api/items", (req, res) => {
-  res.json(Array.from(items.values()));
-});
+// ============================================================
+// Routes API
+// ============================================================
+app.get('/health', (req, res) => res.json({ status: 'ok', time: new Date().toISOString() }));
 
-app.get("/api/items/:id", (req, res) => {
-  const id = Number(req.params.id);
-  const item = items.get(id);
+// Auth
+app.use('/api/admin', authRoutes);
 
-  if (!item) {
-    return res.status(404).json({ error: "Item not found" });
-  }
+// Contenu public
+app.use('/api/articles', articlesRoutes);
+app.use('/api/decisions', decisionsRoutes);
+app.use('/api/documents', documentsRoutes);
+app.use('/api/galerie', galerieRoutes);
+app.use('/api/membres', membresRoutes);
+app.use('/api/plaintes', plaintesRoutes);
+app.use('/api/parametres', parametresRoutes);
 
-  return res.json(item);
-});
+// Admin — routes protégées supplémentaires
+app.use('/api/articles', articlesRoutes);
+app.use('/api/decisions', decisionsRoutes);
+app.use('/api/documents', documentsRoutes);
+app.use('/api/galerie', galerieRoutes);
+app.use('/api/membres', membresRoutes);
+app.use('/api/plaintes', plaintesRoutes);
+app.use('/api/parametres', parametresRoutes);
+app.use('/api/admin/admins', adminsRoutes);
 
-app.post("/api/items", (req, res) => {
-  const { name, description } = req.body || {};
-
-  if (!name || typeof name !== "string") {
-    return res.status(400).json({ error: "name is required" });
-  }
-
-  const now = new Date().toISOString();
-  const item = {
-    id: nextId++,
-    name,
-    description: typeof description === "string" ? description : "",
-    createdAt: now,
-    updatedAt: now
-  };
-
-  items.set(item.id, item);
-  return res.status(201).json(item);
-});
-
-app.put("/api/items/:id", (req, res) => {
-  const id = Number(req.params.id);
-  const existing = items.get(id);
-
-  if (!existing) {
-    return res.status(404).json({ error: "Item not found" });
-  }
-
-  const { name, description } = req.body || {};
-
-  if (!name || typeof name !== "string") {
-    return res.status(400).json({ error: "name is required" });
-  }
-
-  const updated = {
-    ...existing,
-    name,
-    description: typeof description === "string" ? description : "",
-    updatedAt: new Date().toISOString()
-  };
-
-  items.set(id, updated);
-  return res.json(updated);
-});
-
-app.delete("/api/items/:id", (req, res) => {
-  const id = Number(req.params.id);
-
-  if (!items.has(id)) {
-    return res.status(404).json({ error: "Item not found" });
-  }
-
-  items.delete(id);
-  return res.status(204).send();
-});
-
+// 404
 app.use((req, res) => {
-  res.status(404).json({ error: "Route not found" });
+  res.status(404).json({ error: 'Route non trouvée.' });
 });
 
 app.listen(PORT, () => {
-  console.log(`CCN backend listening on http://localhost:${PORT}`);
+  console.log(`\n🚀 Serveur CNC Tchad démarré sur http://localhost:${PORT}`);
+  console.log(`📊 Interface Admin  : http://localhost:${PORT}/admin/login.html`);
+  console.log(`🔗 API Health       : http://localhost:${PORT}/health\n`);
 });
