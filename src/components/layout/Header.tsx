@@ -1,32 +1,31 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, ChevronDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
-
-const navItems = [
-  { label: "Accueil", path: "/" },
-  {
-    label: "Présentation",
-    path: "/presentation",
-    children: [
-      { label: "À propos du CNC", path: "/presentation" },
-      { label: "Missions & Attributions", path: "/missions" },
-    ],
-  },
-  { label: "Actualités", path: "/actualites" },
-  { label: "Documents", path: "/documents" },
-  { label: "Galerie", path: "/galerie" },
-  { label: "Services", path: "/services" },
-  { label: "Contact", path: "/contact" },
-];
-
-
-
+import { useTranslation } from "react-i18next";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 export default function Header() {
+  const { t } = useTranslation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const location = useLocation();
+
+  const navItems = [
+    { label: t("nav.accueil"), path: "/" },
+    {
+      label: t("nav.presentation"),
+      path: "/presentation",
+      children: [
+        { label: "À propos du CNC", path: "/presentation" },
+        { label: "Missions & Attributions", path: "/missions" },
+      ],
+    },
+    { label: t("nav.actualites"), path: "/actualites" },
+    { label: t("nav.documents"), path: "/documents" },
+    { label: t("nav.galerie"), path: "/galerie" },
+    { label: t("nav.services"), path: "/services" },
+    { label: t("nav.contact"), path: "/contact" },
+  ];
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -106,7 +105,9 @@ export default function Header() {
             </nav>
 
             {/* CTA + burger */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 sm:gap-4">
+              <LanguageSwitcher />
+              
               <button
                 className="lg:hidden p-2 rounded-md hover:bg-muted transition-colors"
                 onClick={() => setMobileOpen(!mobileOpen)}

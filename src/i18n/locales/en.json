@@ -1,0 +1,22 @@
+{
+  "nav": {
+    "accueil": "Home",
+    "presentation": "Presentation",
+    "missions": "Missions",
+    "actualites": "News",
+    "contact": "Contact",
+    "services": "Services",
+    "plainte": "File a Complaint",
+    "signalement": "Anonymous Reporting"
+  },
+  "hero": {
+    "title": "National Competition Council",
+    "subtitle": "Independent administrative authority responsible for ensuring compliance with competition rules and promoting a fair and transparent economic environment in Chad.",
+    "cta": "File a complaint",
+    "country": "Republic of Chad"
+  },
+  "header": {
+    "hours": "Opening Hours",
+    "seat": "Headquarters"
+  }
+}

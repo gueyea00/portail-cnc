@@ -1,0 +1,22 @@
+{
+  "nav": {
+    "accueil": "Accueil",
+    "presentation": "Présentation",
+    "missions": "Missions",
+    "actualites": "Actualités",
+    "contact": "Contact",
+    "services": "Services",
+    "plainte": "Déposer une plainte",
+    "signalement": "Signalement anonyme"
+  },
+  "hero": {
+    "title": "Conseil National de la Concurrence",
+    "subtitle": "Autorité administrative indépendante chargée de veiller au respect des règles de la concurrence et de promouvoir un environnement économique juste et transparent au Tchad.",
+    "cta": "Déposer une plainte",
+    "country": "République du Tchad"
+  },
+  "header": {
+    "hours": "Horaires d'ouverture",
+    "seat": "Siège Social"
+  }
+}

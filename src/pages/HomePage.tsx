@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Shield, GitMerge, Scale, FileText, BarChart3, Users, ArrowRight, Quote, Camera, ExternalLink, PenSquare, Gavel, FileSignature, ShieldAlert, Clock, MapPin } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { FadeIn } from "@/components/ui/fade-in";
 import { useQuery } from "@tanstack/react-query";
@@ -42,6 +43,7 @@ const getImgUrl = (path: string | null | undefined, fallback: string) => {
 };
 
 export default function HomePage() {
+  const { t } = useTranslation();
   const { data: recentArticles = [] } = useQuery({
     queryKey: ["articles", "home"],
     queryFn: () => fetch("http://localhost:3000/api/articles?limit=3").then(res => res.json())
@@ -74,15 +76,15 @@ export default function HomePage() {
           <div className="absolute top-0 right-4 md:right-12 hidden md:flex items-center gap-6">
             <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2 rounded-2xl shadow-xl">
               <Clock className="w-4 h-4 text-secondary" />
-              <div className="text-right">
-                <p className="text-[10px] uppercase tracking-wider text-white/60 font-medium">Horaires d'ouverture</p>
+              <div className="text-right font-sans">
+                <p className="text-[10px] uppercase tracking-wider text-white/60 font-medium">{t("header.hours")}</p>
                 <p className="text-xs font-bold text-white">07h30 – 15h30</p>
               </div>
             </div>
             <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2 rounded-2xl shadow-xl">
               <MapPin className="w-4 h-4 text-destructive" />
-              <div className="text-right">
-                <p className="text-[10px] uppercase tracking-wider text-white/60 font-medium">Siège Social</p>
+              <div className="text-right font-sans">
+                <p className="text-[10px] uppercase tracking-wider text-white/60 font-medium">{t("header.seat")}</p>
                 <p className="text-xs font-bold text-white">N'Djamena, Tchad</p>
               </div>
             </div>
@@ -92,19 +94,18 @@ export default function HomePage() {
             <div className="max-w-3xl">
               <div className="inline-flex items-center gap-2 bg-background/10 rounded-full px-4 py-1.5 text-sm mb-6 border border-white/10">
                 <span className="w-2 h-2 rounded-full bg-secondary" />
-                République du Tchad
+                {t("hero.country")}
               </div>
               <h1 className="text-4xl md:text-6xl font-extrabold leading-tight mb-6">
-                Conseil National de la Concurrence
+                {t("hero.title")}
               </h1>
               <p className="text-lg md:text-2xl opacity-90 mb-10 leading-relaxed font-light">
-                Autorité administrative indépendante chargée de veiller au respect des règles de la concurrence
-                et de promouvoir un environnement économique juste et transparent au Tchad.
+                {t("hero.subtitle")}
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link to="/plainte">
                   <Button size="lg" className="bg-destructive text-destructive-foreground hover:bg-destructive/90 font-semibold gap-2 shadow-lg shadow-destructive/20">
-                    Déposer une plainte
+                    {t("hero.cta")}
                     <ArrowRight className="w-4 h-4" />
                   </Button>
                 </Link>
