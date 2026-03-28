@@ -38,23 +38,23 @@ const categorieBadge = (cat: string) => {
 const getImgUrl = (path: string | null | undefined, fallback: string) => {
   if (!path) return fallback;
   if (path.startsWith('http')) return path;
-  return `http://localhost:3000/${path}`;
+  return `/${path}`;
 };
 
 export default function HomePage() {
   const { data: recentArticles = [] } = useQuery({
     queryKey: ["articles", "home"],
-    queryFn: () => fetch("http://localhost:3000/api/articles?limit=3").then(res => res.json())
+    queryFn: () => fetch("/api/articles?limit=3").then(res => res.json())
   });
 
   const { data: galeriePreview = [] } = useQuery({
     queryKey: ["galerie", "home"],
-    queryFn: () => fetch("http://localhost:3000/api/galerie").then(res => res.json()).then(data => data.slice(0, 6))
+    queryFn: () => fetch("/api/galerie").then(res => res.json()).then(data => data.slice(0, 6))
   });
 
   const { data: presidentData } = useQuery({
     queryKey: ["president"],
-    queryFn: () => fetch("http://localhost:3000/api/parametres").then(res => res.json())
+    queryFn: () => fetch("/api/parametres").then(res => res.json())
   });
 
   return (

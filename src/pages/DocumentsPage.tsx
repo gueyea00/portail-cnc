@@ -15,7 +15,7 @@ const categoriesDocuments = [
 const getFileUrl = (path: string | null | undefined, fallback: string) => {
   if (!path) return fallback;
   if (path.startsWith('http')) return path;
-  return `http://localhost:3000/${path}`;
+  return `/${path}`;
 };
 
 function formatBytes(bytes: number, decimals = 2) {
@@ -30,7 +30,7 @@ function formatBytes(bytes: number, decimals = 2) {
 export default function DocumentsPage() {
   const { data: documents = [], isLoading } = useQuery({
     queryKey: ["documents"],
-    queryFn: () => fetch("http://localhost:3000/api/documents").then(res => res.json())
+    queryFn: () => fetch("/api/documents").then(res => res.json())
   });
 
   // Calculate unique actually used categories, but prioritize predefined order

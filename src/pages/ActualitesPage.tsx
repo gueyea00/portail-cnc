@@ -16,7 +16,7 @@ const categoryLabels: Record<string, string> = {
 const getImgUrl = (path: string | null | undefined, fallback: string) => {
   if (!path) return fallback;
   if (path.startsWith('http')) return path;
-  return `http://localhost:3000/${path}`;
+  return `/${path}`;
 };
 
 export default function ActualitesPage() {
@@ -26,7 +26,7 @@ export default function ActualitesPage() {
 
   const { data: articles = [], isLoading } = useQuery({
     queryKey: ["articles"],
-    queryFn: () => fetch("http://localhost:3000/api/articles").then(res => res.json())
+    queryFn: () => fetch("/api/articles").then(res => res.json())
   });
 
   const filtered = filtre === "Tous" ? articles : articles.filter((a: any) => (a.categorie || 'autre') === filtre);

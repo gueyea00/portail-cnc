@@ -18,7 +18,7 @@ const categoriesGalerie = ["Tous", "Réunions du Conseil", "Sessions de sensibil
 const getImgUrl = (path: string | null | undefined, fallback: string) => {
   if (!path) return fallback;
   if (path.startsWith('http')) return path;
-  return `http://localhost:3000/${path}`;
+  return `/${path}`;
 };
 
 // Icône par catégorie (Lucide)
@@ -107,7 +107,7 @@ export default function GaleriePage() {
 
   const { data: galerieItems = [], isLoading } = useQuery({
     queryKey: ["galerie"],
-    queryFn: () => fetch("http://localhost:3000/api/galerie").then(res => res.json())
+    queryFn: () => fetch("/api/galerie").then(res => res.json())
   });
 
   const filtered =

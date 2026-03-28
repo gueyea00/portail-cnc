@@ -14,7 +14,7 @@ const catLabels: Record<string, string> = {
 const getImgUrl = (path: string | null | undefined, fallback: string) => {
   if (!path) return fallback;
   if (path.startsWith('http')) return path;
-  return `http://localhost:3000/${path}`;
+  return `/${path}`;
 };
 
 export default function ArticleDetailPage() {
@@ -23,7 +23,7 @@ export default function ArticleDetailPage() {
   const { data: article, isLoading, error } = useQuery({
     queryKey: ["article", slug],
     queryFn: async () => {
-      const res = await fetch(`http://localhost:3000/api/articles/${slug}`);
+      const res = await fetch(`/api/articles/${slug}`);
       if (!res.ok) throw new Error("Article non trouvé");
       return res.json();
     }
@@ -31,7 +31,7 @@ export default function ArticleDetailPage() {
 
   const { data: recentArticles = [] } = useQuery({
     queryKey: ["articles", "recent"],
-    queryFn: () => fetch("http://localhost:3000/api/articles?limit=5").then(res => res.json())
+    queryFn: () => fetch("/api/articles?limit=5").then(res => res.json())
   });
 
   if (isLoading) {

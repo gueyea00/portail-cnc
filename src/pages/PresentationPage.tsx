@@ -4,18 +4,18 @@ import { useQuery } from "@tanstack/react-query";
 const getImgUrl = (path: string | null | undefined, fallback: string) => {
   if (!path) return fallback;
   if (path.startsWith('http')) return path;
-  return `http://localhost:3000/${path}`;
+  return `/${path}`;
 };
 
 export default function PresentationPage() {
   const { data: membres = [], isLoading: isLoadingMembres } = useQuery({
     queryKey: ["membres"],
-    queryFn: () => fetch("http://localhost:3000/api/membres").then(res => res.json())
+    queryFn: () => fetch("/api/membres").then(res => res.json())
   });
 
   const { data: presidentData } = useQuery({
     queryKey: ["president"],
-    queryFn: () => fetch("http://localhost:3000/api/parametres").then(res => res.json())
+    queryFn: () => fetch("/api/parametres").then(res => res.json())
   });
 
   const activeMembres = (membres || []).filter((m: any) => m.actif !== false).sort((a: any, b: any) => (a.ordre || 0) - (b.ordre || 0));
