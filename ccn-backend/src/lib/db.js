@@ -10,7 +10,7 @@ const pool = new Pool({
   database: process.env.DB_NAME     || 'cncbd',
   user:     process.env.DB_USER     || 'postgres',
   password: process.env.DB_PASSWORD || 'postgres',
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+  ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
 });
 
 pool.on('error', (err) => {

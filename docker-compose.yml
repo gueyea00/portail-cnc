@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: cnc-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: cncbd
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./ccn-backend/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
+      - ./ccn-backend/seed.sql:/docker-entrypoint-initdb.d/2-seed.sql
+    ports:
+      - "5436:5432"
+
+  backend:
+    build: ./ccn-backend
+    container_name: cnc-backend
+    restart: always
+    environment:
+      NODE_ENV: production
+      PORT: 8080
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: cncbd
+      DB_SSL: "false"
+      CORS_ORIGIN: "*"
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./ccn-backend/uploads:/app/uploads
+
+  frontend:
+    build: .
+    container_name: cnc-frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:

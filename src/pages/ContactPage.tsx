@@ -54,7 +54,7 @@ export default function ContactPage() {
               </div>
               <div className="flex items-start gap-3">
                 <Clock className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                <div><p className="text-sm font-medium text-foreground">Horaires</p><p className="text-sm text-muted-foreground">Lundi â€“ Vendredi : 07h30 â€“ 15h30</p></div>
+                <div><p className="text-sm font-medium text-foreground">Horaires</p><p className="text-sm text-muted-foreground">Lundi – Vendredi : 07h30 – 15h30</p></div>
               </div>
             </div>
 
@@ -62,7 +62,7 @@ export default function ContactPage() {
             <div className="bg-gradient-to-br from-primary/5 to-secondary/5 rounded-2xl shadow-inner h-64 flex items-center justify-center">
               <div className="text-center">
                 <MapPin className="w-10 h-10 text-primary/30 mx-auto mb-2" />
-                <p className="text-sm text-muted-foreground">Plan d'accès â€” N'Djamena, Tchad</p>
+                <p className="text-sm text-muted-foreground">Plan d'accès — N'Djamena, Tchad</p>
               </div>
             </div>
 

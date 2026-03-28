@@ -48,43 +48,38 @@ export interface GalerieItem {
 export const missions = [
   {
     titre: "Contrôle des pratiques anticoncurrentielles",
-    description: "Identifier et sanctionner les ententes illicites, abus de position dominante et pratiques anticoncurrentielles qui nuisent à l'économie tchadienne et aux consommateurs.",
+    description: "Identifier et sanctionner les ententes illicites entre entreprises, les abus de position dominante et les pratiques commerciales déloyales qui nuisent à l'économie.",
     icone: "Shield",
   },
   {
-    titre: "Régulation des concentrations économiques",
-    description: "Examiner et contrôler les opérations de fusion, acquisition et concentration d'entreprises susceptibles de porter atteinte à la concurrence sur le marché national.",
+    titre: "Régulation des concentrations",
+    description: "Examiner les projets de fusions, d'acquisitions et de regroupements d'entreprises pour prévenir la création de monopoles nuisibles à la concurrence.",
     icone: "GitMerge",
   },
   {
-    titre: "Lutte contre les pratiques commerciales déloyales",
-    description: "Combattre les actes de concurrence déloyale, la publicité trompeuse et les pratiques commerciales abusives affectant les opérateurs économiques.",
+    titre: "Lutte contre la concurrence déloyale",
+    description: "Combattre les pratiques abusives telles que le dénigrement, la désorganisation ou la confusion visant à détourner la clientèle d'un concurrent.",
     icone: "Scale",
   },
   {
-    titre: "Avis sur les textes législatifs et réglementaires",
-    description: "Émettre des avis consultatifs sur les projets de lois, ordonnances et règlements ayant un impact sur la concurrence et le fonctionnement des marchés.",
+    titre: "Avis consultatifs",
+    description: "Émettre des avis sur les projets de textes législatifs ou réglementaires ayant un impact sur la concurrence et conseiller le Gouvernement sur ces questions.",
     icone: "FileText",
   },
   {
-    titre: "Études sectorielles et veille concurrentielle",
-    description: "Réaliser des études approfondies sur le fonctionnement des marchés et des secteurs économiques stratégiques pour le développement du Tchad.",
+    titre: "Études de marché",
+    description: "Réaliser des analyses approfondies sur le fonctionnement de secteurs spécifiques de l'économie pour identifier d'éventuels dysfonctionnements concurrentiels.",
     icone: "BarChart3",
   },
   {
-    titre: "Sensibilisation et promotion de la culture de concurrence",
-    description: "Organiser des campagnes de sensibilisation auprès des opérateurs économiques, des consommateurs et des institutions sur les bienfaits de la concurrence loyale.",
+    titre: "Sensibilisation et promotion",
+    description: "Informer les opérateurs économiques et les consommateurs sur les règles de la concurrence et promouvoir une culture de loyauté commerciale au Tchad.",
     icone: "Users",
   },
   {
-    titre: "Coopération internationale et régionale",
-    description: "Collaborer avec les institutions sous-régionales (CEMAC, UA) et internationales en matière de droit et de politique de la concurrence.",
-    icone: "Globe",
-  },
-  {
     titre: "Protection des consommateurs",
-    description: "Veiller à ce que les pratiques commerciales respectent les droits des consommateurs et garantissent l'accès à des produits et services de qualité à des prix justes.",
-    icone: "Heart",
+    description: "Veiller à ce que les consommateurs bénéficient d'un choix diversifié de produits et services à des prix compétitifs grâce à un marché dynamique et ouvert.",
+    icone: "CheckCircle",
   },
   {
     titre: "Enquêtes et investigations",
@@ -99,7 +94,7 @@ export const articles: Article[] = [
     slug: "decision-entente-secteur-telecoms",
     titre: "Le CNC sanctionne une entente dans le secteur des télécommunications",
     extrait: "Le Conseil National de la Concurrence a rendu une décision historique sanctionnant trois opérateurs de télécommunications pour entente illicite sur les tarifs.",
-    contenu: `Le Conseil National de la Concurrence a rendu, le 15 janvier 2025, une décision majeure dans le secteur des télécommunications au Tchad. Trois opérateurs ont été reconnus coupables d'une entente illicite visant à fixer de manière concertée les tarifs de communication mobile.\n\nCette pratique, qui perdurait depuis 2022, a eu pour effet de priver les consommateurs tchadiens du bénéfice de la concurrence par les prix. Les amendes prononcées s'élèvent à un total de 2,5 milliards de francs CFA.\n\nLe Président du CNC a souligné que Â« cette décision marque la détermination du Conseil à faire respecter les règles de la concurrence dans tous les secteurs de l'économie nationale Â».`,
+    contenu: `Le Conseil National de la Concurrence a rendu, le 15 janvier 2025, une décision majeure dans le secteur des télécommunications au Tchad. Trois opérateurs ont été reconnus coupables d'une entente illicite visant à fixer de manière concertée les tarifs de communication mobile.\n\nCette pratique, qui perdurait depuis 2022, a eu pour effet de priver les consommateurs tchadiens du bénéfice de la concurrence par les prix. Les amendes prononcées s'élèvent à un total de 2,5 milliards de francs CFA.\n\nLe Président du CNC a souligné que « cette décision marque la détermination du Conseil à faire respecter les règles de la concurrence dans tous les secteurs de l'économie nationale ».`,
     date: "2025-01-15",
     categorie: "communique",
   },
@@ -161,21 +156,19 @@ export const articles: Article[] = [
   },
 ];
 
-// --- Décisions supprimées ---
-
 // --- Documents officiels ---
 export const documents: DocumentCNC[] = [
-  { titre: "Loi NÂ°014/PR/2015 relative à la concurrence en République du Tchad", categorie: "Lois & Règlements", date: "2015-06-12", taille: "1.2 Mo", type: "PDF" },
-  { titre: "Décret NÂ°2016/042 portant organisation du CNC", categorie: "Lois & Règlements", date: "2016-03-08", taille: "850 Ko", type: "PDF" },
-  { titre: "Ordonnance NÂ°2018/007 modifiant la loi sur la concurrence", categorie: "Lois & Règlements", date: "2018-11-20", taille: "980 Ko", type: "PDF" },
-  { titre: "Décision CNC/DEC/2024/001 â€” Entente télécom", categorie: "Communiqués", date: "2024-03-15", taille: "2.1 Mo", type: "PDF" },
-  { titre: "Décision CNC/DEC/2024/002 â€” Abus de position ciment", categorie: "Communiqués", date: "2024-04-22", taille: "1.8 Mo", type: "PDF" },
-  { titre: "Avis CNC/AVI/2024/003 â€” Distribution pétrolière", categorie: "Avis", date: "2024-05-10", taille: "1.5 Mo", type: "PDF" },
-  { titre: "Avis CNC/AVI/2024/006 â€” Transport aérien", categorie: "Avis", date: "2024-08-20", taille: "1.3 Mo", type: "PDF" },
+  { titre: "Loi N°014/PR/2015 relative à la concurrence en République du Tchad", categorie: "Lois & Règlements", date: "2015-06-12", taille: "1.2 Mo", type: "PDF" },
+  { titre: "Décret N°2016/042 portant organisation du CNC", categorie: "Lois & Règlements", date: "2016-03-08", taille: "850 Ko", type: "PDF" },
+  { titre: "Ordonnance N°2018/007 modifiant la loi sur la concurrence", categorie: "Lois & Règlements", date: "2018-11-20", taille: "980 Ko", type: "PDF" },
+  { titre: "Décision CNC/DEC/2024/001 — Entente télécom", categorie: "Communiqués", date: "2024-03-15", taille: "2.1 Mo", type: "PDF" },
+  { titre: "Décision CNC/DEC/2024/002 — Abus de position ciment", categorie: "Communiqués", date: "2024-04-22", taille: "1.8 Mo", type: "PDF" },
+  { titre: "Avis CNC/AVI/2024/003 — Distribution pétrolière", categorie: "Avis", date: "2024-05-10", taille: "1.5 Mo", type: "PDF" },
+  { titre: "Avis CNC/AVI/2024/006 — Transport aérien", categorie: "Avis", date: "2024-08-20", taille: "1.3 Mo", type: "PDF" },
   { titre: "Rapport annuel 2023 du CNC", categorie: "Rapports annuels", date: "2024-02-15", taille: "5.4 Mo", type: "PDF" },
   { titre: "Rapport annuel 2024 du CNC", categorie: "Rapports annuels", date: "2025-01-30", taille: "6.2 Mo", type: "PDF" },
-  { titre: "Étude sectorielle â€” Marché des télécommunications au Tchad", categorie: "Études économiques", date: "2024-07-15", taille: "3.8 Mo", type: "PDF" },
-  { titre: "Étude sectorielle â€” Concurrence dans le secteur bancaire", categorie: "Études économiques", date: "2025-03-01", taille: "4.1 Mo", type: "PDF" },
+  { titre: "Étude sectorielle — Marché des télécommunications au Tchad", categorie: "Études économiques", date: "2024-07-15", taille: "3.8 Mo", type: "PDF" },
+  { titre: "Étude sectorielle — Concurrence dans le secteur bancaire", categorie: "Études économiques", date: "2025-03-01", taille: "4.1 Mo", type: "PDF" },
   { titre: "Guide pratique : Comment déposer une plainte auprès du CNC", categorie: "Guides pratiques", date: "2024-01-10", taille: "720 Ko", type: "PDF" },
   { titre: "Guide des bonnes pratiques concurrentielles pour les entreprises", categorie: "Guides pratiques", date: "2024-06-01", taille: "1.1 Mo", type: "PDF" },
   { titre: "Formulaire de saisine du CNC", categorie: "Formulaires", date: "2024-01-01", taille: "350 Ko", type: "PDF" },
@@ -184,7 +177,7 @@ export const documents: DocumentCNC[] = [
 
 // --- FAQ ---
 export const faqData: FAQ[] = [
-  { question: "Qu'est-ce que le Conseil National de la Concurrence ?", reponse: "Le Conseil National de la Concurrence (CNC) est une autorité administrative indépendante créée par la loi NÂ°014/PR/2015. Il est chargé de veiller au respect des règles de la concurrence sur le marché tchadien, de sanctionner les pratiques anticoncurrentielles et de promouvoir une culture de concurrence loyale.", theme: "Généralités" },
+  { question: "Qu'est-ce que le Conseil National de la Concurrence ?", reponse: "Le Conseil National de la Concurrence (CNC) est une autorité administrative indépendante créée par la loi N°014/PR/2015. Il est chargé de veiller au respect des règles de la concurrence sur le marché tchadien, de sanctionner les pratiques anticoncurrentielles et de promouvoir une culture de concurrence loyale.", theme: "Généralités" },
   { question: "Quelles sont les pratiques anticoncurrentielles sanctionnées par le CNC ?", reponse: "Le CNC sanctionne principalement les ententes illicites (accords entre concurrents pour fixer les prix ou se répartir les marchés), les abus de position dominante (utilisation abusive d'une position forte sur un marché) et les pratiques commerciales déloyales.", theme: "Généralités" },
   { question: "Comment déposer une plainte auprès du CNC ?", reponse: "Vous pouvez déposer une plainte directement en ligne via notre formulaire de dépôt de plainte, par courrier à notre siège à N'Djamena, ou en vous présentant physiquement dans nos locaux aux heures d'ouverture (07h30 - 15h30). La plainte doit être accompagnée de tout document justificatif pertinent.", theme: "Plaintes" },
   { question: "La plainte est-elle confidentielle ?", reponse: "Oui, le CNC garantit la confidentialité des plaintes reçues. L'identité du plaignant n'est communiquée à la partie mise en cause que si le plaignant y consent expressément. Un mécanisme de signalement anonyme est également disponible.", theme: "Plaintes" },
@@ -198,77 +191,32 @@ export const faqData: FAQ[] = [
 export const membres: Membre[] = [
   { nom: "M. Vissia Baranga", fonction: "Président du Conseil", initiales: "VB", couleur: "bg-primary" },
   { nom: "Mme Amina Oumar Djibrine", fonction: "Vice-Présidente", initiales: "AO", couleur: "bg-secondary" },
-  { nom: "M. Ahmat Abakar Moussa", fonction: "Conseiller â€” Affaires juridiques", initiales: "AA", couleur: "bg-primary" },
-  { nom: "Mme Fatimé Hassan Abakar", fonction: "Conseillère â€” Études économiques", initiales: "FH", couleur: "bg-secondary" },
-  { nom: "M. Djibril Ousmane Mahamat", fonction: "Conseiller â€” Enquêtes", initiales: "DO", couleur: "bg-primary" },
-  { nom: "M. Youssouf Ali Brahim", fonction: "Conseiller â€” Coopération", initiales: "YA", couleur: "bg-secondary" },
+  { nom: "M. Ahmat Abakar Moussa", fonction: "Conseiller — Affaires juridiques", initiales: "AA", couleur: "bg-primary" },
+  { nom: "Mme Fatimé Hassan Abakar", fonction: "Conseillère — Études économiques", initiales: "FH", couleur: "bg-secondary" },
+  { nom: "M. Djibril Ousmane Mahamat", fonction: "Conseiller — Enquêtes", initiales: "DO", couleur: "bg-primary" },
+  { nom: "M. Youssouf Ali Brahim", fonction: "Conseiller — Coopération", initiales: "YA", couleur: "bg-secondary" },
 ];
 
 // --- Galerie ---
 export const galerieItems: GalerieItem[] = [
   { id: 1, titre: "Réunion plénière du Conseil", description: "Session plénière ordinaire du Conseil National de la Concurrence", date: "2025-01-20", categorie: "Réunions du Conseil", gradient: "from-primary to-gold" },
-  { id: 2, titre: "Session de sensibilisation â€” secteur commerce", description: "Atelier de sensibilisation des commerçants de N'Djamena", date: "2025-02-05", categorie: "Sessions de sensibilisation", gradient: "from-[#0284C7] to-[#38BDF8]" },
+  { id: 2, titre: "Session de sensibilisation — secteur commerce", description: "Atelier de sensibilisation des commerçants de N'Djamena", date: "2025-02-05", categorie: "Sessions de sensibilisation", gradient: "from-[#0284C7] to-[#38BDF8]" },
   { id: 3, titre: "Cérémonie de partenariat institutionnel", description: "Signature de convention avec la CEMAC", date: "2025-03-01", categorie: "Partenariats", gradient: "from-primary to-gold/70" },
   { id: 4, titre: "Atelier formation des enquêteurs", description: "Formation aux techniques d'investigation", date: "2025-02-14", categorie: "Sessions de sensibilisation", gradient: "from-[#0284C7] to-[#38BDF8]" },
   { id: 5, titre: "Forum régional CEMAC 2024", description: "Participation au forum sur la concurrence en zone CEMAC", date: "2024-11-15", categorie: "Événements", gradient: "from-gold to-primary" },
   { id: 6, titre: "Rencontre avec les opérateurs économiques", description: "Dialogue avec les acteurs du secteur privé", date: "2025-01-10", categorie: "Partenariats", gradient: "from-primary to-gold/70" },
   { id: 7, titre: "Assemblée générale du CNC 2024", description: "Bilan annuel et perspectives", date: "2024-12-20", categorie: "Réunions du Conseil", gradient: "from-primary to-gold" },
-  { id: 8, titre: "Investigation terrain â€” marché central", description: "Enquête de terrain sur les pratiques commerciales", date: "2025-02-20", categorie: "Enquêtes & Investigations", gradient: "from-[#374151] to-[#6B7280]" },
+  { id: 8, titre: "Investigation terrain — marché central", description: "Enquête de terrain sur les pratiques commerciales", date: "2025-02-20", categorie: "Enquêtes & Investigations", gradient: "from-[#374151] to-[#6B7280]" },
   { id: 9, titre: "Visite du Ministre du Commerce", description: "Accueil du Ministre du Commerce au siège du CNC", date: "2025-01-25", categorie: "Événements", gradient: "from-gold to-primary" },
   { id: 10, titre: "Audience avec les associations de consommateurs", description: "Échange avec les représentants des consommateurs", date: "2025-03-05", categorie: "Partenariats", gradient: "from-primary to-gold/70" },
   { id: 11, titre: "Session extraordinaire du Conseil", description: "Réunion extraordinaire sur le secteur pétrolier", date: "2025-02-10", categorie: "Réunions du Conseil", gradient: "from-primary to-gold" },
-  { id: 12, titre: "Enquête sectorielle â€” pharmacies", description: "Investigation dans le secteur pharmaceutique", date: "2024-10-15", categorie: "Enquêtes & Investigations", gradient: "from-[#374151] to-[#6B7280]" },
-  { id: 13, titre: "Conférence de presse â€” bilan 2024", description: "Présentation des résultats annuels à la presse", date: "2025-01-30", categorie: "Événements", gradient: "from-gold to-primary" },
+  { id: 12, titre: "Enquête sectorielle — pharmacies", description: "Investigation dans le secteur pharmaceutique", date: "2024-10-15", categorie: "Enquêtes & Investigations", gradient: "from-[#374151] to-[#6B7280]" },
+  { id: 13, titre: "Conférence de presse — bilan 2024", description: "Présentation des résultats annuels à la presse", date: "2025-01-30", categorie: "Événements", gradient: "from-gold to-primary" },
   { id: 14, titre: "Campagne de sensibilisation province", description: "Tournée de sensibilisation dans les provinces", date: "2025-03-12", categorie: "Sessions de sensibilisation", gradient: "from-[#0284C7] to-[#38BDF8]" },
-  { id: 15, titre: "Rencontre CNC â€” Banque Centrale", description: "Coopération sur la régulation du secteur bancaire", date: "2025-02-28", categorie: "Partenariats", gradient: "from-primary to-gold/70" },
+  { id: 15, titre: "Rencontre CNC — Banque Centrale", description: "Coopération sur la régulation du secteur bancaire", date: "2025-02-28", categorie: "Partenariats", gradient: "from-primary to-gold/70" },
   { id: 16, titre: "Inspection marché Moundou", description: "Contrôle des pratiques commerciales à Moundou", date: "2025-01-18", categorie: "Enquêtes & Investigations", gradient: "from-[#374151] to-[#6B7280]" },
   { id: 17, titre: "Journée portes ouvertes CNC", description: "Accueil du public au siège du CNC", date: "2024-09-20", categorie: "Événements", gradient: "from-gold to-primary" },
   { id: 18, titre: "Formation continue des agents", description: "Programme de renforcement des capacités", date: "2025-03-18", categorie: "Sessions de sensibilisation", gradient: "from-[#0284C7] to-[#38BDF8]" },
-  { id: 19, titre: "Délibération du Conseil â€” secteur BTP", description: "Examen des dossiers du secteur BTP", date: "2025-02-25", categorie: "Réunions du Conseil", gradient: "from-primary to-gold" },
-  { id: 20, titre: "Enquête concurrence â€” transport routier", description: "Investigation sur les tarifs de transport", date: "2025-03-08", categorie: "Enquêtes & Investigations", gradient: "from-[#374151] to-[#6B7280]" },
-];
-
-// --- Catégories de documents ---
-export const categoriesDocuments = [
-  "Lois & Règlements",
-  "Avis",
-  "Rapports annuels",
-  "Études économiques",
-  "Guides pratiques",
-  "Formulaires",
-];
-
-// --- Services ---
-export const services = [
-  { titre: "Dépôt de plainte", description: "Soumettez une plainte formelle concernant des pratiques anticoncurrentielles. Votre plainte sera examinée par nos services compétents dans les meilleurs délais.", icone: "FileWarning", lien: "/plainte" },
-  { titre: "Signalement anonyme", description: "Signalez une pratique suspecte de manière anonyme. Votre identité sera protégée tout au long de la procédure.", icone: "ShieldAlert", lien: "/signalement" },
-  { titre: "Suivi de dossier", description: "Consultez l'état d'avancement de votre dossier en cours de traitement grâce à votre numéro de référence.", icone: "ClipboardList", lien: "#" },
-  { titre: "Demande d'avis", description: "Sollicitez l'avis du CNC sur une question de concurrence ou sur un projet d'opération de concentration.", icone: "MessageSquare", lien: "#" },
-  { titre: "Prise de rendez-vous", description: "Planifiez un rendez-vous avec les services du CNC pour toute question relative à la concurrence.", icone: "Calendar", lien: "#" },
-];
-
-// --- Directions / Organigramme ---
-export const directions = [
-  { titre: "Direction des Enquêtes et Investigations", description: "Chargée de mener les enquêtes sur les pratiques anticoncurrentielles, de recueillir les preuves et d'instruire les dossiers soumis au Conseil." },
-  { titre: "Direction des Études Économiques", description: "Responsable des études de marché, des analyses sectorielles et de la veille concurrentielle sur l'ensemble de l'économie tchadienne." },
-  { titre: "Direction Juridique et du Contentieux", description: "Assure le conseil juridique du Conseil, rédige les décisions et avis, et gère les procédures contentieuses." },
-  { titre: "Direction de la Coopération et de la Communication", description: "Gère les relations avec les partenaires institutionnels nationaux et internationaux et les campagnes de sensibilisation." },
-  { titre: "Direction Administrative et Financière", description: "Assure la gestion administrative, financière et des ressources humaines de l'institution." },
-];
-
-// --- Catégories de la galerie ---
-export const categoriesGalerie = [
-  "Tous",
-  "Réunions du Conseil",
-  "Enquêtes & Investigations",
-  "Sessions de sensibilisation",
-  "Partenariats",
-  "Événements",
-];
-
-// --- Stats homepage ---
-export const stats = [
-  { valeur: "47", label: "Enquêtes menées" },
-  { valeur: "8", label: "Secteurs surveillés" },
-  { valeur: "15", label: "Sessions de sensibilisation" },
+  { id: 19, titre: "Délibération du Conseil — secteur BTP", description: "Examen des dossiers du secteur BTP", date: "2025-02-25", categorie: "Réunions du Conseil", gradient: "from-primary to-gold" },
+  { id: 20, titre: "Enquête concurrence — transport routier", description: "Investigation sur les tarifs de transport", date: "2025-03-08", categorie: "Enquêtes & Investigations", gradient: "from-[#374151] to-[#6B7280]" },
 ];
