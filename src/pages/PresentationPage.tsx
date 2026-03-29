@@ -77,10 +77,10 @@ export default function PresentationPage() {
             {/* Carte photo président (pleine largeur) */}
             <div className="md:w-1/3 relative min-h-[400px] overflow-hidden group">
               <img 
-                src={getImgUrl(presidentData?.president_photo_path, "/president.jpg")} 
+                src={getImgUrl(presidentData?.president_photo_path, "/president.png")} 
                 alt={presidentData?.president_nom || "M. Vissia Baranga"} 
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 object-top" 
-                onError={(e) => { e.currentTarget.src = 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=800'; }}
+                onError={(e) => { e.currentTarget.src = "/president.png"; }}
               />
               {/* Overlay Texte */}
               <div className="absolute inset-x-0 bottom-0 pt-20 pb-8 px-6 bg-gradient-to-t from-primary via-primary/80 to-transparent text-white text-center">

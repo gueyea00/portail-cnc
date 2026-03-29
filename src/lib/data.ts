@@ -220,3 +220,43 @@ export const galerieItems: GalerieItem[] = [
   { id: 19, titre: "Délibération du Conseil — secteur BTP", description: "Examen des dossiers du secteur BTP", date: "2025-02-25", categorie: "Réunions du Conseil", gradient: "from-primary to-gold" },
   { id: 20, titre: "Enquête concurrence — transport routier", description: "Investigation sur les tarifs de transport", date: "2025-03-08", categorie: "Enquêtes & Investigations", gradient: "from-[#374151] to-[#6B7280]" },
 ];
+
+// --- Services en ligne ---
+export const services = [
+  {
+    titre: "DÃ©pÃ´t de plainte",
+    description: "Signaler officiellement une pratique anticoncurrentielle ou une violation des rÃ¨gles du marchÃ©.",
+    icone: "ShieldAlert",
+    lien: "/plainte",
+  },
+  {
+    titre: "Signalement anonyme",
+    description: "Informer le Conseil d'un comportement suspect de maniÃ¨re totalement anonyme et sÃ©curisÃ©e.",
+    icone: "FileWarning",
+    lien: "/signalement",
+  },
+  {
+    titre: "Demande d'avis",
+    description: "Solliciter l'avis du Conseil sur un projet de texte ou une situation de concurrence.",
+    icone: "MessageSquare",
+    lien: "/contact",
+  },
+  {
+    titre: "AccÃ¨s aux documents",
+    description: "Consulter les lois, dÃ©crets, dÃ©cisions et rapports publics du CNC.",
+    icone: "BookOpen",
+    lien: "/documents",
+  },
+  {
+    titre: "Foire aux questions",
+    description: "Trouver des rÃ©ponses aux questions les plus frÃ©quentes sur la concurrence et le CNC.",
+    icone: "ClipboardList",
+    lien: "/faq",
+  },
+  {
+    titre: "Contact & Rendez-vous",
+    description: "Prendre rendez-vous avec nos conseillers ou contacter nos services administratifs.",
+    icone: "Calendar",
+    lien: "/contact",
+  },
+];
