@@ -8,7 +8,7 @@ let currentAdmin = JSON.parse(localStorage.getItem('cnc_admin') || '{}');
 
 // ---- Auth Guard ----
 if (!token && !window.location.pathname.includes('login')) {
-  window.location.href = '/admin/login.html';
+  window.location.href = '/admin/login';
 }
 
 // ---- Helpers ----
@@ -48,7 +48,7 @@ function formatDate(d) {
 function logout() {
   localStorage.removeItem('cnc_token');
   localStorage.removeItem('cnc_admin');
-  window.location.href = '/admin/login.html';
+  window.location.href = '/admin/login';
 }
 
 function refreshIcons() {

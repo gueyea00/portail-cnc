@@ -58,16 +58,7 @@ const App = () => {
             <Route path="/faq" element={<FaqPage />} />
             <Route path="/galerie" element={<GaleriePage />} />
             
-            {/* Admin Routes */}
-            <Route path="/admin/login" element={<AdminLoginPage />} />
-            <Route 
-              path="/admin" 
-              element={
-                <ProtectedRoute>
-                  <AdminDashboardPage />
-                </ProtectedRoute>
-              } 
-            />
+            {/* Les routes /admin sont gérées par le proxy backend vers le CMS HTML/JS */}
 
             <Route path="*" element={<NotFound />} />
           </Routes>

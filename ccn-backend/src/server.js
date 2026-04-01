@@ -20,7 +20,7 @@ dotenv.config();
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3000;
 
 // Créer les dossiers uploads si inexistants
 ['uploads', 'uploads/decisions', 'uploads/documents', 'uploads/galerie', 'uploads/membres', 'uploads/president', 'uploads/articles'].forEach(dir => {
@@ -34,6 +34,24 @@ app.use(express.urlencoded({ extended: true }));
 
 // Fichiers statiques : uploads uniquement (l'admin est gérée par React/Frontend)
 app.use('/uploads', express.static(join(__dirname, '../uploads')));
+
+// Interface admin statique (HTML/JS)
+const adminDir = join(__dirname, '../admin');
+
+// Servir les pages sans extension .html dans l'URL
+app.get('/admin/login', (req, res) => {
+  res.sendFile(join(adminDir, 'login.html'));
+});
+
+app.get('/admin/dashboard', (req, res) => {
+  res.sendFile(join(adminDir, 'dashboard.html'));
+});
+
+// Rediriger /admin vers /admin/login
+app.get('/admin', (req, res) => res.redirect('/admin/login'));
+
+// Servir les autres fichiers statiques (JS, CSS)
+app.use('/admin', express.static(adminDir));
 
 // ============================================================
 // Routes API
@@ -69,6 +87,7 @@ app.use((req, res) => {
 
 app.listen(PORT, () => {
   console.log(`\n🚀 Serveur CNC Tchad démarré sur http://localhost:${PORT}`);
-  console.log(`📊 Interface Admin  : http://localhost:${PORT}/admin/login.html`);
+  console.log(`📊 Interface Admin  : http://localhost:${PORT}/admin/login`);
   console.log(`🔗 API Health       : http://localhost:${PORT}/health\n`);
 });
+

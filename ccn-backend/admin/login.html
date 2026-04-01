@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CNC Tchad — Administration</title>
+  <link rel="icon" type="image/png" href="/armoiries-tchad.png" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body class="login-page">
@@ -35,7 +36,7 @@
   <script>
     // Rediriger si déjà connecté
     if (localStorage.getItem('cnc_token')) {
-      window.location.href = '/admin/dashboard.html';
+      window.location.href = '/admin/dashboard';
     }
 
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
@@ -60,7 +61,7 @@
 
         localStorage.setItem('cnc_token', data.token);
         localStorage.setItem('cnc_admin', JSON.stringify(data.admin));
-        window.location.href = '/admin/dashboard.html';
+        window.location.href = '/admin/dashboard';
       } catch (error) {
         err.textContent = error.message;
         err.style.display = 'block';

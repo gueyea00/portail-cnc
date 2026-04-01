@@ -12,16 +12,31 @@ export default defineConfig(({ mode }) => ({
       overlay: false,
     },
     proxy: {
+      // Remote VPS (masked for local dev)
+      // "/api": {
+      //   target: "http://148.230.124.48:8080",
+      //   changeOrigin: true,
+      // },
+      // "/admin": {
+      //   target: "http://148.230.124.48:8080",
+      //   changeOrigin: true,
+      // },
+      // "/uploads": {
+      //   target: "http://148.230.124.48:8080",
+      //   changeOrigin: true,
+      // },
+
+      // Local backend
       "/api": {
-        target: "http://148.230.124.48:8080",
+        target: "http://localhost:3000",
         changeOrigin: true,
       },
       "/admin": {
-        target: "http://148.230.124.48:8080",
+        target: "http://localhost:3000",
         changeOrigin: true,
       },
       "/uploads": {
-        target: "http://148.230.124.48:8080",
+        target: "http://localhost:3000",
         changeOrigin: true,
       },
     },
@@ -34,3 +49,5 @@ export default defineConfig(({ mode }) => ({
     dedupe: ["react", "react-dom", "react/jsx-runtime", "react/jsx-dev-runtime"],
   },
 }));
+
+
