@@ -20,10 +20,48 @@
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content="CNC Tchad — Conseil National de la Concurrence" />
     <meta name="twitter:image" content="/armoiries-tchad.png" />
+
+    <!-- Google Translate widget (caché visuellement, contrôlé par notre propre menu) -->
+    <!-- IMPORTANT: Ne pas mettre class="notranslate" sur <html>, sinon rien n'est traduit -->
+    <style>
+      /* Cache le widget Google Translate natif et sa barre de notification */
+      .goog-te-banner-frame.skiptranslate { display: none !important; }
+      .goog-te-banner-frame { display: none !important; }
+      .skiptranslate { display: none !important; }
+      body { top: 0 !important; position: static !important; }
+      .goog-te-gadget { display: none !important; }
+      /* Barre de notification Google Translate (nouveaux navigateurs) */
+      .VIpgJd-ZVi9od-aZ2wEe-wOHMyf,
+      .VIpgJd-ZVi9od-aZ2wEe-OiiCO { display: none !important; }
+      /* Empêche que Google Translate décale le body vers le bas */
+      .translated-ltr body, .translated-rtl body { top: 0 !important; }
+    </style>
   </head>
 
   <body>
     <div id="root"></div>
+
+    <!-- Conteneur Google Translate widget (invisible) -->
+    <div id="google_translate_element" style="display:none; position:absolute; top:-9999px; left:-9999px;"></div>
+
+    <!-- Initialisation du widget Google Translate -->
+    <script type="text/javascript">
+      function googleTranslateElementInit() {
+        new google.translate.TranslateElement(
+          {
+            pageLanguage: 'fr',
+            includedLanguages: 'fr,en,ar',
+            autoDisplay: false,
+            layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+          },
+          'google_translate_element'
+        );
+      }
+    </script>
+    <script type="text/javascript"
+      src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit">
+    </script>
+
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

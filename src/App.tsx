@@ -24,18 +24,22 @@ import ProtectedRoute from "./components/admin/ProtectedRoute";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import "./i18n/config";
+import { useGoogleTranslate } from "@/hooks/useGoogleTranslate";
 
 const queryClient = new QueryClient();
 
 const App = () => {
   const { i18n } = useTranslation();
+  // Google Translate gère la langue de toute la page (statique + dynamique)
+  const { currentLang } = useGoogleTranslate();
 
   useEffect(() => {
-    // Gérer la direction du texte (RTL pour l'arabe, LTR pour les autres)
-    const dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
+    // RTL basé sur la langue Google Translate (priorité) ou i18next
+    const activeLang = currentLang || i18n.language;
+    const dir = activeLang === 'ar' ? 'rtl' : 'ltr';
     document.documentElement.dir = dir;
-    document.documentElement.lang = i18n.language;
-  }, [i18n.language]);
+    document.documentElement.lang = activeLang;
+  }, [currentLang, i18n.language]);
 
   return (
   <QueryClientProvider client={queryClient}>

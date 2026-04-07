@@ -420,6 +420,9 @@ async function loadPresident() {
   if (f('presidentNom')) f('presidentNom').value = data.president_nom || '';
   if (f('presidentTitre')) f('presidentTitre').value = data.president_titre || '';
   if (f('presidentMessage')) f('presidentMessage').value = data.president_message || '';
+  if (f('footerTelephone')) f('footerTelephone').value = data.footer_telephone || '';
+  if (f('footerEmail')) f('footerEmail').value = data.footer_email || '';
+  if (f('footerAdresse')) f('footerAdresse').value = data.footer_adresse || '';
 }
 
 async function loadAdmins() {

@@ -1,7 +1,12 @@
 import { Link } from "react-router-dom";
 import { Facebook, Linkedin, Twitter, Mail, Phone, MapPin, Send, ChevronRight } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Footer() {
+  const { data: parametres } = useQuery({
+    queryKey: ["parametres_footer"],
+    queryFn: () => fetch("/api/parametres").then(res => res.json())
+  });
   return (
     <footer className="bg-primary text-primary-foreground pt-0 pb-8 relative overflow-hidden">
 
@@ -118,19 +123,19 @@ export default function Footer() {
                   <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-gold group-hover:text-primary transition-colors duration-300">
                     <MapPin className="w-4 h-4" />
                   </div>
-                  <span className="pt-1 leading-snug">Av. Charles de Gaulle,<br /> N'Djamena, Tchad</span>
+                  <span className="pt-1 leading-snug whitespace-pre-line">{parametres?.footer_adresse || "Av. Charles de Gaulle,\nN'Djamena, Tchad"}</span>
                 </li>
                 <li className="flex items-center gap-3 group cursor-default">
                   <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-gold group-hover:text-primary transition-colors duration-300">
                     <Phone className="w-4 h-4" />
                   </div>
-                  <span>+235 22 52 XX XX</span>
+                  <span>{parametres?.footer_telephone || "+235 22 52 XX XX"}</span>
                 </li>
                 <li className="flex items-center gap-3 group cursor-default">
                   <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-gold group-hover:text-primary transition-colors duration-300">
                     <Mail className="w-4 h-4" />
                   </div>
-                  <span>contact@cnc-tchad.td</span>
+                  <span>{parametres?.footer_email || "contact@cnc-tchad.td"}</span>
                 </li>
               </ul>
             </div>
@@ -170,7 +175,6 @@ export default function Footer() {
           </div>
           <div className="text-center md:text-right">
             <p>&copy; {new Date().getFullYear()} Conseil National de la Concurrence.</p>
-            <p className="mt-1">Réalisation : <span className="text-white/70">Ebenyx Technologies SA-CA</span></p>
           </div>
         </div>
       </div>

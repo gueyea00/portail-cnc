@@ -36,7 +36,7 @@
       </a>
       <div class="nav-section-label">Institution</div>
       <a href="#" class="nav-item" data-section="president">
-        <i data-lucide="user" class="nav-icon"></i> Mot du Président
+        <i data-lucide="settings" class="nav-icon"></i> Paramètres du site
       </a>
       <a href="#" class="nav-item" data-section="membres">
         <i data-lucide="users" class="nav-icon"></i> Membres du Conseil
@@ -148,10 +148,11 @@
       <div id="galerieGrid" class="galerie-grid"></div>
     </section>
 
-    <!-- Section Président -->
+    <!-- Section Paramètres (Président & Footer) -->
     <section id="section-president" class="content-section">
-      <div class="section-toolbar"><h3>Mot du Président</h3></div>
+      <div class="section-toolbar"><h3>Paramètres du Site</h3></div>
       <form id="presidentForm" class="form-card" enctype="multipart/form-data">
+        <h4 style="margin-bottom: 12px; color: var(--text); border-bottom: 1px solid var(--border); padding-bottom: 8px;">Mot du Président</h4>
         <div class="form-row">
           <div class="form-group">
             <label>Nom complet</label>
@@ -170,7 +171,25 @@
           <label>Photo du Président</label>
           <input type="file" name="president_photo_file" accept="image/*" />
         </div>
-        <button type="submit" class="btn btn-primary">Enregistrer</button>
+
+        <h4 style="margin-top: 24px; margin-bottom: 12px; color: var(--text); border-bottom: 1px solid var(--border); padding-bottom: 8px;">Contacts (Pied de page)</h4>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>Téléphone</label>
+            <input type="text" id="footerTelephone" name="footer_telephone" placeholder="+235 22 52 XX XX" />
+          </div>
+          <div class="form-group">
+            <label>Email contact</label>
+            <input type="email" id="footerEmail" name="footer_email" placeholder="contact@cnc-tchad.td" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Adresse physique</label>
+          <textarea id="footerAdresse" name="footer_adresse" rows="2" placeholder="Av. Charles de Gaulle,\nN'Djamena, Tchad"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="margin-top: 16px;">Enregistrer les paramètres</button>
       </form>
     </section>
 
