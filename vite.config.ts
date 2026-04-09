@@ -28,12 +28,12 @@ export default defineConfig(({ mode }) => ({
 
       // Local backend
       "/api": {
-        target: "http://localhost:8080",
+        target: "http://148.230.124.48:8080",
         changeOrigin: true,
       },
 
       "/uploads": {
-        target: "http://localhost:8080",
+        target: "http://148.230.124.48:8080",
         changeOrigin: true,
       },
     },

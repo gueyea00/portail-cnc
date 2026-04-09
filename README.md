@@ -34,14 +34,14 @@ npm run dev
 npm install
 npm run dev
 ```
-Le frontend sera accessible sur [http://localhost:8081](http://localhost:8081). Les appels API sont automatiquement proxysés vers le VPS à l'adresse **http://148.230.124.48:8080**.
+Le frontend sera accessible sur [http://148.230.124.48:8081](http://148.230.124.48:8081). Les appels API sont automatiquement proxysés vers le VPS à l'adresse **http://148.230.124.48:8080**.
 
 ## Déploiement Docker (Complet)
 Pour lancer l'ensemble de l'application (Frontend + Backend + DB) :
 ```bash
 docker-compose up --build
 ```
-- Frontend : [http://localhost](http://localhost) (Port 80)
+- Frontend : [http://148.230.124.48](http://148.230.124.48) (Port 80)
 - Backend API : [http://148.230.124.48:8080/api](http://148.230.124.48:8080/api)
 - Interface Admin : [http://148.230.124.48:8080/admin](http://148.230.124.48:8080/admin)
 

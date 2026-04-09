@@ -19,7 +19,7 @@ npm run dev
 3) Health check:
 
 ```bash
-curl http://localhost:4000/health
+curl http://148.230.124.48:4000/health
 ```
 
 ## CRUD Endpoints
