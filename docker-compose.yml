@@ -40,7 +40,7 @@ services:
     container_name: cnc-frontend
     restart: always
     ports:
-      - "80:80"
+      - "8909:80"
     depends_on:
       - backend
 
