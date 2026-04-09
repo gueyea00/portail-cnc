@@ -22,7 +22,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 
-type TabType = "dashboard" | "articles" | "membres" | "galerie" | "documents" | "plaintes" | "parametres";
+type TabType = "dashboard" | "articles" | "membres" | "galerie" | "documents" | "plaintes" | "liens" | "parametres";
+
 
 export default function AdminDashboardPage() {
   const [activeTab, setActiveTab] = useState<TabType>("dashboard");
@@ -83,6 +84,11 @@ export default function AdminDashboardPage() {
   const [showDocumentForm, setShowDocumentForm] = useState(false);
   const [editingDocument, setEditingDocument] = useState<any>(null);
 
+  const [liens, setLiens] = useState<any[]>([]);
+  const [lienForm, setLienForm] = useState({ nom: "", url: "", description: "", categorie: "Ministère", ordre: 0 });
+  const [showLienForm, setShowLienForm] = useState(false);
+  const [editingLien, setEditingLien] = useState<any>(null);
+
   const navigate = useNavigate();
   const admin = JSON.parse(localStorage.getItem("cnc_admin") || "{}");
   const token = localStorage.getItem("cnc_token");
@@ -97,7 +103,9 @@ export default function AdminDashboardPage() {
     if (activeTab === "galerie") fetchGalerie();
     if (activeTab === "documents") fetchDocuments();
     if (activeTab === "plaintes") fetchPlaintes();
+    if (activeTab === "liens") fetchLiens();
     if (activeTab === "parametres") fetchParametres();
+
   }, [activeTab]);
 
   const authFetch = async (url: string, options: RequestInit = {}) => {
@@ -452,6 +460,66 @@ export default function AdminDashboardPage() {
     }
   };
 
+  const fetchLiens = async () => {
+    setIsLoadingTab(true);
+    try {
+      const res = await fetch("/api/liens");
+      const data = await res.json();
+      setLiens(Array.isArray(data) ? data : []);
+    } catch (error) {
+      toast.error("Erreur lors du chargement des liens");
+    } finally {
+      setIsLoadingTab(false);
+    }
+  };
+
+  const openLienForm = (lien: any = null) => {
+    if (lien) {
+      setEditingLien(lien);
+      setLienForm({ nom: lien.nom, url: lien.url, description: lien.description || "", categorie: lien.categorie || "Ministère", ordre: lien.ordre || 0 });
+    } else {
+      setEditingLien(null);
+      setLienForm({ nom: "", url: "", description: "", categorie: "Ministère", ordre: 0 });
+    }
+    setShowLienForm(true);
+  };
+
+  const handleSaveLien = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoadingTab(true);
+    try {
+      const url = editingLien ? `/api/liens/admin/${editingLien.id}` : "/api/liens/admin";
+      const method = editingLien ? "PUT" : "POST";
+      const res = await authFetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(lienForm),
+      });
+      if (!res.ok) throw new Error("Erreur enregistrement");
+      toast.success(editingLien ? "Lien mis à jour" : "Lien ajouté");
+      setShowLienForm(false);
+      setEditingLien(null);
+      fetchLiens();
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setIsLoadingTab(false);
+    }
+  };
+
+  const handleDeleteLien = async (id: number) => {
+    if (!confirm("Supprimer ce lien ?")) return;
+    try {
+      const res = await authFetch(`/api/liens/admin/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Erreur suppression");
+      toast.success("Lien supprimé");
+      fetchLiens();
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
+
+
   const handleUpdateParametre = async (cle: string, valeur: string) => {
     try {
       const res = await authFetch(`/api/parametres/admin`, {
@@ -540,7 +608,9 @@ export default function AdminDashboardPage() {
     { id: "galerie", label: "Galerie", icon: <ImageIcon className="w-5 h-5" /> },
     { id: "documents", label: "Documents", icon: <FileBadge className="w-5 h-5" /> },
     { id: "plaintes", label: "Plaintes", icon: <MessageSquare className="w-5 h-5" /> },
+    { id: "liens", label: "Liens institutionnels", icon: <ExternalLink className="w-5 h-5" /> },
     { id: "parametres", label: "Paramètres", icon: <Settings className="w-5 h-5" /> },
+
   ];
 
   return (
@@ -1269,6 +1339,145 @@ export default function AdminDashboardPage() {
                   {plaintes.length === 0 && (
                     <div className="py-20 text-center text-slate-400">Aucune plainte trouvée.</div>
                   )}
+                </div>
+              )}
+            </div>
+          )}
+
+          {activeTab === "liens" && (
+            <div className="space-y-6 animate-in fade-in duration-300">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-bold text-slate-800">Liens institutionnels</h2>
+                  <p className="text-xs text-muted-foreground">Ministères, organismes et partenaires</p>
+                </div>
+                <Button onClick={() => openLienForm()} className="rounded-xl gap-2 font-bold">
+                  <Plus className="w-4 h-4" />
+                  Ajouter un lien
+                </Button>
+              </div>
+
+              {showLienForm && (
+                <form onSubmit={handleSaveLien} className="bg-white rounded-[32px] border border-slate-100 shadow-sm p-6 space-y-4">
+                  <h3 className="text-lg font-bold text-slate-800 mb-4">
+                    {editingLien ? "Modifier le lien" : "Nouveau Lien"}
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Nom / Intitulé *</p>
+                      <Input
+                        value={lienForm.nom}
+                        onChange={(e) => setLienForm(prev => ({ ...prev, nom: e.target.value }))}
+                        required
+                        className="h-11 rounded-xl border-slate-200"
+                        placeholder="ex: Ministère du Commerce"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">URL *</p>
+                      <Input
+                        value={lienForm.url}
+                        onChange={(e) => setLienForm(prev => ({ ...prev, url: e.target.value }))}
+                        required
+                        className="h-11 rounded-xl border-slate-200"
+                        placeholder="https://..."
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Catégorie</p>
+                      <select
+                        value={lienForm.categorie}
+                        onChange={(e) => setLienForm(prev => ({ ...prev, categorie: e.target.value }))}
+                        className="h-11 w-full rounded-xl border border-slate-200 px-3 bg-white text-sm"
+                      >
+                        <option value="Ministère">Ministère</option>
+                        <option value="Institution">Institution</option>
+                        <option value="Organisation régionale">Organisation régionale</option>
+                        <option value="Partenaire">Partenaire</option>
+                        <option value="Autre">Autre</option>
+                      </select>
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Ordre d'affichage</p>
+                      <Input
+                        type="number"
+                        value={lienForm.ordre}
+                        onChange={(e) => setLienForm(prev => ({ ...prev, ordre: parseInt(e.target.value) || 0 }))}
+                        className="h-11 rounded-xl border-slate-200"
+                      />
+                    </div>
+                    <div className="space-y-2 md:col-span-2">
+                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Description (optionnelle)</p>
+                      <Input
+                        value={lienForm.description}
+                        onChange={(e) => setLienForm(prev => ({ ...prev, description: e.target.value }))}
+                        className="h-11 rounded-xl border-slate-200"
+                        placeholder="Courte description..."
+                      />
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <Button type="submit" className="font-bold rounded-xl h-11 px-8" disabled={isLoadingTab}>
+                      {isLoadingTab ? "Enregistrement..." : "Enregistrer"}
+                    </Button>
+                    <Button type="button" variant="outline" onClick={() => setShowLienForm(false)} className="rounded-xl h-11">Annuler</Button>
+                  </div>
+                </form>
+              )}
+
+              {isLoadingTab ? (
+                <p className="text-sm text-slate-500">Chargement...</p>
+              ) : (
+                <div className="bg-white rounded-[32px] border border-slate-100 shadow-sm overflow-hidden">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-slate-50 border-b border-slate-100">
+                        <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest">Nom</th>
+                        <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest">Catégorie</th>
+                        <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest">URL</th>
+                        <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest">Ordre</th>
+                        <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-50">
+                      {liens.map((lien) => (
+                        <tr key={lien.id} className="hover:bg-slate-50/50 transition-colors group">
+                          <td className="px-6 py-4">
+                            <p className="text-sm font-bold text-slate-800">{lien.nom}</p>
+                            {lien.description && <p className="text-xs text-slate-400 mt-0.5">{lien.description}</p>}
+                          </td>
+                          <td className="px-6 py-4">
+                            <span className="text-[10px] font-black uppercase px-2 py-1 rounded-full bg-blue-100 text-blue-700">
+                              {lien.categorie}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4">
+                            <a href={lien.url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline font-mono truncate max-w-[200px] block">
+                              {lien.url}
+                            </a>
+                          </td>
+                          <td className="px-6 py-4 text-sm text-slate-500 font-medium">{lien.ordre}</td>
+                          <td className="px-6 py-4">
+                            <div className="flex items-center gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
+                              <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-600" onClick={() => openLienForm(lien)}>
+                                <Edit className="w-4 h-4" />
+                              </Button>
+                              <Button variant="ghost" size="icon" className="h-8 w-8 text-red-600" onClick={() => handleDeleteLien(lien.id)}>
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                      {liens.length === 0 && (
+                        <tr>
+                          <td colSpan={5} className="px-6 py-12 text-center text-slate-400 font-medium">
+                            Aucun lien institutionnel trouvé.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
                 </div>
               )}
             </div>

@@ -183,4 +183,17 @@ CREATE TABLE IF NOT EXISTS etapes_intervention (
   description     TEXT,
   created_at      TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- ============================================================
+-- TABLE : liens_institutionnels
+-- ============================================================
+CREATE TABLE IF NOT EXISTS liens_institutionnels (
+  id              SERIAL PRIMARY KEY,
+  nom             TEXT NOT NULL,
+  url             TEXT NOT NULL,
+  description     TEXT,
+  categorie       TEXT DEFAULT 'Autre',
+  ordre           INT DEFAULT 0,
+  created_at      TIMESTAMPTZ DEFAULT NOW()
+);
 `;
