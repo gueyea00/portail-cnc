@@ -48,6 +48,41 @@ export default function AdminDashboardPage() {
     date_publication: "",
   });
   const [articleImage, setArticleImage] = useState<File | null>(null);
+  const [editingArticle, setEditingArticle] = useState<any>(null);
+  const [membreImage, setMembreImage] = useState<File | null>(null);
+  const [editingMembre, setEditingMembre] = useState<any>(null);
+  const [showMembreForm, setShowMembreForm] = useState(false);
+  const [membreForm, setMembreForm] = useState({
+    nom: "",
+    fonction: "",
+    initiales: "",
+    bio: "",
+    actif: true,
+    ordre: 0,
+  });
+  const [galerieForm, setGalerieForm] = useState({
+    titre: "",
+    description: "",
+    date_evenement: "",
+    categorie: "Événement",
+    gradient: "from-primary to-gold",
+    ordre: 0,
+  });
+  const [galerieImage, setGalerieImage] = useState<File | null>(null);
+  const [showGalerieForm, setShowGalerieForm] = useState(false);
+  const [editingGalerie, setEditingGalerie] = useState<any>(null);
+
+  const [documentForm, setDocumentForm] = useState({
+    titre: "",
+    categorie: "Loi",
+    type_fichier: "PDF",
+    taille: "",
+    date_publication: "",
+  });
+  const [documentFile, setDocumentFile] = useState<File | null>(null);
+  const [showDocumentForm, setShowDocumentForm] = useState(false);
+  const [editingDocument, setEditingDocument] = useState<any>(null);
+
   const navigate = useNavigate();
   const admin = JSON.parse(localStorage.getItem("cnc_admin") || "{}");
   const token = localStorage.getItem("cnc_token");
@@ -87,7 +122,32 @@ export default function AdminDashboardPage() {
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/(^-|-$)+/g, "");
 
-  const openArticleForm = () => {
+  const openArticleForm = (article: any = null) => {
+    if (article) {
+      setEditingArticle(article);
+      setArticleForm({
+        titre: article.titre,
+        slug: article.slug,
+        extrait: article.extrait || "",
+        contenu: article.contenu || "",
+        categorie: article.categorie || "communique",
+        image_url: article.image_url || "",
+        statut: article.statut || "brouillon",
+        date_publication: article.date_publication ? article.date_publication.split("T")[0] : "",
+      });
+    } else {
+      setEditingArticle(null);
+      setArticleForm({
+        titre: "",
+        slug: "",
+        extrait: "",
+        contenu: "",
+        categorie: "communique",
+        image_url: "",
+        statut: "brouillon",
+        date_publication: "",
+      });
+    }
     setActiveTab("articles");
     setShowArticleForm(true);
   };
@@ -97,7 +157,7 @@ export default function AdminDashboardPage() {
     try {
       const res = await authFetch("/api/articles/admin/all");
       const data = await res.json();
-      setArticles(data);
+      setArticles(Array.isArray(data) ? data : []);
     } catch (error) {
       toast.error("Erreur lors du chargement des articles");
     } finally {
@@ -110,7 +170,7 @@ export default function AdminDashboardPage() {
     try {
       const res = await fetch("/api/membres");
       const data = await res.json();
-      setMembres(data);
+      setMembres(Array.isArray(data) ? data : []);
     } catch (error) {
       toast.error("Erreur lors du chargement des membres");
     } finally {
@@ -123,22 +183,9 @@ export default function AdminDashboardPage() {
     try {
       const res = await authFetch("/api/galerie/admin/all");
       const data = await res.json();
-      setGalerie(data);
+      setGalerie(Array.isArray(data) ? data : []);
     } catch (error) {
       toast.error("Erreur lors du chargement de la galerie");
-    } finally {
-      setIsLoadingTab(false);
-    }
-  };
-
-  const fetchDocuments = async () => {
-    setIsLoadingTab(true);
-    try {
-      const res = await fetch("/api/documents");
-      const data = await res.json();
-      setDocuments(data);
-    } catch (error) {
-      toast.error("Erreur lors du chargement des documents");
     } finally {
       setIsLoadingTab(false);
     }
@@ -149,11 +196,246 @@ export default function AdminDashboardPage() {
     try {
       const res = await authFetch("/api/plaintes/admin/all");
       const data = await res.json();
-      setPlaintes(data);
+      setPlaintes(Array.isArray(data) ? data : []);
     } catch (error) {
       toast.error("Erreur lors du chargement des plaintes");
     } finally {
       setIsLoadingTab(false);
+    }
+  };
+
+  const openMembreForm = (membre: any = null) => {
+    if (membre) {
+      setEditingMembre(membre);
+      setMembreForm({
+        nom: membre.nom,
+        fonction: membre.fonction || "",
+        initiales: membre.initiales || "",
+        bio: membre.bio || "",
+        actif: membre.actif !== false,
+        ordre: membre.ordre || 0,
+      });
+    } else {
+      setEditingMembre(null);
+      setMembreForm({
+        nom: "",
+        fonction: "",
+        initiales: "",
+        bio: "",
+        actif: true,
+        ordre: 0,
+      });
+    }
+    setShowMembreForm(true);
+  };
+
+  const handleSaveMembre = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoadingTab(true);
+    try {
+      const formData = new FormData();
+      formData.append("nom", membreForm.nom);
+      formData.append("fonction", membreForm.fonction);
+      formData.append("initiales", membreForm.initiales);
+      formData.append("bio", membreForm.bio);
+      formData.append("actif", String(membreForm.actif));
+      formData.append("ordre", String(membreForm.ordre));
+      if (membreImage) formData.append("image", membreImage);
+
+      const url = editingMembre ? `/api/membres/admin/${editingMembre.id}` : "/api/membres/admin";
+      const method = editingMembre ? "PUT" : "POST";
+
+      const res = await authFetch(url, {
+        method,
+        body: formData,
+      });
+      if (!res.ok) throw new Error("Erreur enregistrement");
+
+      toast.success(editingMembre ? "Membre mis à jour" : "Membre ajouté");
+      setShowMembreForm(false);
+      setEditingMembre(null);
+      setMembreImage(null);
+      fetchMembres();
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setIsLoadingTab(false);
+    }
+  };
+
+  const handleDeleteMembre = async (id: number) => {
+    if (!confirm("Supprimer ce membre ?")) return;
+    try {
+      const res = await authFetch(`/api/membres/admin/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Erreur suppression");
+      toast.success("Membre supprimé");
+      fetchMembres();
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
+
+  const openGalerieForm = (item: any = null) => {
+    if (item) {
+      setEditingGalerie(item);
+      setGalerieForm({
+        titre: item.titre,
+        description: item.description || "",
+        date_evenement: item.date_evenement ? item.date_evenement.split("T")[0] : "",
+        categorie: item.categorie || "Événement",
+        gradient: item.gradient || "from-primary to-gold",
+        ordre: item.ordre || 0,
+      });
+    } else {
+      setEditingGalerie(null);
+      setGalerieForm({
+        titre: "",
+        description: "",
+        date_evenement: "",
+        categorie: "Événement",
+        gradient: "from-primary to-gold",
+        ordre: 0,
+      });
+    }
+    setShowGalerieForm(true);
+  };
+
+  const handleSaveGalerie = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoadingTab(true);
+    try {
+      const formData = new FormData();
+      Object.entries(galerieForm).forEach(([key, value]) => formData.append(key, String(value)));
+      if (galerieImage) formData.append("image", galerieImage);
+
+      const url = editingGalerie ? `/api/galerie/admin/${editingGalerie.id}` : "/api/galerie/admin";
+      const method = editingGalerie ? "PUT" : "POST";
+
+      const res = await authFetch(url, { method, body: formData });
+      if (!res.ok) throw new Error("Erreur enregistrement");
+
+      toast.success(editingGalerie ? "Élément mis à jour" : "Élément ajouté");
+      setShowGalerieForm(false);
+      setEditingGalerie(null);
+      setGalerieImage(null);
+      fetchGalerie();
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setIsLoadingTab(false);
+    }
+  };
+
+  const handleDeleteGalerie = async (id: number) => {
+    if (!confirm("Supprimer cet élément ?")) return;
+    try {
+      const res = await authFetch(`/api/galerie/admin/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Erreur suppression");
+      toast.success("Élément supprimé");
+      fetchGalerie();
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
+
+  const openDocumentForm = (doc: any = null) => {
+    if (doc) {
+      setEditingDocument(doc);
+      setDocumentForm({
+        titre: doc.titre,
+        categorie: doc.categorie || "Loi",
+        type_fichier: doc.type_fichier || "PDF",
+        taille: doc.taille || "",
+        date_publication: doc.date_publication ? doc.date_publication.split("T")[0] : "",
+      });
+    } else {
+      setEditingDocument(null);
+      setDocumentForm({
+        titre: "",
+        categorie: "Loi",
+        type_fichier: "PDF",
+        taille: "",
+        date_publication: "",
+      });
+    }
+    setShowDocumentForm(true);
+  };
+
+  const handleSaveDocument = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoadingTab(true);
+    try {
+      const formData = new FormData();
+      Object.entries(documentForm).forEach(([key, value]) => formData.append(key, String(value)));
+      if (documentFile) formData.append("fichier", documentFile);
+
+      const url = editingDocument ? `/api/documents/admin/${editingDocument.id}` : "/api/documents/admin";
+      const method = editingDocument ? "PUT" : "POST";
+
+      const res = await authFetch(url, { method, body: formData });
+      if (!res.ok) throw new Error("Erreur enregistrement");
+
+      toast.success(editingDocument ? "Document mis à jour" : "Document ajouté");
+      setShowDocumentForm(false);
+      setEditingDocument(null);
+      setDocumentFile(null);
+      fetchDocuments();
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setIsLoadingTab(false);
+    }
+  };
+
+  const handleDeleteDocument = async (id: number) => {
+    if (!confirm("Supprimer ce document ?")) return;
+    try {
+      const res = await authFetch(`/api/documents/admin/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Erreur suppression");
+      toast.success("Document supprimé");
+      fetchDocuments();
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
+
+  const fetchDocuments = async () => {
+    setIsLoadingTab(true);
+    try {
+      const res = await fetch("/api/documents");
+      const data = await res.json();
+      setDocuments(Array.isArray(data) ? data : []);
+    } catch (error) {
+      toast.error("Erreur lors du chargement des documents");
+    } finally {
+      setIsLoadingTab(false);
+    }
+  };
+
+  const handleUpdatePlainteStatut = async (id: number, statut: string) => {
+    try {
+      const res = await authFetch(`/api/plaintes/admin/${id}/statut`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ statut }),
+      });
+      if (!res.ok) throw new Error("Erreur statut");
+      toast.success("Statut mis à jour");
+      fetchPlaintes();
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
+
+  const handleDeletePlainte = async (id: number) => {
+    if (!confirm("Supprimer cette plainte ?")) return;
+    try {
+      const res = await authFetch(`/api/plaintes/admin/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Erreur suppression");
+      toast.success("Plainte supprimée");
+      fetchPlaintes();
+    } catch (error: any) {
+      toast.error(error.message);
     }
   };
 
@@ -170,7 +452,22 @@ export default function AdminDashboardPage() {
     }
   };
 
-  const handleCreateArticle = async (e: React.FormEvent) => {
+  const handleUpdateParametre = async (cle: string, valeur: string) => {
+    try {
+      const res = await authFetch(`/api/parametres/admin`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ cle, valeur }),
+      });
+      if (!res.ok) throw new Error("Erreur paramètre");
+      toast.success("Paramètre mis à jour");
+      fetchParametres();
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
+
+  const handleSaveArticle = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSavingArticle(true);
     try {
@@ -188,35 +485,44 @@ export default function AdminDashboardPage() {
       }
       if (articleImage) formData.append("image", articleImage);
 
-      const res = await authFetch("/api/articles/admin", {
-        method: "POST",
+      const url = editingArticle ? `/api/articles/admin/${editingArticle.id}` : "/api/articles/admin";
+      const method = editingArticle ? "PUT" : "POST";
+
+      const res = await authFetch(url, {
+        method,
         body: formData,
       });
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || "Création impossible");
+        throw new Error(data.error || "Opération impossible");
       }
 
-      toast.success("Article créé");
+      toast.success(editingArticle ? "Article mis à jour" : "Article créé");
       setShowArticleForm(false);
+      setEditingArticle(null);
       setArticleForm({
-        titre: "",
-        slug: "",
-        extrait: "",
-        contenu: "",
-        categorie: "communique",
-        image_url: "",
-        statut: "brouillon",
-        date_publication: "",
+        titre: "", slug: "", extrait: "", contenu: "", categorie: "communique", image_url: "", statut: "brouillon", date_publication: "",
       });
       setArticleImage(null);
       fetchArticles();
     } catch (error: any) {
-      toast.error("Erreur lors de la création", {
+      toast.error("Erreur lors de l'enregistrement", {
         description: error.message,
       });
     } finally {
       setIsSavingArticle(false);
+    }
+  };
+
+  const handleDeleteArticle = async (id: number) => {
+    if (!confirm("Supprimer cet article ?")) return;
+    try {
+      const res = await authFetch(`/api/articles/admin/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Erreur suppression");
+      toast.success("Article supprimé");
+      fetchArticles();
+    } catch (error: any) {
+      toast.error(error.message);
     }
   };
 
@@ -395,7 +701,10 @@ export default function AdminDashboardPage() {
               </div>
 
               {showArticleForm && (
-                <form onSubmit={handleCreateArticle} className="bg-white rounded-[32px] border border-slate-100 shadow-sm p-6 space-y-4">
+                <form onSubmit={handleSaveArticle} className="bg-white rounded-[32px] border border-slate-100 shadow-sm p-6 space-y-4">
+                  <h3 className="text-lg font-bold text-slate-800 mb-4">
+                    {editingArticle ? "Modifier l'article" : "Nouvel Article"}
+                  </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Titre</p>
@@ -520,7 +829,7 @@ export default function AdminDashboardPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-50">
-                    {articles
+                    {Array.isArray(articles) && articles
                       .filter((art) =>
                         String(art.titre || "")
                           .toLowerCase()
@@ -554,11 +863,21 @@ export default function AdminDashboardPage() {
                           {new Date(art.date_publication).toLocaleDateString()}
                         </td>
                         <td className="px-6 py-4">
-                          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-blue-600 hover:bg-blue-50">
+                          <div className="flex items-center gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-8 w-8 rounded-lg text-blue-600 hover:bg-blue-50"
+                              onClick={() => openArticleForm(art)}
+                            >
                               <Edit className="w-4 h-4" />
                             </Button>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-red-600 hover:bg-red-50">
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-8 w-8 rounded-lg text-red-600 hover:bg-red-50"
+                              onClick={() => handleDeleteArticle(art.id)}
+                            >
                               <Trash2 className="w-4 h-4" />
                             </Button>
                           </div>
@@ -580,27 +899,99 @@ export default function AdminDashboardPage() {
 
           {activeTab === "membres" && (
             <div className="space-y-6 animate-in fade-in duration-300">
-              <div>
-                <h2 className="text-lg font-bold text-slate-800">Membres</h2>
-                <p className="text-xs text-muted-foreground">Liste des membres actifs</p>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-bold text-slate-800">Membres</h2>
+                  <p className="text-xs text-muted-foreground">Liste des membres actifs</p>
+                </div>
+                <Button onClick={() => openMembreForm()} className="rounded-xl gap-2 font-bold">
+                  <Plus className="w-4 h-4" />
+                  Ajouter un membre
+                </Button>
               </div>
+
+              {showMembreForm && (
+                <form onSubmit={handleSaveMembre} className="bg-white rounded-[32px] border border-slate-100 shadow-sm p-6 space-y-4">
+                  <h3 className="text-lg font-bold text-slate-800 mb-4">
+                    {editingMembre ? "Modifier le membre" : "Nouveau Membre"}
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Nom Complet</p>
+                      <Input
+                        value={membreForm.nom}
+                        onChange={(e) => setMembreForm(prev => ({ ...prev, nom: e.target.value }))}
+                        required
+                        className="h-11 rounded-xl border-slate-200"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Fonction</p>
+                      <Input
+                        value={membreForm.fonction}
+                        onChange={(e) => setMembreForm(prev => ({ ...prev, fonction: e.target.value }))}
+                        className="h-11 rounded-xl border-slate-200"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                       <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Initiales</p>
+                       <Input
+                         value={membreForm.initiales}
+                         onChange={(e) => setMembreForm(prev => ({ ...prev, initiales: e.target.value }))}
+                         className="h-11 rounded-xl border-slate-200"
+                       />
+                    </div>
+                    <div className="space-y-2">
+                       <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Photo</p>
+                       <input
+                         type="file"
+                         accept="image/*"
+                         onChange={(e) => setMembreImage(e.target.files?.[0] || null)}
+                       />
+                    </div>
+                    <div className="space-y-2 md:col-span-2">
+                       <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Biographie</p>
+                       <Textarea
+                         value={membreForm.bio}
+                         onChange={(e) => setMembreForm(prev => ({ ...prev, bio: e.target.value }))}
+                         className="min-h-[100px] rounded-xl border-slate-200"
+                       />
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <Button type="submit" className="font-bold rounded-xl h-11 px-8">Enregistrer</Button>
+                    <Button type="button" variant="outline" onClick={() => setShowMembreForm(false)} className="rounded-xl h-11">Annuler</Button>
+                  </div>
+                </form>
+              )}
+
               {isLoadingTab ? (
                 <p className="text-sm text-slate-500">Chargement...</p>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                   {membres.map((membre) => (
-                    <div key={membre.id} className="bg-white rounded-2xl border border-slate-100 p-4 shadow-sm">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-full bg-slate-100 overflow-hidden flex items-center justify-center text-sm font-bold text-slate-500">
-                          {membre.photo_path ? (
-                            <img src={`/${membre.photo_path}`} alt={membre.nom} className="w-full h-full object-cover" />
-                          ) : (
-                            (membre.initiales || membre.nom?.charAt(0))
-                          )}
+                    <div key={membre.id} className="bg-white rounded-2xl border border-slate-100 p-4 shadow-sm group">
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-full bg-slate-100 overflow-hidden flex items-center justify-center text-sm font-bold text-slate-500">
+                            {membre.photo_path ? (
+                              <img src={`/${membre.photo_path}`} alt={membre.nom} className="w-full h-full object-cover" />
+                            ) : (
+                              (membre.initiales || membre.nom?.charAt(0))
+                            )}
+                          </div>
+                          <div>
+                            <p className="text-sm font-bold text-slate-800">{membre.nom}</p>
+                            <p className="text-xs text-slate-500">{membre.fonction}</p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-sm font-bold text-slate-800">{membre.nom}</p>
-                          <p className="text-xs text-slate-500">{membre.fonction}</p>
+                        <div className="flex items-center gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-600" onClick={() => openMembreForm(membre)}>
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                          <Button variant="ghost" size="icon" className="h-8 w-8 text-red-600" onClick={() => handleDeleteMembre(membre.id)}>
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
                         </div>
                       </div>
                     </div>
@@ -615,17 +1006,71 @@ export default function AdminDashboardPage() {
 
           {activeTab === "galerie" && (
             <div className="space-y-6 animate-in fade-in duration-300">
-              <div>
-                <h2 className="text-lg font-bold text-slate-800">Galerie</h2>
-                <p className="text-xs text-muted-foreground">Images publiées</p>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-bold text-slate-800">Galerie</h2>
+                  <p className="text-xs text-muted-foreground">Images publiées</p>
+                </div>
+                <Button onClick={() => openGalerieForm()} className="rounded-xl gap-2 font-bold">
+                  <Plus className="w-4 h-4" />
+                  Ajouter une image
+                </Button>
               </div>
+
+              {showGalerieForm && (
+                <form onSubmit={handleSaveGalerie} className="bg-white rounded-[32px] border border-slate-100 shadow-sm p-6 space-y-4">
+                  <h3 className="text-lg font-bold text-slate-800 mb-4">
+                    {editingGalerie ? "Modifier l'image" : "Nouvelle Image"}
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Titre</p>
+                      <Input
+                        value={galerieForm.titre}
+                        onChange={(e) => setGalerieForm(prev => ({ ...prev, titre: e.target.value }))}
+                        required
+                        className="h-11 rounded-xl border-slate-200"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Catégorie</p>
+                      <Input
+                        value={galerieForm.categorie}
+                        onChange={(e) => setGalerieForm(prev => ({ ...prev, categorie: e.target.value }))}
+                        className="h-11 rounded-xl border-slate-200"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                       <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Image</p>
+                       <input
+                         type="file"
+                         accept="image/*"
+                         onChange={(e) => setGalerieImage(e.target.files?.[0] || null)}
+                       />
+                    </div>
+                    <div className="space-y-2 md:col-span-2">
+                       <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Description</p>
+                       <Textarea
+                         value={galerieForm.description}
+                         onChange={(e) => setGalerieForm(prev => ({ ...prev, description: e.target.value }))}
+                         className="min-h-[100px] rounded-xl border-slate-200"
+                       />
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <Button type="submit" className="font-bold rounded-xl h-11 px-8">Enregistrer</Button>
+                    <Button type="button" variant="outline" onClick={() => setShowGalerieForm(false)} className="rounded-xl h-11">Annuler</Button>
+                  </div>
+                </form>
+              )}
+
               {isLoadingTab ? (
                 <p className="text-sm text-slate-500">Chargement...</p>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                   {galerie.map((item) => (
-                    <div key={item.id} className="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm">
-                      <div className="h-40 bg-slate-100">
+                    <div key={item.id} className="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm group">
+                      <div className="h-48 bg-slate-100 relative">
                         {item.image_path ? (
                           <img src={`/${item.image_path}`} alt={item.titre} className="w-full h-full object-cover" />
                         ) : (
@@ -633,15 +1078,23 @@ export default function AdminDashboardPage() {
                             Pas d'image
                           </div>
                         )}
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                          <Button size="icon" className="bg-white text-primary hover:bg-white/90" onClick={() => openGalerieForm(item)}>
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                          <Button size="icon" variant="destructive" onClick={() => handleDeleteGalerie(item.id)}>
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
                       </div>
                       <div className="p-4">
-                        <p className="text-sm font-bold text-slate-800">{item.titre}</p>
-                        <p className="text-xs text-slate-500">{item.categorie || "—"}</p>
+                        <p className="text-sm font-bold text-slate-800 line-clamp-1">{item.titre}</p>
+                        <p className="text-xs text-slate-500">{item.categorie || "Événement"}</p>
                       </div>
                     </div>
                   ))}
                   {galerie.length === 0 && (
-                    <div className="text-sm text-slate-500">Aucun élément dans la galerie.</div>
+                    <div className="col-span-full py-12 text-center text-slate-400">Aucun élément dans la galerie.</div>
                   )}
                 </div>
               )}
@@ -650,10 +1103,62 @@ export default function AdminDashboardPage() {
 
           {activeTab === "documents" && (
             <div className="space-y-6 animate-in fade-in duration-300">
-              <div>
-                <h2 className="text-lg font-bold text-slate-800">Documents</h2>
-                <p className="text-xs text-muted-foreground">Documents publiés</p>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-bold text-slate-800">Documents</h2>
+                  <p className="text-xs text-muted-foreground">Documents publiés</p>
+                </div>
+                <Button onClick={() => openDocumentForm()} className="rounded-xl gap-2 font-bold">
+                  <Plus className="w-4 h-4" />
+                  Ajouter un document
+                </Button>
               </div>
+
+              {showDocumentForm && (
+                <form onSubmit={handleSaveDocument} className="bg-white rounded-[32px] border border-slate-100 shadow-sm p-6 space-y-4">
+                  <h3 className="text-lg font-bold text-slate-800 mb-4">
+                    {editingDocument ? "Modifier le document" : "Nouveau Document"}
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2 md:col-span-2">
+                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Titre du document</p>
+                      <Input
+                        value={documentForm.titre}
+                        onChange={(e) => setDocumentForm(prev => ({ ...prev, titre: e.target.value }))}
+                        required
+                        className="h-11 rounded-xl border-slate-200"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Catégorie</p>
+                      <select
+                        value={documentForm.categorie}
+                        onChange={(e) => setDocumentForm(prev => ({ ...prev, categorie: e.target.value }))}
+                        className="h-11 w-full rounded-xl border border-slate-200 px-3 bg-white text-sm"
+                      >
+                         <option value="Loi">Loi</option>
+                         <option value="Décret">Décret</option>
+                         <option value="Arrêté">Arrêté</option>
+                         <option value="Note">Note circulaire</option>
+                         <option value="Rapport">Rapport</option>
+                      </select>
+                    </div>
+                    <div className="space-y-2">
+                       <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Fichier (PDF)</p>
+                       <input
+                         type="file"
+                         accept="application/pdf"
+                         onChange={(e) => setDocumentFile(e.target.files?.[0] || null)}
+                       />
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <Button type="submit" className="font-bold rounded-xl h-11 px-8">Enregistrer</Button>
+                    <Button type="button" variant="outline" onClick={() => setShowDocumentForm(false)} className="rounded-xl h-11">Annuler</Button>
+                  </div>
+                </form>
+              )}
+
               {isLoadingTab ? (
                 <p className="text-sm text-slate-500">Chargement...</p>
               ) : (
@@ -664,30 +1169,35 @@ export default function AdminDashboardPage() {
                         <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest">Titre</th>
                         <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest">Catégorie</th>
                         <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest">Type</th>
-                        <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest">Taille</th>
-                        <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest">Date</th>
+                        <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-50">
                       {documents.map((doc) => (
-                        <tr key={doc.id} className="hover:bg-slate-50/50 transition-colors">
+                        <tr key={doc.id} className="hover:bg-slate-50/50 transition-colors group">
                           <td className="px-6 py-4">
                             <p className="text-sm font-bold text-slate-800">{doc.titre}</p>
                             {doc.fichier_path && (
-                              <p className="text-[10px] text-slate-400 font-mono">/{doc.fichier_path}</p>
+                              <p className="text-[10px] text-slate-400 font-mono">/{doc.fichier_path.split('/').pop()}</p>
                             )}
                           </td>
                           <td className="px-6 py-4 text-sm text-slate-500">{doc.categorie || "—"}</td>
-                          <td className="px-6 py-4 text-sm text-slate-500">{doc.type_fichier || "—"}</td>
-                          <td className="px-6 py-4 text-sm text-slate-500">{doc.taille || "—"}</td>
-                          <td className="px-6 py-4 text-sm text-slate-500">
-                            {doc.date_publication ? new Date(doc.date_publication).toLocaleDateString() : "—"}
+                          <td className="px-6 py-4 text-sm text-slate-500 font-mono">{doc.type_fichier || "PDF"}</td>
+                          <td className="px-6 py-4">
+                            <div className="flex items-center gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
+                              <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-600" onClick={() => openDocumentForm(doc)}>
+                                <Edit className="w-4 h-4" />
+                              </Button>
+                              <Button variant="ghost" size="icon" className="h-8 w-8 text-red-600" onClick={() => handleDeleteDocument(doc.id)}>
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
                           </td>
                         </tr>
                       ))}
                       {documents.length === 0 && (
                         <tr>
-                          <td colSpan={5} className="px-6 py-12 text-center text-slate-400 font-medium">
+                          <td colSpan={4} className="px-6 py-12 text-center text-slate-400 font-medium">
                             Aucun document trouvé.
                           </td>
                         </tr>
@@ -701,43 +1211,64 @@ export default function AdminDashboardPage() {
 
           {activeTab === "plaintes" && (
             <div className="space-y-6 animate-in fade-in duration-300">
-              <div>
-                <h2 className="text-lg font-bold text-slate-800">Plaintes</h2>
-                <p className="text-xs text-muted-foreground">Derniers signalements</p>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-bold text-slate-800">Plaintes & Dénonciations</h2>
+                  <p className="text-xs text-muted-foreground">Gestion des signalements reçus</p>
+                </div>
               </div>
+
               {isLoadingTab ? (
                 <p className="text-sm text-slate-500">Chargement...</p>
               ) : (
-                <div className="bg-white rounded-[32px] border border-slate-100 shadow-sm overflow-hidden">
-                  <table className="w-full text-left border-collapse">
-                    <thead>
-                      <tr className="bg-slate-50 border-b border-slate-100">
-                        <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest">Réf.</th>
-                        <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest">Nom</th>
-                        <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest">Statut</th>
-                        <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest">Date</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-50">
-                      {plaintes.map((p) => (
-                        <tr key={p.id} className="hover:bg-slate-50/50 transition-colors">
-                          <td className="px-6 py-4 text-sm font-mono text-slate-600">{p.reference}</td>
-                          <td className="px-6 py-4 text-sm text-slate-800">{[p.nom, p.prenom].filter(Boolean).join(" ") || "—"}</td>
-                          <td className="px-6 py-4 text-sm text-slate-500">{p.statut || "nouvelle"}</td>
-                          <td className="px-6 py-4 text-sm text-slate-500">
-                            {p.created_at ? new Date(p.created_at).toLocaleDateString() : "—"}
-                          </td>
-                        </tr>
-                      ))}
-                      {plaintes.length === 0 && (
-                        <tr>
-                          <td colSpan={4} className="px-6 py-12 text-center text-slate-400 font-medium">
-                            Aucune plainte trouvée.
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
+                <div className="space-y-4">
+                  {plaintes.map((p) => (
+                    <div key={p.id} className="bg-white rounded-[32px] border border-slate-100 p-6 shadow-sm hover:shadow-md transition-shadow group">
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="space-y-2 flex-1">
+                          <div className="flex items-center gap-2">
+                             <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
+                               p.statut === 'traite' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
+                             }`}>
+                               {p.statut === 'traite' ? 'Traitée' : 'Nouvelle'}
+                             </span>
+                             <p className="text-xs text-slate-400 font-medium">#{p.id} • {new Date(p.created_at).toLocaleString()}</p>
+                          </div>
+                          <h4 className="font-bold text-slate-800">{p.objet}</h4>
+                          <p className="text-sm text-slate-600 leading-relaxed">{p.message}</p>
+                          <div className="flex flex-wrap gap-4 pt-2 border-t border-slate-50">
+                            <div>
+                               <p className="text-[10px] font-black uppercase text-slate-400">Plaignant</p>
+                               <p className="text-sm font-bold text-slate-700">{p.nom}</p>
+                            </div>
+                            <div>
+                               <p className="text-[10px] font-black uppercase text-slate-400">Email / Tel</p>
+                               <p className="text-sm text-slate-600">{p.email} {p.telephone && `• ${p.telephone}`}</p>
+                            </div>
+                            {p.entreprise_visee && (
+                              <div>
+                                 <p className="text-[10px] font-black uppercase text-slate-400">Entreprise Visée</p>
+                                 <p className="text-sm font-bold text-orange-600">{p.entreprise_visee}</p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {p.statut !== 'traite' && (
+                            <Button size="sm" className="rounded-xl h-10 bg-green-600 font-bold text-[10px]" onClick={() => handleUpdatePlainteStatut(p.id, 'traite')}>
+                              <CheckCircle2 className="w-3 h-3 mr-1" /> Marquer Traitée
+                            </Button>
+                          )}
+                          <Button size="icon" variant="ghost" className="h-10 w-10 text-red-600 hover:bg-red-50" onClick={() => handleDeletePlainte(p.id)}>
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  {plaintes.length === 0 && (
+                    <div className="py-20 text-center text-slate-400">Aucune plainte trouvée.</div>
+                  )}
                 </div>
               )}
             </div>
@@ -747,38 +1278,27 @@ export default function AdminDashboardPage() {
             <div className="space-y-6 animate-in fade-in duration-300">
               <div>
                 <h2 className="text-lg font-bold text-slate-800">Paramètres</h2>
-                <p className="text-xs text-muted-foreground">Configuration du site</p>
+                <p className="text-xs text-muted-foreground">Configuration générale</p>
               </div>
+
               {isLoadingTab ? (
                 <p className="text-sm text-slate-500">Chargement...</p>
               ) : (
-                <div className="bg-white rounded-[32px] border border-slate-100 shadow-sm p-6">
-                  {Object.keys(parametres).length === 0 ? (
-                    <p className="text-sm text-slate-500">Aucun paramètre trouvé.</p>
-                  ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {Object.entries(parametres).map(([key, value]) => (
-                        <div key={key} className="rounded-xl border border-slate-100 p-4">
-                          <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">{key}</p>
-                          <p className="text-sm text-slate-800 break-words mt-2">{value}</p>
-                        </div>
-                      ))}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {Object.entries(parametres).map(([cle, valeur]) => (
+                    <div key={cle} className="bg-white rounded-2xl border border-slate-100 p-6 space-y-3 shadow-sm">
+                      <p className="text-xs font-black uppercase text-primary tracking-widest">{cle.replace(/_/g, " ")}</p>
+                      <Input 
+                        defaultValue={valeur} 
+                        className="h-11 rounded-xl bg-slate-50 border-transparent focus:bg-white"
+                        onBlur={(e) => {
+                          if (e.target.value !== valeur) handleUpdateParametre(cle, e.target.value);
+                        }}
+                      />
                     </div>
-                  )}
+                  ))}
                 </div>
               )}
-            </div>
-          )}
-
-          {false && (
-            <div className="flex flex-col items-center justify-center py-20 text-center space-y-4 animate-in zoom-in duration-300">
-               <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center text-slate-400">
-                  <LayoutDashboard className="w-8 h-8" />
-               </div>
-               <div className="max-w-sm">
-                  <h3 className="text-lg font-bold text-slate-800">Module en cours de migration</h3>
-                  <p className="text-sm text-slate-500">Nous terminons l'intégration de cet onglet pour une expérience de gestion optimale sur Vercel.</p>
-               </div>
             </div>
           )}
         </div>

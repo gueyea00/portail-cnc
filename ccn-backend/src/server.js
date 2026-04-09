@@ -15,6 +15,9 @@ import membresRoutes from './routes/membres.js';
 import plaintesRoutes from './routes/plaintes.js';
 import parametresRoutes from './routes/parametres.js';
 import adminsRoutes from './routes/admins.js';
+import missionsRoutes from './routes/missions.js';
+import faqRoutes from './routes/faq.js';
+import servicesRoutes from './routes/services.js';
 
 dotenv.config();
 
@@ -69,6 +72,9 @@ app.use('/api/galerie', galerieRoutes);
 app.use('/api/membres', membresRoutes);
 app.use('/api/plaintes', plaintesRoutes);
 app.use('/api/parametres', parametresRoutes);
+app.use('/api/missions', missionsRoutes);
+app.use('/api/faq', faqRoutes);
+app.use('/api/services', servicesRoutes);
 
 // Admin — routes protégées supplémentaires
 app.use('/api/articles', articlesRoutes);

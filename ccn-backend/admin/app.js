@@ -198,6 +198,127 @@ function openModal(type, data = null) {
     };
   }
 
+  if (type === 'mission') {
+    title.textContent = data ? 'Modifier la mission' : 'Nouvelle mission';
+    body.innerHTML = `
+      <form id="missionForm">
+        <div class="form-group"><label>Titre *</label><input name="titre" value="${data?.titre || ''}" required /></div>
+        <div class="form-group"><label>Description</label><textarea name="description" rows="3">${data?.description || ''}</textarea></div>
+        <div class="form-row">
+          <div class="form-group"><label>Icône (Lucide)</label><input name="icone" value="${data?.icone || 'shield'}" placeholder="shield, zap, users..." /></div>
+          <div class="form-group"><label>Ordre</label><input type="number" name="ordre" value="${data?.ordre || 0}" /></div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" onclick="closeModal()">Annuler</button>
+          <button type="submit" class="btn btn-primary">Enregistrer</button>
+        </div>
+      </form>`;
+    document.getElementById('missionForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const body = Object.fromEntries(new FormData(e.target));
+      const url = data ? `/api/missions/admin/${data.id}` : '/api/missions/admin';
+      const method = data ? 'PUT' : 'POST';
+      const res = await apiFetch(url, { method, headers: headers(), body: JSON.stringify(body) });
+      if (res?.ok) { showToast('Mission enregistrée !'); closeModal(); loadMissions(); }
+    };
+  }
+
+  if (type === 'historique') {
+    title.textContent = data ? 'Modifier la date' : 'Ajouter une date';
+    body.innerHTML = `
+      <form id="historiqueForm">
+        <div class="form-group"><label>Année *</label><input name="annee" value="${data?.annee || ''}" placeholder="ex: 2024" required /></div>
+        <div class="form-group"><label>Description</label><textarea name="description" rows="3">${data?.description || ''}</textarea></div>
+        <div class="form-group"><label>Ordre</label><input type="number" name="ordre" value="${data?.ordre || 0}" /></div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" onclick="closeModal()">Annuler</button>
+          <button type="submit" class="btn btn-primary">Enregistrer</button>
+        </div>
+      </form>`;
+    document.getElementById('historiqueForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const body = Object.fromEntries(new FormData(e.target));
+      // Note: Missions endpoint used for historical timeline in this context
+      const url = data ? `/api/missions/admin/historique/${data.id}` : '/api/missions/admin/historique';
+      const method = data ? 'PUT' : 'POST';
+      const res = await apiFetch(url, { method, headers: headers(), body: JSON.stringify(body) });
+      if (res?.ok) { showToast('Historique mis à jour !'); closeModal(); loadHistorique(); }
+    };
+  }
+
+  if (type === 'faq') {
+    title.textContent = data ? 'Modifier la FAQ' : 'Nouvelle question';
+    body.innerHTML = `
+      <form id="faqForm">
+        <div class="form-group"><label>Question *</label><input name="question" value="${data?.question || ''}" required /></div>
+        <div class="form-group"><label>Réponse</label><textarea name="reponse" rows="4">${data?.reponse || ''}</textarea></div>
+        <div class="form-row">
+          <div class="form-group"><label>Thème</label><input name="theme" value="${data?.theme || ''}" placeholder="Procédure, Droit..." /></div>
+          <div class="form-group"><label>Ordre</label><input type="number" name="ordre" value="${data?.ordre || 0}" /></div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" onclick="closeModal()">Annuler</button>
+          <button type="submit" class="btn btn-primary">Enregistrer</button>
+        </div>
+      </form>`;
+    document.getElementById('faqForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const body = Object.fromEntries(new FormData(e.target));
+      const url = data ? `/api/faq/admin/${data.id}` : '/api/faq/admin';
+      const method = data ? 'PUT' : 'POST';
+      const res = await apiFetch(url, { method, headers: headers(), body: JSON.stringify(body) });
+      if (res?.ok) { showToast('FAQ mise à jour !'); closeModal(); loadFAQ(); }
+    };
+  }
+
+  if (type === 'processus') {
+    title.textContent = data ? 'Modifier l\'étape' : 'Ajouter une étape';
+    body.innerHTML = `
+      <form id="processusForm">
+        <div class="form-group"><label>Titre *</label><input name="titre" value="${data?.titre || ''}" required /></div>
+        <div class="form-group"><label>Description</label><textarea name="description" rows="3">${data?.description || ''}</textarea></div>
+        <div class="form-group"><label>Ordre</label><input type="number" name="ordre" value="${data?.ordre || 0}" /></div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" onclick="closeModal()">Annuler</button>
+          <button type="submit" class="btn btn-primary">Enregistrer</button>
+        </div>
+      </form>`;
+    document.getElementById('processusForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const body = Object.fromEntries(new FormData(e.target));
+      const url = data ? `/api/missions/admin/etapes/${data.id}` : '/api/missions/admin/etapes';
+      const method = data ? 'PUT' : 'POST';
+      const res = await apiFetch(url, { method, headers: headers(), body: JSON.stringify(body) });
+      if (res?.ok) { showToast('Étape enregistrée !'); closeModal(); loadProcessus(); }
+    };
+  }
+
+  if (type === 'service') {
+    title.textContent = data ? 'Modifier le service' : 'Ajouter un service';
+    body.innerHTML = `
+      <form id="serviceForm">
+        <div class="form-group"><label>Titre *</label><input name="titre" value="${data?.titre || ''}" required /></div>
+        <div class="form-group"><label>Description</label><textarea name="description" rows="2">${data?.description || ''}</textarea></div>
+        <div class="form-row">
+          <div class="form-group"><label>Icône</label><input name="icone" value="${data?.icone || ''}" placeholder="Search, FileText..." /></div>
+          <div class="form-group"><label>Lien</label><input name="lien" value="${data?.lien || ''}" placeholder="/plaintes" /></div>
+        </div>
+        <div class="form-group"><label>Ordre</label><input type="number" name="ordre" value="${data?.ordre || 0}" /></div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" onclick="closeModal()">Annuler</button>
+          <button type="submit" class="btn btn-primary">Enregistrer</button>
+        </div>
+      </form>`;
+    document.getElementById('serviceForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const body = Object.fromEntries(new FormData(e.target));
+      const url = data ? `/api/services/admin/${data.id}` : '/api/services/admin';
+      const method = data ? 'PUT' : 'POST';
+      const res = await apiFetch(url, { method, headers: headers(), body: JSON.stringify(body) });
+      if (res?.ok) { showToast('Service mis à jour !'); closeModal(); loadServices(); }
+    };
+  }
+
   if (type === 'membre') {
     title.textContent = data ? 'Modifier le membre' : 'Nouveau membre';
     body.innerHTML = `
@@ -420,9 +541,109 @@ async function loadPresident() {
   if (f('presidentNom')) f('presidentNom').value = data.president_nom || '';
   if (f('presidentTitre')) f('presidentTitre').value = data.president_titre || '';
   if (f('presidentMessage')) f('presidentMessage').value = data.president_message || '';
+  if (f('heroTitle')) f('heroTitle').value = data.hero_title || '';
+  if (f('heroSubtitle')) f('heroSubtitle').value = data.hero_subtitle || '';
+  if (f('horairesOuverture')) f('horairesOuverture').value = data.horaires_ouverture || '';
+  if (f('siegeSocial')) f('siegeSocial').value = data.siege_social || '';
+  if (f('presP1')) f('presP1').value = data.presentation_p1 || '';
+  if (f('presP2')) f('presP2').value = data.presentation_p2 || '';
+  if (f('presP3')) f('presP3').value = data.presentation_p3 || '';
+  if (f('footerDescription')) f('footerDescription').value = data.footer_description || '';
   if (f('footerTelephone')) f('footerTelephone').value = data.footer_telephone || '';
   if (f('footerEmail')) f('footerEmail').value = data.footer_email || '';
   if (f('footerAdresse')) f('footerAdresse').value = data.footer_adresse || '';
+}
+
+async function loadMissions() {
+  const res = await apiFetch('/api/missions', {});
+  const items = await res.json();
+  const tb = document.getElementById('missionsTableBody');
+  if (!tb) return;
+  tb.innerHTML = items.map(m => `<tr>
+    <td><strong>${m.titre}</strong></td>
+    <td><i data-lucide="${m.icone}"></i> ${m.icone}</td>
+    <td>${m.ordre}</td>
+    <td>
+      <button class="btn btn-ghost btn-sm" onclick='openModal("mission", ${JSON.stringify(m).replace(/'/g, "&#39;")})'><i data-lucide="edit-2" class="icon-sm"></i></button>
+      <button class="btn btn-danger btn-sm" onclick="deleteItem('missions', ${m.id})"><i data-lucide="trash-2" class="icon-sm"></i></button>
+    </td>
+  </tr>`).join('');
+  refreshIcons();
+}
+
+async function loadHistorique() {
+  const res = await apiFetch('/api/missions/historique', {});
+  const items = await res.json();
+  const tb = document.getElementById('historiqueTableBody');
+  if (!tb) return;
+  tb.innerHTML = items.map(h => `<tr>
+    <td>${h.annee}</td>
+    <td>${h.description}</td>
+    <td>${h.ordre}</td>
+    <td>
+      <button class="btn btn-ghost btn-sm" onclick='openModal("historique", ${JSON.stringify(h).replace(/'/g, "&#39;")})'><i data-lucide="edit-2" class="icon-sm"></i></button>
+      <button class="btn btn-danger btn-sm" onclick="deleteHistory(${h.id})"><i data-lucide="trash-2" class="icon-sm"></i></button>
+    </td>
+  </tr>`).join('');
+  refreshIcons();
+}
+
+async function deleteHistory(id) {
+  if (!confirm('Supprimer ?')) return;
+  await apiFetch(`/api/missions/admin/historique/${id}`, { method: 'DELETE', headers: headers() });
+  loadHistorique();
+}
+
+async function loadProcessus() {
+  const data = await apiFetch('/api/missions/admin/etapes');
+  const tbody = document.getElementById('processusTableBody');
+  tbody.innerHTML = data.map(i => `
+    <tr>
+      <td><span class="badge badge-outline">${i.ordre}</span></td>
+      <td><strong>${i.titre}</strong></td>
+      <td><p class="text-truncate" style="max-width: 300px;">${i.description}</p></td>
+      <td style="text-align: right;">
+        <button class="btn btn-sm btn-ghost" onclick="editItem('processus', ${i.id})"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
+        <button class="btn btn-sm btn-ghost text-destructive" onclick="deleteItem('processus', ${i.id})"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+      </td>
+    </tr>
+  `).join('');
+  lucide.createIcons();
+}
+
+async function loadFAQ() {
+  const res = await apiFetch('/api/faq', {});
+  const items = await res.json();
+  const tb = document.getElementById('faqTableBody');
+  if (!tb) return;
+  tb.innerHTML = items.map(f => `<tr>
+    <td><strong>${f.question}</strong></td>
+    <td>${f.theme || '—'}</td>
+    <td>${f.ordre}</td>
+    <td>
+      <button class="btn btn-ghost btn-sm" onclick='openModal("faq", ${JSON.stringify(f).replace(/'/g, "&#39;")})'><i data-lucide="edit-2" class="icon-sm"></i></button>
+      <button class="btn btn-danger btn-sm" onclick="deleteItem('faq', ${f.id})"><i data-lucide="trash-2" class="icon-sm"></i></button>
+    </td>
+  </tr>`).join('');
+  refreshIcons();
+}
+
+async function loadServices() {
+  const res = await apiFetch('/api/services', {});
+  const items = await res.json();
+  const tb = document.getElementById('servicesTableBody');
+  if (!tb) return;
+  tb.innerHTML = items.map(s => `<tr>
+    <td><strong>${s.titre}</strong></td>
+    <td><i data-lucide="${s.icone}"></i> ${s.icone}</td>
+    <td>${s.lien}</td>
+    <td>${s.ordre}</td>
+    <td>
+      <button class="btn btn-ghost btn-sm" onclick='openModal("service", ${JSON.stringify(s).replace(/'/g, "&#39;")})'><i data-lucide="edit-2" class="icon-sm"></i></button>
+      <button class="btn btn-danger btn-sm" onclick="deleteItem('services', ${s.id})"><i data-lucide="trash-2" class="icon-sm"></i></button>
+    </td>
+  </tr>`).join('');
+  refreshIcons();
 }
 
 async function loadAdmins() {
@@ -465,7 +686,7 @@ async function deleteItem(resource, id) {
   const res = await apiFetch(`/api/${resource}/admin/${id}`, { method: 'DELETE', headers: headers() });
   if (res?.ok || res?.status === 204) {
     showToast('Supprimé !');
-    const loaders = { articles: loadArticles, documents: loadDocuments, galerie: loadGalerie, membres: loadMembres, admins: loadAdmins };
+    const loaders = { articles: loadArticles, documents: loadDocuments, galerie: loadGalerie, membres: loadMembres, admins: loadAdmins, missions: loadMissions, faq: loadFAQ, services: loadServices };
     loaders[resource]?.();
   } else showToast('Erreur lors de la suppression', true);
 }
@@ -487,6 +708,11 @@ function navigateTo(section) {
     galerie: loadGalerie,
     president: loadPresident,
     membres: loadMembres,
+    missions: loadMissions,
+    historique: loadHistorique,
+    processus: loadProcessus,
+    faq: loadFAQ,
+    services_list: loadServices,
     plaintes: loadPlaintes,
     admins: loadAdmins,
   };

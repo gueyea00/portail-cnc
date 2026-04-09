@@ -28,15 +28,12 @@ export default defineConfig(({ mode }) => ({
 
       // Local backend
       "/api": {
-        target: "http://localhost:3000",
+        target: "http://localhost:8080",
         changeOrigin: true,
       },
-      "/admin": {
-        target: "http://localhost:3000",
-        changeOrigin: true,
-      },
+
       "/uploads": {
-        target: "http://localhost:3000",
+        target: "http://localhost:8080",
         changeOrigin: true,
       },
     },

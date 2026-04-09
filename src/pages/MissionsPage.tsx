@@ -1,6 +1,6 @@
+import { useQuery } from "@tanstack/react-query";
 import Breadcrumb from "@/components/layout/Breadcrumb";
-import { missions } from "@/lib/data";
-import { Shield, GitMerge, Scale, FileText, BarChart3, Users, Globe, Heart, Search, Target } from "lucide-react";
+import { Shield, GitMerge, Scale, FileText, BarChart3, Users, Globe, Heart, Search, Target, CheckCircle, Zap } from "lucide-react";
 
 const iconMap: Record<string, React.ReactNode> = {
   Shield: <Shield className="w-8 h-8" />,
@@ -12,9 +12,23 @@ const iconMap: Record<string, React.ReactNode> = {
   Globe: <Globe className="w-8 h-8" />,
   Heart: <Heart className="w-8 h-8" />,
   Search: <Search className="w-8 h-8" />,
+  CheckCircle: <CheckCircle className="w-8 h-8" />,
+  Zap: <Zap className="w-8 h-8" />,
 };
 
 export default function MissionsPage() {
+  const { data: missionsApi = [] } = useQuery({
+    queryKey: ["missions"],
+    queryFn: () => fetch("/api/missions").then(res => res.json())
+  });
+
+  const { data: etapesApi = [] } = useQuery({
+    queryKey: ["etapes-intervention"],
+    queryFn: () => fetch("/api/missions/etapes").then(res => res.json())
+  });
+
+  const sortedEtapes = Array.isArray(etapesApi) ? [...etapesApi].sort((a: any, b: any) => (a.ordre || 0) - (b.ordre || 0)) : [];
+
   return (
     <div>
       <section className="page-hero">
@@ -23,67 +37,57 @@ export default function MissionsPage() {
             <Target className="w-8 h-8 md:w-10 md:h-10 text-gold" />
             Missions & Attributions
           </h1>
-          <p className="mt-2 opacity-90 text-lg">Les neuf missions fondamentales du CNC</p>
+          <p className="mt-2 opacity-90 text-lg">Les missions fondamentales du CNC</p>
         </div>
       </section>
       <Breadcrumb />
 
-      <div className="container-page py-12">
-        <div className="space-y-6">
-          {missions.map((m, i) => (
-            <div key={m.titre} className={`${i % 2 === 0 ? 'bg-surface' : 'bg-muted'} p-6 md:p-8 rounded-2xl shadow-soft flex gap-6 items-start border-t-2 border-transparent hover:border-gold transition-colors`}>
-              <div className="shrink-0 w-14 h-14 rounded-lg bg-primary/10 text-gold flex items-center justify-center">
-                {iconMap[m.icone]}
-              </div>
-              <div>
-                <div className="flex items-center gap-3 mb-2">
-                  <span className="text-xs font-bold text-foreground bg-gold px-2 py-0.5 rounded shadow-sm">Mission {i + 1}</span>
-                  <h3 className="font-semibold text-foreground text-lg">{m.titre}</h3>
+      <div className="bg-muted/50 py-16">
+        <div className="container-page">
+          <p className="section-subtitle mb-12">Le CNC assure la régulation et le bon fonctionnement des marchés au Tchad.</p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {(missionsApi.length > 0 ? missionsApi : []).map((m: any, i: number) => (
+              <div key={m.titre} className="bg-surface p-6 rounded-[2rem] shadow-soft flex flex-col items-center text-center border-2 border-transparent hover:border-primary/20 hover:shadow-xl transition-all duration-300 group">
+                <div className="shrink-0 w-16 h-16 rounded-2xl bg-primary/5 text-primary flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <div className="w-8 h-8">
+                    {iconMap[m.icone] || <Shield className="w-8 h-8" />}
+                  </div>
                 </div>
-                <p className="text-muted-foreground leading-relaxed">{m.description}</p>
+                <div className="mb-4">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-primary/60 mb-2 block">Mission {i + 1}</span>
+                  <h3 className="font-bold text-foreground text-md leading-tight h-12 flex items-center justify-center">{m.titre}</h3>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed line-clamp-4 group-hover:line-clamp-none transition-all duration-500">{m.description}</p>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-
-
       </div>
 
-      {/* Timeline des interventions */}
-      <section className="bg-primary text-primary-foreground py-20 border-y border-white/5 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10 pointer-events-none">
-          <div className="absolute top-0 right-1/4 w-96 h-96 bg-white rounded-full blur-[120px]" />
-          <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-secondary rounded-full blur-[120px]" />
-        </div>
-        <div className="container-page relative z-10">
-          <div className="accent-line mx-auto bg-secondary" />
-          <h2 className="text-3xl md:text-5xl font-extrabold text-center mb-4 text-white">Types d'interventions</h2>
-          <p className="text-lg md:text-xl opacity-80 text-center mb-12 max-w-2xl mx-auto">Le parcours d'une affaire devant le Conseil National de la Concurrence</p>
-          
-          <div className="max-w-3xl mx-auto mt-12 space-y-8">
-            {[
-              { etape: "1", titre: "Saisine ou auto-saisine", desc: "Le CNC est saisi par plainte, signalement ou se saisit d'office." },
-              { etape: "2", titre: "Enquête préliminaire", desc: "Les enquêteurs recueillent les éléments de preuve et auditionnent les parties." },
-              { etape: "3", titre: "Instruction contradictoire", desc: "Les parties présentent leurs observations et moyens de défense." },
-              { etape: "4", titre: "Délibération", desc: "Le Conseil délibère et rend sa décision en séance plénière." },
-              { etape: "5", titre: "Décision et publication", desc: "La décision est notifiée aux parties et publiée au registre du CNC." },
-            ].map((e, idx) => (
-              <div key={e.etape} className="flex gap-6 group">
-                <div className="shrink-0 w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center font-bold text-xl border border-white/20 group-hover:bg-secondary group-hover:text-primary transition-all duration-300">
-                  {e.etape}
+      <section className="bg-surface py-20 border-t border-border">
+        <div className="container-page">
+          <h2 className="section-title text-center">Types d'interventions</h2>
+          <p className="section-subtitle text-center mb-16">Le parcours d'une affaire devant le Conseil National de la Concurrence</p>
+
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 relative">
+            {/* Ligne de connexion sur desktop - Placée derrière (z-0) */}
+            <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-border hidden md:block -translate-y-8 z-0" />
+
+            {sortedEtapes.length === 0 ? (
+              <div className="col-span-5 text-center text-muted-foreground italic">Aucun processus défini.</div>
+            ) : sortedEtapes.map((e: any, idx: number) => (
+              <div key={e.id} className="relative bg-surface p-6 rounded-2xl border border-border flex flex-col items-center text-center hover:shadow-lg transition-all z-10">
+                <div className="w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-xl mb-4 shadow-lg shadow-primary/20">
+                  {idx + 1}
                 </div>
-                <div className="pt-1 flex-1 border-b border-white/10 pb-6 group-last:border-none">
-                  <h3 className="font-bold text-xl text-white mb-2">{e.titre}</h3>
-                  <p className="text-base text-white/70">{e.desc}</p>
-                </div>
+                <h3 className="font-bold text-foreground mb-2">{e.titre}</h3>
+                <p className="text-xs text-muted-foreground leading-relaxed">{e.description}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
-
-
     </div>
   );
 }
-

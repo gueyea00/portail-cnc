@@ -6,12 +6,12 @@ import { FadeIn } from "@/components/ui/fade-in";
 import { useQuery } from "@tanstack/react-query";
 
 const missionsPreview = [
-  { titre: "Contrôle des pratiques anticoncurrentielles", desc: "Identifier et sanctionner les ententes et abus de position dominante.", icone: <Shield className="w-8 h-8" /> },
-  { titre: "Régulation des concentrations", desc: "Examiner les fusions et acquisitions d'entreprises.", icone: <GitMerge className="w-8 h-8" /> },
-  { titre: "Lutte contre la concurrence déloyale", desc: "Combattre les pratiques commerciales abusives.", icone: <Scale className="w-8 h-8" /> },
-  { titre: "Avis consultatifs", desc: "Émettre des avis sur les projets de lois et règlements.", icone: <FileText className="w-8 h-8" /> },
-  { titre: "Études de marché", desc: "Réaliser des études sectorielles approfondies.", icone: <BarChart3 className="w-8 h-8" /> },
-  { titre: "Sensibilisation", desc: "Promouvoir la culture de concurrence loyale.", icone: <Users className="w-8 h-8" /> },
+  { titre: "Contrôle des pratiques anticoncurrentielles", desc: "Identifier et sanctionner les ententes et abus de position dominante.", icone: <Shield className="w-5 h-5" />, color: "text-primary", bg: "bg-primary", baseColor: "border-primary/30" },
+  { titre: "Régulation des concentrations", desc: "Examiner les fusions et acquisitions d'entreprises.", icone: <GitMerge className="w-5 h-5" />, color: "text-primary", bg: "bg-primary", baseColor: "border-primary/30" },
+  { titre: "Lutte contre la concurrence déloyale", desc: "Combattre les pratiques commerciales abusives.", icone: <Scale className="w-5 h-5" />, color: "text-primary", bg: "bg-primary", baseColor: "border-primary/30" },
+  { titre: "Avis consultatifs", desc: "Émettre des avis sur les projets de lois et règlements.", icone: <FileText className="w-5 h-5" />, color: "text-primary", bg: "bg-primary", baseColor: "border-primary/30" },
+  { titre: "Études de marché", desc: "Réaliser des études sectorielles approfondies.", icone: <BarChart3 className="w-5 h-5" />, color: "text-primary", bg: "bg-primary", baseColor: "border-primary/30" },
+  { titre: "Sensibilisation", desc: "Promouvoir la culture de concurrence loyale.", icone: <Users className="w-5 h-5" />, color: "text-primary", bg: "bg-primary", baseColor: "border-primary/30" },
 ];
 
 const acceRapide = [
@@ -62,7 +62,7 @@ export default function HomePage() {
   return (
     <div>
       {/* Hero */}
-      <section 
+      <section
         className="text-primary-foreground min-h-[90vh] flex items-center py-16 md:py-24 relative overflow-hidden"
         style={{ backgroundImage: "url('/hero-bg.jpg')", backgroundSize: 'cover', backgroundPosition: 'center' }}
       >
@@ -78,29 +78,26 @@ export default function HomePage() {
               <Clock className="w-4 h-4 text-secondary" />
               <div className="text-right font-sans">
                 <p className="text-[10px] uppercase tracking-wider text-white/60 font-medium">{t("header.hours")}</p>
-                <p className="text-xs font-bold text-white">07h30 – 15h30</p>
+                <p className="text-xs font-bold text-white">{presidentData?.horaires_ouverture || "07h30 – 15h30"}</p>
               </div>
             </div>
             <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2 rounded-2xl shadow-xl">
               <MapPin className="w-4 h-4 text-destructive" />
               <div className="text-right font-sans">
                 <p className="text-[10px] uppercase tracking-wider text-white/60 font-medium">{t("header.seat")}</p>
-                <p className="text-xs font-bold text-white">N'Djamena, Tchad</p>
+                <p className="text-xs font-bold text-white">{presidentData?.siege_social || "N'Djamena, Tchad"}</p>
               </div>
             </div>
           </div>
 
           <FadeIn>
             <div className="max-w-3xl">
-              <div className="inline-flex items-center gap-2 bg-background/10 rounded-full px-4 py-1.5 text-sm mb-6 border border-white/10">
-                <span className="w-2 h-2 rounded-full bg-secondary" />
-                {t("hero.country")}
-              </div>
+
               <h1 className="text-4xl md:text-6xl font-extrabold leading-tight mb-6">
-                {t("hero.title")}
+                {presidentData?.hero_title || t("hero.title")}
               </h1>
               <p className="text-lg md:text-2xl opacity-90 mb-10 leading-relaxed font-light">
-                {t("hero.subtitle")}
+                {presidentData?.hero_subtitle || t("hero.subtitle")}
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link to="/plainte">
@@ -109,6 +106,41 @@ export default function HomePage() {
                     <ArrowRight className="w-4 h-4" />
                   </Button>
                 </Link>
+              </div>
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
+      {/* Mot du Président */}
+      <section className="py-20 bg-surface border-b border-border">
+        <div className="container-page">
+          <FadeIn>
+            <div className="w-full">
+              <div className="bg-surface rounded-2xl border border-border overflow-hidden md:flex shadow-xl">
+                <div className="md:w-2/5 bg-primary p-0 flex flex-col relative overflow-hidden h-[400px] md:h-auto">
+                  <img src={getImgUrl(presidentData?.president_photo_path, "/president.png")} alt={presidentData?.president_nom || "M. Vissia Bouranga"} className="absolute inset-0 w-full h-full object-cover z-0 object-top" onError={(e) => { e.currentTarget.src = '/president.png'; }} />
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/60 to-transparent z-10" />
+
+                  <div className="relative z-20 mt-auto p-8 text-center w-full">
+                    <h3 className="text-2xl font-bold text-white mb-1">{presidentData?.president_nom || "M. Vissia Bouranga"}</h3>
+                    <p className="text-md text-secondary font-medium">{presidentData?.president_titre || "Président du CNC"}</p>
+                  </div>
+                </div>
+                <div className="md:w-3/5 p-10 md:p-12 border-l-4 border-l-secondary relative flex flex-col justify-center">
+                  <Quote className="w-16 h-16 text-secondary/20 absolute top-8 left-8" />
+                  <blockquote className="text-foreground text-lg md:text-xl italic leading-relaxed mb-8 relative z-10 pt-6 pl-6">
+                    « {presidentData?.president_message || "Le Conseil National de la Concurrence œuvre sans relâche pour garantir un marché équitable où chaque opérateur économique peut prospérer dans le respect des règles. Notre mission est de bâtir un environnement de confiance propice au développement économique de notre nation."}  »
+                  </blockquote>
+                  <div className="relative z-10 pl-6">
+                    <Link to="/presentation">
+                      <Button variant="outline" className="gap-2 border-primary text-primary hover:bg-primary hover:text-white transition-all">
+                        Lire le message complet
+                        <ArrowRight className="w-4 h-4" />
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
               </div>
             </div>
           </FadeIn>
@@ -125,17 +157,29 @@ export default function HomePage() {
             </div>
           </FadeIn>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {missionsPreview.map((m, i) => (
-              <FadeIn key={m.titre} delay={i * 100}>
-                <div className="bg-surface p-8 rounded-xl border border-border card-hover shadow-soft border-t-4 border-t-transparent hover:border-t-secondary transition-all h-full">
-                  <div className="w-16 h-16 rounded-xl bg-muted flex items-center justify-center text-primary mb-6 shadow-sm">
-                    {m.icone}
+            {missionsPreview.map((m, i) => {
+              return (
+                <FadeIn key={m.titre} delay={i * 100}>
+                  {/* Container principal de la carte */}
+                  <div className={`relative bg-surface p-8 pt-10 rounded-[1.5rem] border-2 ${m.baseColor} hover:shadow-xl transition-all duration-300 h-full flex flex-col items-center text-center mt-6`}>
+
+                    {/* Encoche Concave (Notch) simulée par une forme superposée */}
+                    <div className={`absolute -top-[2px] -left-[2px] w-[3.5rem] h-[3.5rem] bg-muted rounded-br-[3.5rem] border-b-2 border-r-2 ${m.baseColor} z-0 pointer-events-none`} />
+
+                    {/* Icône nichée avec précision dans l'encoche */}
+                    <div className={`absolute -top-4 -left-3 w-[3.25rem] h-[3.25rem] rounded-full ${m.bg} text-white flex items-center justify-center shadow-lg z-10 hover:scale-110 transition-transform`}>
+                      {m.icone}
+                    </div>
+
+                    <h3 className="text-lg font-extrabold text-foreground mb-3 leading-snug">{m.titre}</h3>
+
+                    <div className="w-12 h-[2px] bg-border my-1 mb-4 rounded-full" />
+
+                    <p className="text-sm font-medium text-muted-foreground leading-relaxed">{m.desc}</p>
                   </div>
-                  <h3 className="text-xl font-bold text-foreground mb-3">{m.titre}</h3>
-                  <p className="text-base text-muted-foreground leading-relaxed">{m.desc}</p>
-                </div>
-              </FadeIn>
-            ))}
+                </FadeIn>
+              );
+            })}
           </div>
           <FadeIn delay={600}>
             <div className="text-center mt-12">
@@ -183,41 +227,6 @@ export default function HomePage() {
 
 
 
-      {/* Mot du Président */}
-      <section className="py-20 bg-muted border-t border-border">
-        <div className="container-page">
-          <FadeIn>
-            <div className="max-w-5xl mx-auto">
-              <div className="bg-surface rounded-2xl border border-border overflow-hidden md:flex shadow-xl">
-                <div className="md:w-2/5 bg-primary p-0 flex flex-col relative overflow-hidden h-[400px] md:h-auto">
-                  <img src={getImgUrl(presidentData?.president_photo_path, "/president.png")} alt={presidentData?.president_nom || "M. Vissia Bouranga"} className="absolute inset-0 w-full h-full object-cover z-0 object-top" onError={(e) => { e.currentTarget.src = '/president.png'; }} />
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/60 to-transparent z-10" />
-                  
-                  <div className="relative z-20 mt-auto p-8 text-center w-full">
-                    <h3 className="text-2xl font-bold text-white mb-1">{presidentData?.president_nom || "M. Vissia Bouranga"}</h3>
-                    <p className="text-md text-secondary font-medium">{presidentData?.president_titre || "Président du CNC"}</p>
-                  </div>
-                </div>
-                <div className="md:w-3/5 p-10 md:p-12 border-l-4 border-l-secondary relative flex flex-col justify-center">
-                  <Quote className="w-16 h-16 text-secondary/20 absolute top-8 left-8" />
-                  <blockquote className="text-foreground text-lg md:text-xl italic leading-relaxed mb-8 relative z-10 pt-6 pl-6">
-                    « {presidentData?.president_message || "Le Conseil National de la Concurrence œuvre sans relâche pour garantir un marché équitable où chaque opérateur économique peut prospérer dans le respect des règles. Notre mission est de bâtir un environnement de confiance propice au développement économique de notre nation."}  »
-                  </blockquote>
-                  <div className="relative z-10 pl-6">
-                    <Link to="/presentation">
-                      <Button variant="outline" className="gap-2 border-primary text-primary hover:bg-primary hover:text-white transition-all">
-                        Lire le message complet
-                        <ArrowRight className="w-4 h-4" />
-                      </Button>
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </FadeIn>
-        </div>
-      </section>
-
       {/* Actualités récentes */}
       <section className="py-20 bg-surface border-t border-border">
         <div className="container-page">
@@ -228,7 +237,7 @@ export default function HomePage() {
             </div>
           </FadeIn>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {recentArticles.length === 0 ? (
+            {(!Array.isArray(recentArticles) || recentArticles.length === 0) ? (
               <p className="text-center col-span-3 text-muted-foreground">Aucune actualité récente pour le moment.</p>
             ) : (
               recentArticles.map((a: any, i: number) => (
@@ -236,7 +245,7 @@ export default function HomePage() {
                   <div className="bg-background rounded-xl border border-border overflow-hidden card-hover shadow-soft h-full flex flex-col">
                     {/* Image cover for news */}
                     <div className="h-48 bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center relative overflow-hidden group">
-                      <img src={getImgUrl(a.image_url, `https://images.unsplash.com/photo-${i===0?'1507679799987-c7cf7ee3face':i===1?'1557804506-669a67965ba0':'1454165804606-c3d57bc86b40'}?auto=format&fit=crop&q=80&w=800`)} alt={a.titre} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                      <img src={getImgUrl(a.image_url, `https://images.unsplash.com/photo-${i === 0 ? '1507679799987-c7cf7ee3face' : i === 1 ? '1557804506-669a67965ba0' : '1454165804606-c3d57bc86b40'}?auto=format&fit=crop&q=80&w=800`)} alt={a.titre} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                       <div className="absolute inset-0 bg-primary/20 group-hover:bg-transparent transition-colors duration-500" />
                     </div>
                     <div className="p-6 flex flex-col flex-grow">
@@ -268,7 +277,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Galerie aperçu */}
+      {/* Galerie aperçu
       <section className="py-20 bg-surface border-t border-border">
         <div className="container-page">
           <FadeIn>
@@ -278,7 +287,7 @@ export default function HomePage() {
             </div>
           </FadeIn>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {galeriePreview.length === 0 ? (
+            {(!Array.isArray(galeriePreview) || galeriePreview.length === 0) ? (
               <p className="text-center col-span-3 text-muted-foreground">Aucune photo dans la galerie pour le moment.</p>
             ) : (
               galeriePreview.map((item: any, i: number) => (
@@ -306,7 +315,7 @@ export default function HomePage() {
             </div>
           </FadeIn>
         </div>
-      </section>
+      </section> */}
 
       {/* Partenaires */}
       <section className="py-12 bg-muted border-t border-border">

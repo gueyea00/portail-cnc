@@ -41,7 +41,22 @@
       <a href="#" class="nav-item" data-section="membres">
         <i data-lucide="users" class="nav-icon"></i> Membres du Conseil
       </a>
+      <a href="#" class="nav-item" data-section="missions">
+        <i data-lucide="shield" class="nav-icon"></i> Missions
+      </a>
+      <a href="#" class="nav-item" data-section="processus">
+        <i data-lucide="git-merge" class="nav-icon"></i> Processus
+      </a>
+      <a href="#" class="nav-item" data-section="historique">
+        <i data-lucide="calendar" class="nav-icon"></i> Historique
+      </a>
+      <a href="#" class="nav-item" data-section="faq">
+        <i data-lucide="help-circle" class="nav-icon"></i> FAQ
+      </a>
       <div class="nav-section-label">Services</div>
+      <a href="#" class="nav-item" data-section="services_list">
+        <i data-lucide="briefcase" class="nav-icon"></i> Gestion Services
+      </a>
       <a href="#" class="nav-item" data-section="plaintes">
         <i data-lucide="clipboard-list" class="nav-icon"></i> Plaintes
         <span class="badge" id="badgePlaintes">0</span>
@@ -152,7 +167,30 @@
     <section id="section-president" class="content-section">
       <div class="section-toolbar"><h3>Paramètres du Site</h3></div>
       <form id="presidentForm" class="form-card" enctype="multipart/form-data">
-        <h4 style="margin-bottom: 12px; color: var(--text); border-bottom: 1px solid var(--border); padding-bottom: 8px;">Mot du Président</h4>
+        <h4 style="margin-bottom: 12px; color: var(--text); border-bottom: 1px solid var(--border); padding-bottom: 8px;">Accueil (Hero)</h4>
+        <div class="form-group">
+          <label>Titre principal</label>
+          <input type="text" id="heroTitle" name="hero_title" placeholder="Réguler pour une économie prospère..." />
+        </div>
+        <div class="form-group">
+          <label>Sous-titre</label>
+          <textarea id="heroSubtitle" name="hero_subtitle" rows="2" placeholder="Le garant de la saine concurrence..."></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group"><label>Horaires d'ouverture</label><input id="horairesOuverture" name="horaires_ouverture" placeholder="07h30 – 15h30" /></div>
+          <div class="form-group"><label>Siège Social (Ville, Pays)</label><input id="siegeSocial" name="siege_social" placeholder="N'Djamena, Tchad" /></div>
+        </div>
+
+        <h4 style="margin-top: 24px; margin-bottom: 12px; color: var(--text); border-bottom: 1px solid var(--border); padding-bottom: 8px;">Présentation (Page À Propos)</h4>
+        <div class="form-group"><label>Paragraphe 1 (Introduction)</label><textarea id="presP1" name="presentation_p1" rows="3"></textarea></div>
+        <div class="form-group"><label>Paragraphe 2 (Missions)</label><textarea id="presP2" name="presentation_p2" rows="3"></textarea></div>
+        <div class="form-group"><label>Paragraphe 3 (Conclusion)</label><textarea id="presP3" name="presentation_p3" rows="3"></textarea></div>
+
+        <h4 style="margin-top: 24px; margin-bottom: 12px; color: var(--text); border-bottom: 1px solid var(--border); padding-bottom: 8px;">Bas de page (Footer)</h4>
+        <div class="form-group"><label>Description courte (sous le logo)</label><textarea id="footerDescription" name="footer_description" rows="2"></textarea></div>
+
+        <h4 style="margin-top: 24px; margin-bottom: 12px; color: var(--text); border-bottom: 1px solid var(--border); padding-bottom: 8px;">Mot du Président</h4>
         <div class="form-row">
           <div class="form-group">
             <label>Nom complet</label>
@@ -205,6 +243,84 @@
         <table class="data-table">
           <thead><tr><th>Nom</th><th>Fonction</th><th>Ordre</th><th>Actif</th><th>Actions</th></tr></thead>
           <tbody id="membresTableBody"><tr><td colspan="5" class="loading">Chargement...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Section Missions -->
+    <section id="section-missions" class="content-section">
+      <div class="section-toolbar">
+        <h3>Missions du CNC</h3>
+        <button class="btn btn-primary" onclick="openModal('mission')">
+          <i data-lucide="plus" class="icon-sm"></i> Nouvelle mission
+        </button>
+      </div>
+      <div class="table-container">
+        <table class="data-table">
+          <thead><tr><th>Titre</th><th>Icône</th><th>Ordre</th><th>Actions</th></tr></thead>
+          <tbody id="missionsTableBody"><tr><td colspan="4" class="loading">Chargement...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Section Historique -->
+    <section id="section-historique" class="content-section">
+      <div class="section-toolbar">
+        <h3>Historique (Dates clés)</h3>
+        <button class="btn btn-primary" onclick="openModal('historique')">
+          <i data-lucide="plus" class="icon-sm"></i> Nouvelle date
+        </button>
+      </div>
+      <div class="table-container">
+        <table class="data-table">
+          <thead><tr><th>Année</th><th>Description</th><th>Ordre</th><th>Actions</th></tr></thead>
+          <tbody id="historiqueTableBody"><tr><td colspan="4" class="loading">Chargement...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Section Processus -->
+    <section id="section-processus" class="content-section">
+      <div class="section-toolbar">
+        <h3>Étapes d'intervention</h3>
+        <button class="btn btn-primary" onclick="openModal('processus')">Ajouter une étape</button>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr><th>Ordre</th><th>Titre</th><th>Description</th><th style="text-align: right;">Actions</th></tr>
+        </thead>
+        <tbody id="processusTableBody"></tbody>
+      </table>
+    </section>
+
+    <!-- Section FAQ -->
+    <section id="section-faq" class="content-section">
+      <div class="section-toolbar">
+        <h3>Foire Aux Questions</h3>
+        <button class="btn btn-primary" onclick="openModal('faq')">
+          <i data-lucide="plus" class="icon-sm"></i> Nouvelle question
+        </button>
+      </div>
+      <div class="table-container">
+        <table class="data-table">
+          <thead><tr><th>Question</th><th>Thème</th><th>Ordre</th><th>Actions</th></tr></thead>
+          <tbody id="faqTableBody"><tr><td colspan="4" class="loading">Chargement...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Section Gestion Services -->
+    <section id="section-services_list" class="content-section">
+      <div class="section-toolbar">
+        <h3>Gestion des Services (Frontend)</h3>
+        <button class="btn btn-primary" onclick="openModal('service')">
+          <i data-lucide="plus" class="icon-sm"></i> Nouveau service
+        </button>
+      </div>
+      <div class="table-container">
+        <table class="data-table">
+          <thead><tr><th>Titre</th><th>Icône</th><th>Lien</th><th>Ordre</th><th>Actions</th></tr></thead>
+          <tbody id="servicesTableBody"><tr><td colspan="5" class="loading">Chargement...</td></tr></tbody>
         </table>
       </div>
     </section>

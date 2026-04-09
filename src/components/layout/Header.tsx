@@ -42,15 +42,9 @@ export default function Header() {
                 alt="Armoiries de la République du Tchad"
                 className="w-10 h-12 md:w-12 md:h-14 object-contain"
               />
-
-              {/* Séparateur vertical */}
-              <div className="hidden sm:block w-px h-10 bg-border mx-1" />
-
               {/* Texte institutionnel */}
               <div className="hidden sm:block">
-                <p className="text-[11px] uppercase tracking-widest text-muted-foreground leading-none mb-0.5">République du Tchad</p>
-                <p className="text-base font-bold text-primary leading-tight">Conseil National</p>
-                <p className="text-sm text-muted-foreground leading-tight">de la Concurrence</p>
+                <p className="text-base font-bold text-primary leading-tight">Conseil National<br />de la Concurrence</p>
               </div>
 
 
@@ -107,7 +101,7 @@ export default function Header() {
             {/* CTA + burger */}
             <div className="flex items-center gap-3 sm:gap-4">
               <LanguageSwitcher />
-              
+
               <button
                 className="lg:hidden p-2 rounded-md hover:bg-muted transition-colors"
                 onClick={() => setMobileOpen(!mobileOpen)}

@@ -11,8 +11,6 @@ services:
       POSTGRES_DB: cncbd
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - ./ccn-backend/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
-      - ./ccn-backend/seed.sql:/docker-entrypoint-initdb.d/2-seed.sql
     ports:
       - "5436:5432"
 

@@ -70,13 +70,13 @@ function LightboxModal({
 
         <div className={`w-full aspect-video rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center relative overflow-hidden shadow-2xl`}>
           <img src={getImgUrl(item.image_path, `https://images.unsplash.com/photo-1550000000000?auto=format&fit=crop&q=80&w=1200`)} alt={item.titre} className="absolute inset-0 w-full h-full object-cover" />
-          
+
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
             <span className="text-xs text-white/60 uppercase tracking-wider">{item.categorie || 'Autre'}</span>
             <h3 className="text-white text-xl font-bold mt-1">{item.titre}</h3>
             <p className="text-white/70 text-sm mt-1">{item.description}</p>
           </div>
-          
+
           <div className="absolute top-4 right-4 bg-black/50 text-white text-xs px-3 py-1 rounded-full backdrop-blur-sm">
             {new Date(item.date_evenement).toLocaleDateString("fr-FR")}
           </div>
@@ -139,7 +139,6 @@ export default function GaleriePage() {
       {/* Hero */}
       <section className="page-hero">
         <div className="container-page">
-          <div className="accent-line" />
           <h1 className="text-3xl md:text-4xl font-bold flex items-center justify-center md:justify-start gap-4">
             <Camera className="w-8 h-8 md:w-10 md:h-10 text-gold" />
             Galerie institutionnelle
@@ -156,11 +155,10 @@ export default function GaleriePage() {
             <button
               key={cat}
               onClick={() => setActiveFilter(cat)}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-all inline-flex items-center gap-1.5 ${
-                activeFilter === cat
-                  ? "bg-primary text-primary-foreground shadow-md"
-                  : "bg-surface shadow-sm text-foreground hover:bg-muted"
-              }`}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all inline-flex items-center gap-1.5 ${activeFilter === cat
+                ? "bg-primary text-primary-foreground shadow-md"
+                : "bg-surface shadow-sm text-foreground hover:bg-muted"
+                }`}
             >
               {cat !== "Tous" && <CategorieIcon cat={cat} />}
               {cat}
@@ -195,11 +193,11 @@ export default function GaleriePage() {
                   </span>
                 </div>
 
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/55 transition-all duration-300 z-0">
+                {/* <div className="absolute inset-0 bg-black/0 group-hover:bg-black/55 transition-all duration-300 z-0">
                   <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <Search className="w-8 h-8 text-white mb-2" />
                   </div>
-                </div>
+                </div> */}
 
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-10">
                   <p className="text-white text-sm font-semibold line-clamp-1">{item.titre}</p>

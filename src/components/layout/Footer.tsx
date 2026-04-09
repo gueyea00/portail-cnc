@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Facebook, Linkedin, Twitter, Mail, Phone, MapPin, Send, ChevronRight } from "lucide-react";
+import { Facebook, Linkedin, Mail, Phone, MapPin, Send, ChevronRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
 export default function Footer() {
@@ -52,7 +52,7 @@ export default function Footer() {
               </div>
             </div>
             <p className="text-sm text-white/60 leading-relaxed">
-              Autorité administrative indépendante chargée de veiller au respect des règles de la concurrence en République du Tchad.
+              {parametres?.footer_description || "Autorité administrative indépendante chargée de veiller au respect des règles de la concurrence en République du Tchad."}
             </p>
             <div className="flex gap-3 pt-2">
               <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/80 hover:bg-gold hover:text-primary hover:-translate-y-1 transition-all duration-300 shadow-sm" aria-label="Facebook">
@@ -61,8 +61,10 @@ export default function Footer() {
               <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/80 hover:bg-gold hover:text-primary hover:-translate-y-1 transition-all duration-300 shadow-sm" aria-label="LinkedIn">
                 <Linkedin className="w-4 h-4" />
               </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/80 hover:bg-gold hover:text-primary hover:-translate-y-1 transition-all duration-300 shadow-sm" aria-label="Twitter">
-                <Twitter className="w-4 h-4" />
+              <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/80 hover:bg-gold hover:text-primary hover:-translate-y-1 transition-all duration-300 shadow-sm" aria-label="X (anciennement Twitter)">
+                <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 22.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                </svg>
               </a>
             </div>
           </div>
@@ -174,7 +176,7 @@ export default function Footer() {
             <a href="#" className="hover:text-gold transition-colors">UEMOA</a>
           </div>
           <div className="text-center md:text-right">
-            <p>&copy; {new Date().getFullYear()} Conseil National de la Concurrence.</p>
+            <p>&copy; {new Date().getFullYear()} Ebenyx Technologies.</p>
           </div>
         </div>
       </div>

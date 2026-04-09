@@ -1,8 +1,8 @@
-﻿import { Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Breadcrumb from "@/components/layout/Breadcrumb";
-import { services } from "@/lib/data";
-import { FileWarning, ShieldAlert, ClipboardList, MessageSquare, BookOpen, Calendar, ArrowRight, Laptop } from "lucide-react";
+import { FileWarning, ShieldAlert, ClipboardList, MessageSquare, BookOpen, Calendar, ArrowRight, Laptop, Search, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
 
 const iconMap: Record<string, React.ReactNode> = {
   FileWarning: <FileWarning className="w-8 h-8" />,
@@ -11,9 +11,17 @@ const iconMap: Record<string, React.ReactNode> = {
   MessageSquare: <MessageSquare className="w-8 h-8" />,
   BookOpen: <BookOpen className="w-8 h-8" />,
   Calendar: <Calendar className="w-8 h-8" />,
+  Search: <Search className="w-8 h-8" />,
+  FileText: <FileText className="w-8 h-8" />,
 };
 
 export default function ServicesPage() {
+  const { data: servicesApi = [] } = useQuery({
+    queryKey: ["services"],
+    queryFn: () => fetch("/api/services").then(res => res.json())
+  });
+
+  const sortedServices = (servicesApi || []).sort((a: any, b: any) => (a.ordre || 0) - (b.ordre || 0));
   return (
     <div>
       <section className="page-hero">
@@ -29,7 +37,7 @@ export default function ServicesPage() {
 
       <div className="container-page py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {services.map((s) => (
+          {sortedServices.map((s: any) => (
             <div key={s.titre} className="bg-surface p-8 rounded-2xl shadow-soft card-hover flex flex-col">
               <div className="w-14 h-14 rounded-lg bg-muted text-primary flex items-center justify-center mb-4">
                 {iconMap[s.icone]}

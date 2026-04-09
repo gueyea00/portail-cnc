@@ -1,7 +1,7 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import Breadcrumb from "@/components/layout/Breadcrumb";
-import { faqData } from "@/lib/data";
 import { ChevronDown, HelpCircle } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 
 const themes = ["Tous", "Généralités", "Plaintes", "Procédures", "Sanctions"];
 
@@ -9,7 +9,12 @@ export default function FaqPage() {
   const [filtre, setFiltre] = useState("Tous");
   const [open, setOpen] = useState<number | null>(null);
 
-  const filtered = filtre === "Tous" ? faqData : faqData.filter((q) => q.theme === filtre);
+  const { data: faqApi = [] } = useQuery({
+    queryKey: ["faq"],
+    queryFn: () => fetch("/api/faq").then(res => res.json())
+  });
+
+  const filtered = filtre === "Tous" ? faqApi : faqApi.filter((q: any) => q.theme === filtre);
 
   return (
     <div>

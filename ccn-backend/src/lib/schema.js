@@ -1,8 +1,4 @@
--- ============================================================
--- CNC Tchad -- Schema PostgreSQL complet
--- Base de données : cncbd
--- ============================================================
-
+export const schema = `
 -- ============================================================
 -- TABLE : admins
 -- ============================================================
@@ -18,7 +14,7 @@ CREATE TABLE IF NOT EXISTS admins (
 );
 
 -- ============================================================
--- TABLE : articles (actualités)
+-- TABLE : articles
 -- ============================================================
 CREATE TABLE IF NOT EXISTS articles (
   id              SERIAL PRIMARY KEY,
@@ -26,10 +22,10 @@ CREATE TABLE IF NOT EXISTS articles (
   titre           TEXT NOT NULL,
   extrait         TEXT,
   contenu         TEXT,
-  categorie       TEXT CHECK (categorie IN ('communique','enquete','evenement')),
+  categorie       TEXT,
   image_url       TEXT,
   image_path      TEXT,
-  statut          TEXT DEFAULT 'brouillon' CHECK (statut IN ('publie','brouillon','archive')),
+  statut          TEXT DEFAULT 'brouillon',
   date_publication DATE DEFAULT CURRENT_DATE,
   created_at      TIMESTAMPTZ DEFAULT NOW(),
   updated_at      TIMESTAMPTZ DEFAULT NOW()
@@ -51,7 +47,7 @@ CREATE TABLE IF NOT EXISTS decisions (
 );
 
 -- ============================================================
--- TABLE : documents officiels
+-- TABLE : documents
 -- ============================================================
 CREATE TABLE IF NOT EXISTS documents (
   id              SERIAL PRIMARY KEY,
@@ -65,11 +61,11 @@ CREATE TABLE IF NOT EXISTS documents (
 );
 
 -- ============================================================
--- TABLE : galerie
+-- TABLE : galerie_items
 -- ============================================================
 CREATE TABLE IF NOT EXISTS galerie_items (
   id              SERIAL PRIMARY KEY,
-  titre           TEXT NOT NULL,
+  titre           TEXT UNIQUE NOT NULL,
   description     TEXT,
   date_evenement  DATE,
   categorie       TEXT,
@@ -81,11 +77,11 @@ CREATE TABLE IF NOT EXISTS galerie_items (
 );
 
 -- ============================================================
--- TABLE : membres du Conseil
+-- TABLE : membres
 -- ============================================================
 CREATE TABLE IF NOT EXISTS membres (
   id              SERIAL PRIMARY KEY,
-  nom             TEXT NOT NULL,
+  nom             TEXT UNIQUE NOT NULL,
   fonction        TEXT,
   bio             TEXT,
   photo_path      TEXT,
@@ -109,7 +105,7 @@ CREATE TABLE IF NOT EXISTS plaintes (
   type_pratique   TEXT,
   description     TEXT,
   entreprise_concernee TEXT,
-  statut          TEXT DEFAULT 'recue' CHECK (statut IN ('recue','en_cours','traitee','classee')),
+  statut          TEXT DEFAULT 'recue',
   note_interne    TEXT,
   created_at      TIMESTAMPTZ DEFAULT NOW(),
   updated_at      TIMESTAMPTZ DEFAULT NOW()
@@ -120,7 +116,7 @@ CREATE TABLE IF NOT EXISTS plaintes (
 -- ============================================================
 CREATE TABLE IF NOT EXISTS services (
   id              SERIAL PRIMARY KEY,
-  titre           TEXT NOT NULL,
+  titre           TEXT UNIQUE NOT NULL,
   description     TEXT,
   icone           TEXT,
   lien            TEXT,
@@ -130,10 +126,61 @@ CREATE TABLE IF NOT EXISTS services (
 );
 
 -- ============================================================
--- TABLE : parametres_site (Mot du Président, config)
+-- TABLE : missions
+-- ============================================================
+CREATE TABLE IF NOT EXISTS missions (
+  id              SERIAL PRIMARY KEY,
+  titre           TEXT UNIQUE NOT NULL,
+  description     TEXT,
+  icone           TEXT,
+  ordre           INT DEFAULT 0,
+  actif           BOOLEAN DEFAULT true,
+  created_at      TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ============================================================
+-- TABLE : historique
+-- ============================================================
+CREATE TABLE IF NOT EXISTS historique (
+  id              SERIAL PRIMARY KEY,
+  annee           TEXT NOT NULL,
+  description     TEXT NOT NULL,
+  ordre           INT DEFAULT 0,
+  actif           BOOLEAN DEFAULT true,
+  created_at      TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(annee, description)
+);
+
+-- ============================================================
+-- TABLE : faq
+-- ============================================================
+CREATE TABLE IF NOT EXISTS faq (
+  id              SERIAL PRIMARY KEY,
+  question        TEXT UNIQUE NOT NULL,
+  reponse         TEXT,
+  theme           TEXT,
+  ordre           INT DEFAULT 0,
+  actif           BOOLEAN DEFAULT true,
+  created_at      TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ============================================================
+-- TABLE : parametres_site
 -- ============================================================
 CREATE TABLE IF NOT EXISTS parametres_site (
   cle             TEXT PRIMARY KEY,
   valeur          TEXT,
   updated_at      TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- ============================================================
+-- TABLE : etapes_intervention
+-- ============================================================
+CREATE TABLE IF NOT EXISTS etapes_intervention (
+  id              SERIAL PRIMARY KEY,
+  ordre           INTEGER DEFAULT 0,
+  titre           TEXT UNIQUE NOT NULL,
+  description     TEXT,
+  created_at      TIMESTAMPTZ DEFAULT NOW()
+);
+`;

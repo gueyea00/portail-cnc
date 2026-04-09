@@ -224,14 +224,14 @@ export const galerieItems: GalerieItem[] = [
 // --- Services en ligne ---
 export const services = [
   {
-    titre: "DÃ©pÃ´t de plainte",
-    description: "Signaler officiellement une pratique anticoncurrentielle ou une violation des rÃ¨gles du marchÃ©.",
+    titre: "Dépôt de plainte",
+    description: "Signaler officiellement une pratique anticoncurrentielle ou une violation des règles du marché.",
     icone: "ShieldAlert",
     lien: "/plainte",
   },
   {
     titre: "Signalement anonyme",
-    description: "Informer le Conseil d'un comportement suspect de maniÃ¨re totalement anonyme et sÃ©curisÃ©e.",
+    description: "Informer le Conseil d'un comportement suspect de manière totalement anonyme et sécurisée.",
     icone: "FileWarning",
     lien: "/signalement",
   },
@@ -242,14 +242,14 @@ export const services = [
     lien: "/contact",
   },
   {
-    titre: "AccÃ¨s aux documents",
-    description: "Consulter les lois, dÃ©crets, dÃ©cisions et rapports publics du CNC.",
+    titre: "Accès aux documents",
+    description: "Consulter les lois, décrets, décisions et rapports publics du CNC.",
     icone: "BookOpen",
     lien: "/documents",
   },
   {
     titre: "Foire aux questions",
-    description: "Trouver des rÃ©ponses aux questions les plus frÃ©quentes sur la concurrence et le CNC.",
+    description: "Trouver des réponses aux questions les plus fréquentes sur la concurrence et le CNC.",
     icone: "ClipboardList",
     lien: "/faq",
   },
