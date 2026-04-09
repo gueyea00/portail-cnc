@@ -248,7 +248,7 @@ export default function AdminDashboardPage() {
       formData.append("bio", membreForm.bio);
       formData.append("actif", String(membreForm.actif));
       formData.append("ordre", String(membreForm.ordre));
-      if (membreImage) formData.append("image", membreImage);
+      if (membreImage) formData.append("photo", membreImage);
 
       const url = editingMembre ? `/api/membres/admin/${editingMembre.id}` : "/api/membres/admin";
       const method = editingMembre ? "PUT" : "POST";
