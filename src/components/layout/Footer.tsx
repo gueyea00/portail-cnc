@@ -47,8 +47,7 @@ export default function Footer() {
             <div className="flex items-center gap-3">
               <img src="/armoiries-tchad.png" alt="Armoiries du Tchad" className="w-12 h-14 object-contain bg-white rounded p-1 shadow-sm" />
               <div>
-                <p className="font-extrabold text-base leading-tight tracking-wide">Conseil National</p>
-                <p className="text-sm text-white/70 leading-tight">de la Concurrence</p>
+                <p className="font-extrabold text-base leading-tight tracking-wide">Conseil National<br />de la Concurrence</p>
               </div>
             </div>
             <p className="text-sm text-white/60 leading-relaxed">
