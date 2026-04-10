@@ -105,8 +105,11 @@ CREATE TABLE IF NOT EXISTS plaintes (
   type_pratique   TEXT,
   description     TEXT,
   entreprise_concernee TEXT,
+  adresse         TEXT,
+  secteur         TEXT,
   statut          TEXT DEFAULT 'recue',
   note_interne    TEXT,
+  fichiers        TEXT, -- JSON array of file paths
   created_at      TIMESTAMPTZ DEFAULT NOW(),
   updated_at      TIMESTAMPTZ DEFAULT NOW()
 );

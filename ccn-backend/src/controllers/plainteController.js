@@ -7,11 +7,23 @@ class PlainteController {
       if (!description) return res.status(400).json({ error: 'description requise.' });
       
       const reference = `CNC-${new Date().getFullYear()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
-      const data = { ...req.body, reference };
+      
+      // Gérer les fichiers
+      let fichiers_paths = [];
+      if (req.files && req.files.length > 0) {
+        fichiers_paths = req.files.map(file => `/uploads/plaintes/${file.filename}`);
+      }
+      
+      const data = { 
+        ...req.body, 
+        reference,
+        fichiers: JSON.stringify(fichiers_paths)
+      };
       
       const plainte = await PlainteService.createPlainte(data);
       res.status(201).json({ message: 'Plainte enregistrée.', reference: plainte.reference });
     } catch (err) {
+      console.error('Erreur creation plainte:', err);
       res.status(500).json({ error: err.message });
     }
   }

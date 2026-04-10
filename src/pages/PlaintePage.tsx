@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import Breadcrumb from "@/components/layout/Breadcrumb";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -32,7 +32,7 @@ export default function PlaintePage() {
   const [step, setStep] = useState(0);
   const [data1, setData1] = useState<Etape1Data | null>(null);
   const [data2, setData2] = useState<Etape2Data | null>(null);
-  const [fichiers, setFichiers] = useState<string[]>([]);
+  const [fichiers, setFichiers] = useState<File[]>([]);
   const [honneur, setHonneur] = useState(false);
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -50,19 +50,25 @@ export default function PlaintePage() {
 
     setLoading(true);
     try {
+      const formData = new FormData();
+      formData.append("nom", data1.nom);
+      formData.append("prenom", data1.prenom);
+      formData.append("email", data1.email);
+      formData.append("telephone", data1.telephone);
+      formData.append("qualite", data1.qualite);
+      formData.append("adresse", data1.adresse);
+      formData.append("type_pratique", data2.typePratique);
+      formData.append("secteur", data2.secteur);
+      formData.append("entreprise_concernee", data2.entreprise);
+      formData.append("description", data2.description);
+      
+      fichiers.forEach((file) => {
+        formData.append("fichiers", file);
+      });
+
       const response = await fetch("/api/plaintes", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          nom: data1.nom,
-          prenom: data1.prenom,
-          email: data1.email,
-          telephone: data1.telephone,
-          qualite: data1.qualite,
-          type_pratique: data2.typePratique,
-          description: data2.description,
-          entreprise_concernee: data2.entreprise,
-        }),
+        body: formData,
       });
 
       if (!response.ok) {
@@ -201,7 +207,20 @@ export default function PlaintePage() {
             <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
               <Upload className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
               <p className="text-sm text-muted-foreground mb-2">Glissez-déposez vos fichiers ici ou</p>
-              <Button variant="outline" size="sm" onClick={() => { setFichiers([...fichiers, `document_${fichiers.length + 1}.pdf`]); toast.info("Fichier ajouté (simulation)"); }}>
+              <input
+                type="file"
+                id="file-upload"
+                multiple
+                className="hidden"
+                onChange={(e) => {
+                  if (e.target.files) {
+                    const newFiles = Array.from(e.target.files);
+                    setFichiers((prev) => [...prev, ...newFiles]);
+                    toast.success(`${newFiles.length} fichier(s) ajouté(s)`);
+                  }
+                }}
+              />
+              <Button variant="outline" size="sm" onClick={() => document.getElementById('file-upload')?.click()}>
                 Parcourir les fichiers
               </Button>
             </div>
@@ -209,8 +228,12 @@ export default function PlaintePage() {
               <ul className="space-y-2">
                 {fichiers.map((f, i) => (
                   <li key={i} className="flex items-center justify-between bg-surface p-3 rounded border border-border text-sm">
-                    <span>{f}</span>
-                    <button onClick={() => setFichiers(fichiers.filter((_, j) => j !== i))} className="text-destructive text-xs">Supprimer</button>
+                    <div className="flex items-center gap-2">
+                       <Upload className="w-4 h-4 text-primary" />
+                       <span className="truncate max-w-[200px]">{f.name}</span>
+                       <span className="text-xs text-muted-foreground">({(f.size / 1024).toFixed(1)} KB)</span>
+                    </div>
+                    <button onClick={() => setFichiers(fichiers.filter((_, j) => j !== i))} className="text-destructive text-xs hover:underline">Supprimer</button>
                   </li>
                 ))}
               </ul>
@@ -249,7 +272,7 @@ export default function PlaintePage() {
               </div>
               <div className="p-4">
                 <h3 className="text-sm font-semibold text-primary mb-2">Pièces jointes</h3>
-                <p className="text-sm">{fichiers.length > 0 ? fichiers.join(", ") : "Aucune pièce jointe"}</p>
+                <p className="text-sm">{fichiers.length > 0 ? fichiers.map(f => f.name).join(", ") : "Aucune pièce jointe"}</p>
               </div>
             </div>
 
