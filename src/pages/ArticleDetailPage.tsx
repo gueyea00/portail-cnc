@@ -1,8 +1,9 @@
 import { useParams, Link } from "react-router-dom";
 import Breadcrumb from "@/components/layout/Breadcrumb";
-import { ArrowLeft, Calendar, Tag } from "lucide-react";
+import { ArrowLeft, Calendar, Tag, Share2, Facebook, Linkedin, Twitter, Mail, Send, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
+import { FadeIn } from "@/components/ui/fade-in";
 
 const catLabels: Record<string, string> = {
   communique: "Communiqué",
@@ -36,8 +37,9 @@ export default function ArticleDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="container-page py-16 text-center text-muted-foreground">
-        Chargement de l'article...
+      <div className="container-page py-32 text-center">
+        <div className="inline-block w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4" />
+        <p className="text-muted-foreground font-medium">Récupération des données...</p>
       </div>
     );
   }
@@ -45,8 +47,9 @@ export default function ArticleDetailPage() {
   if (error || !article) {
     return (
       <div className="container-page py-16 text-center">
-        <h1 className="text-2xl font-bold text-foreground mb-4">Article non trouvé</h1>
-        <Link to="/actualites"><Button>Retour aux actualités</Button></Link>
+        <h1 className="text-3xl font-black text-foreground mb-4 font-sans">ARTICLE NON TROUVÉ</h1>
+        <p className="text-muted-foreground mb-8">L'article que vous recherchez semble ne plus exister.</p>
+        <Link to="/actualites"><Button size="lg" className="rounded-full">Retour au portail</Button></Link>
       </div>
     );
   }
@@ -54,71 +57,204 @@ export default function ArticleDetailPage() {
   const recents = recentArticles.filter((a: any) => a.slug !== slug).slice(0, 4);
 
   return (
-    <div>
-      <section className="page-hero">
-        <div className="container-page">
-          <h1 className="text-2xl md:text-3xl font-bold max-w-3xl">{article.titre}</h1>
+    <div className="bg-background">
+      {/* 1. En-tête Ebenyx Style — Bannière géante 600px */}
+      <section className="relative h-[600px] w-full overflow-hidden flex items-center">
+        {/* Image de fond */}
+        <div className="absolute inset-0">
+          <img 
+            src={getImgUrl(article.image_path || article.image_url, "/hero-bg.jpg")} 
+            alt={article.titre} 
+            className="w-full h-full object-cover"
+          />
+        </div>
+        
+        {/* Superposition Dégradé Bleu Tchad (#002664) */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#002664] via-[#002664]/80 to-transparent z-10" />
+        
+        {/* Motif de points (Dot Pattern) */}
+        <div className="absolute inset-0 z-20 opacity-20" style={{ backgroundImage: `radial-gradient(circle, #ffffff 1px, transparent 1px)`, backgroundSize: '30px 30px' }} />
+
+        <div className="container-page relative z-30 text-white">
+          <FadeIn>
+            <div className="max-w-4xl">
+              <div className="flex items-center gap-3 mb-6">
+                 <span className="px-4 py-1.5 rounded-full bg-secondary text-primary font-black text-[10px] uppercase tracking-[0.2em]">
+                   {catLabels[article.categorie || 'autre']}
+                 </span>
+                 <span className="w-12 h-[1px] bg-white/30" />
+                 <span className="text-sm font-medium opacity-80 flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-secondary" />
+                    {new Date(article.date_publication || article.created_at).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
+                 </span>
+              </div>
+              
+              {/* Titre extra-gras 64px */}
+              <h1 className="text-4xl md:text-[64px] font-black leading-[1.1] mb-6 drop-shadow-2xl">
+                {article.titre}
+              </h1>
+              
+              {/* Sous-titre en italique */}
+              <p className="text-xl md:text-2xl font-light italic text-white/90 leading-relaxed max-w-2xl border-l-2 border-secondary pl-6">
+                Explorez les détails de cette actualité majeure concernant le Conseil National de la Concurrence.
+              </p>
+            </div>
+          </FadeIn>
         </div>
       </section>
-      <Breadcrumb />
 
-      <div className="container-page py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Article */}
-          <div className="lg:col-span-2">
-            <Link to="/actualites" className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:text-secondary mb-6 transition-colors">
-              <ArrowLeft className="w-4 h-4" /> Retour aux actualités
-            </Link>
+      {/* 2. Mise en page "News" avec Fil d'Ariane spécialisé */}
+      <div className="relative -mt-10 z-40 container-page mb-16 px-4 md:px-0">
+          <div className="bg-white p-6 rounded-2xl shadow-2xl border border-primary/5 flex items-center justify-between">
+             <div className="font-black text-xs uppercase tracking-widest text-primary flex items-center gap-3">
+                <Link to="/" className="hover:text-secondary">ACCUEIL</Link>
+                <span className="text-muted-foreground/30">/</span>
+                <Link to="/actualites" className="hover:text-secondary">ACTUALITÉS</Link>
+                <span className="text-muted-foreground/30">/</span>
+                <span className="text-muted-foreground font-medium truncate max-w-[200px]">{article.titre}</span>
+             </div>
+             <div className="hidden md:flex items-center gap-2 text-primary">
+                <Share2 className="w-5 h-5" />
+                <span className="text-[10px] font-bold">PARTAGER</span>
+             </div>
+          </div>
+      </div>
 
-            {/* Image de couverture principale */}
-            <div className="w-full h-[250px] md:h-[400px] rounded-2xl overflow-hidden mb-8 shadow-sm bg-muted">
-              <img 
-                src={getImgUrl(article.image_path || article.image_url, "/hero-bg.jpg")} 
-                alt={article.titre} 
-                className="w-full h-full object-cover"
-              />
-            </div>
+      <div className="container-page pb-24">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
+          
+          {/* Article Content (2/3) */}
+          <div className="lg:col-span-8">
+            <FadeIn>
+              <article>
+                {/* 3. Typographie & Lecture — 22px + Lettrine */}
+                <div className="prose-ebenx max-w-none">
+                  {/* Premier paragraphe avec lettrine (simulé via styles CSS inline pour le premier bloc) */}
+                  <div className="text-[22px] leading-[1.8] text-foreground font-medium mb-12 text-justify">
+                    <style dangerouslySetInnerHTML={{ __html: `
+                      .ebenx-content p:first-of-type::first-letter {
+                        float: left;
+                        font-size: 84px;
+                        line-height: 1;
+                        font-weight: 900;
+                        padding-right: 12px;
+                        color: #002664;
+                        font-family: serif;
+                      }
+                    `}} />
+                    <div className="ebenx-content whitespace-pre-wrap">
+                      {article.contenu || article.extrait}
+                    </div>
+                  </div>
+                </div>
 
-            <div className="flex gap-4 items-center flex-wrap mb-6 pb-6 border-b border-border/60">
-              <span className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
-                <Calendar className="w-4 h-4" /> {new Date(article.date_publication || article.created_at).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
-              </span>
-              <span className="inline-flex items-center gap-1 text-sm text-primary bg-primary/10 px-2 py-0.5 rounded-full">
-                <Tag className="w-3 h-3" /> {catLabels[article.categorie || 'autre']}
-              </span>
-            </div>
-            <div className="prose max-w-none text-foreground leading-relaxed whitespace-pre-wrap">
-              {article.contenu || article.extrait}
-            </div>
+                {/* Tags & Related Info */}
+                <div className="mt-16 pt-10 border-t border-border flex flex-wrap gap-4">
+                   <div className="flex items-center gap-2 px-6 py-3 bg-muted rounded-xl text-sm font-bold text-primary">
+                      <Tag className="w-4 h-4" />
+                      MARCHÉ
+                   </div>
+                   <div className="flex items-center gap-2 px-6 py-3 bg-muted rounded-xl text-sm font-bold text-primary">
+                      <Tag className="w-4 h-4" />
+                      RÉGULATION
+                   </div>
+                   <div className="flex items-center gap-2 px-6 py-3 bg-muted rounded-xl text-sm font-bold text-primary">
+                      <Tag className="w-4 h-4" />
+                      TCHAD
+                   </div>
+                </div>
+              </article>
+            </FadeIn>
           </div>
 
-          {/* Sidebar */}
-          <aside className="space-y-6">
-            <div className="bg-surface rounded-2xl shadow-soft p-8">
-              <h3 className="font-semibold text-foreground mb-4">Articles récents</h3>
-              <ul className="space-y-3">
+          {/* 4. Barre Latérale (1/3) */}
+          <aside className="lg:col-span-4 space-y-12">
+            
+            {/* Social Share Blocks */}
+            <div className="bg-surface p-10 rounded-[2.5rem] shadow-soft border border-border">
+              <h3 className="text-xl font-black text-primary uppercase tracking-tighter mb-8 flex items-center gap-3">
+                <span className="w-8 h-1 bg-secondary rounded-full" />
+                Partager
+              </h3>
+              <div className="flex gap-4">
+                {[
+                  { icon: <Facebook className="w-6 h-6" />, label: 'Facebook' },
+                  { icon: <Twitter className="w-6 h-6" />, label: 'X' },
+                  { icon: <Linkedin className="w-6 h-6" />, label: 'LinkedIn' },
+                  { icon: <Mail className="w-6 h-6" />, label: 'Email' }
+                ].map((s, idx) => (
+                  <button key={idx} className="w-14 h-14 rounded-2xl bg-[#002664]/5 text-[#002664] flex items-center justify-center hover:bg-[#002664] hover:text-white transition-all duration-300 shadow-sm" aria-label={s.label}>
+                    {s.icon}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Newsletter Ebenyx Widget */}
+            <div className="bg-[#002664] p-10 rounded-[2.5rem] shadow-2xl relative overflow-hidden group">
+               {/* Pattern for widget */}
+              <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `radial-gradient(circle, #ffffff 1px, transparent 1px)`, backgroundSize: '15px 15px' }} />
+              
+              <div className="relative z-10">
+                <div className="w-16 h-16 bg-secondary rounded-2xl flex items-center justify-center text-primary mb-6 shadow-xl group-hover:rotate-12 transition-transform duration-500">
+                  <Send className="w-8 h-8" />
+                </div>
+                <h3 className="text-2xl font-black text-white mb-3">Newsletter</h3>
+                <p className="text-sm text-white/70 mb-8 leading-relaxed italic">
+                  Restez informé des dernières décisions et actualités du CNC directement dans votre boîte mail.
+                </p>
+                <div className="space-y-4">
+                  <input 
+                    type="email" 
+                    placeholder="votre@email.com" 
+                    className="w-full px-6 py-4 rounded-2xl bg-white/10 border border-white/20 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-secondary/50 font-medium"
+                  />
+                  <Button className="w-full py-7 rounded-2xl bg-secondary text-primary hover:bg-secondary/90 font-black text-sm uppercase tracking-widest shadow-xl">
+                    S'ABONNER MAINTENANT
+                  </Button>
+                </div>
+                <div className="mt-6 flex items-center gap-2 text-[10px] text-white/40 font-bold tracking-widest uppercase">
+                  <CheckCircle2 className="w-3 h-3 text-secondary" />
+                  CONFIDENTIALITÉ GARANTIE
+                </div>
+              </div>
+            </div>
+
+            {/* Recent Posts List */}
+            <div className="p-2">
+              <h3 className="text-xl font-black text-primary uppercase tracking-tighter mb-8 flex items-center gap-3">
+                <span className="w-8 h-1 bg-secondary rounded-full" />
+                À lire aussi
+              </h3>
+              <div className="space-y-10">
                 {recents.map((a: any) => (
-                  <li key={a.slug || a.id}>
-                    <Link to={`/actualites/${a.slug}`} className="text-sm text-muted-foreground hover:text-primary transition-colors line-clamp-2">
-                      {a.titre}
-                    </Link>
-                    <p className="text-xs text-muted-foreground/60 mt-0.5">{new Date(a.date_publication || a.created_at).toLocaleDateString("fr-FR")}</p>
-                  </li>
+                  <Link key={a.slug || a.id} to={`/actualites/${a.slug}`} className="group block">
+                    <div className="flex gap-5 items-start">
+                      <div className="w-24 h-24 rounded-2xl overflow-hidden shrink-0 shadow-soft border border-border">
+                        <img 
+                          src={getImgUrl(a.image_path || a.image_url, "/hero-bg.jpg")} 
+                          alt="" 
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <span className="text-[10px] font-black text-secondary tracking-widest uppercase">
+                          {catLabels[a.categorie || 'autre']}
+                        </span>
+                        <h4 className="text-sm font-bold text-foreground group-hover:text-primary transition-colors leading-snug line-clamp-2">
+                          {a.titre}
+                        </h4>
+                        <div className="flex items-center gap-2 text-[10px] text-muted-foreground font-bold">
+                          <Calendar className="w-3 h-3" />
+                          {new Date(a.date_publication || a.created_at).toLocaleDateString("fr-FR")}
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
                 ))}
-              </ul>
+              </div>
             </div>
-            <div className="bg-surface rounded-lg border border-border p-6">
-              <h3 className="font-semibold text-foreground mb-4">Catégories</h3>
-              <ul className="space-y-2">
-                {Object.entries(catLabels).map(([key, label]) => (
-                  <li key={key}>
-                    <Link to="/actualites" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                      {label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
+
           </aside>
         </div>
       </div>

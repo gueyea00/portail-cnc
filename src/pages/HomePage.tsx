@@ -112,33 +112,73 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Mot du Président */}
-      <section className="py-20 bg-surface border-b border-border">
-        <div className="container-page">
-          <FadeIn>
-            <div className="w-full">
-              <div className="bg-surface rounded-2xl border border-border overflow-hidden md:flex shadow-xl">
-                <div className="md:w-2/5 bg-primary p-0 flex flex-col relative overflow-hidden h-[400px] md:h-auto">
-                  <img src={getImgUrl(presidentData?.president_photo_path, "/president.png")} alt={presidentData?.president_nom || "M. Vissia Bouranga"} className="absolute inset-0 w-full h-full object-cover z-0 object-top" onError={(e) => { e.currentTarget.src = '/president.png'; }} />
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/60 to-transparent z-10" />
+      {/* Mot du Président — Nouveau Design Modernisé */}
+      <section className="py-24 bg-background relative overflow-hidden">
+        {/* Décorations de fond */}
+        <div className="absolute top-0 right-0 w-1/3 h-full bg-primary/5 -skew-x-12 translate-x-1/2 pointer-events-none" />
+        <div className="absolute -bottom-24 -left-24 w-64 h-64 rounded-full bg-secondary/10 blur-3xl pointer-events-none" />
 
-                  <div className="relative z-20 mt-auto p-8 text-center w-full">
-                    <h3 className="text-2xl font-bold text-white mb-1">{presidentData?.president_nom || "M. Vissia Bouranga"}</h3>
-                    <p className="text-md text-secondary font-medium">{presidentData?.president_titre || "Président du CNC"}</p>
+        <div className="container-page relative z-10">
+          <FadeIn>
+            <div className="max-w-6xl mx-auto">
+              <div className="relative grid grid-cols-1 lg:grid-cols-12 gap-0 lg:gap-8 items-center bg-surface rounded-[2.5rem] p-4 lg:p-8 shadow-2xl shadow-primary/10 border border-border">
+                
+                {/* Image Section avec découpe décorative */}
+                <div className="lg:col-span-5 relative group">
+                  <div className="aspect-[4/5] rounded-[2rem] overflow-hidden shadow-2xl relative z-10">
+                    <img 
+                      src={getImgUrl(presidentData?.president_photo_path, "/president.png")} 
+                      alt={presidentData?.president_nom || "M. Vissia Bouranga"} 
+                      className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105" 
+                      onError={(e) => { e.currentTarget.src = '/president.png'; }} 
+                    />
+                    {/* Overlay dégradé subtil */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-primary/60 via-transparent to-transparent opacity-60" />
+                  </div>
+                  
+                  {/* Éléments décoratifs flottants */}
+                  <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-secondary rounded-3xl -z-0 rotate-12" />
+                  <div className="absolute -top-6 -left-6 w-24 h-24 border-4 border-primary/20 rounded-full -z-0 animate-pulse" />
+                  
+                  {/* Badge de fonction flottant */}
+                  <div className="absolute bottom-8 left-8 right-8 bg-white/10 backdrop-blur-xl border border-white/20 p-6 rounded-2xl shadow-xl z-20">
+                    <h3 className="text-xl font-bold text-white mb-0.5">{presidentData?.president_nom || "M. Vissia Bouranga"}</h3>
+                    <p className="text-sm font-semibold text-secondary uppercase tracking-widest">{presidentData?.president_titre || "Président du CNC"}</p>
                   </div>
                 </div>
-                <div className="md:w-3/5 p-10 md:p-12 border-l-4 border-l-secondary relative flex flex-col justify-center">
-                  <Quote className="w-16 h-16 text-secondary/20 absolute top-8 left-8" />
-                  <blockquote className="text-foreground text-lg md:text-xl italic leading-relaxed mb-8 relative z-10 pt-6 pl-6">
-                    « {presidentData?.president_message || "Le Conseil National de la Concurrence œuvre sans relâche pour garantir un marché équitable où chaque opérateur économique peut prospérer dans le respect des règles. Notre mission est de bâtir un environnement de confiance propice au développement économique de notre nation."}  »
-                  </blockquote>
-                  <div className="relative z-10 pl-6">
-                    <Link to="/presentation">
-                      <Button variant="outline" className="gap-2 border-primary text-primary hover:bg-primary hover:text-white transition-all">
-                        Lire le message complet
-                        <ArrowRight className="w-4 h-4" />
-                      </Button>
-                    </Link>
+
+                {/* Content Section */}
+                <div className="lg:col-span-7 p-8 lg:p-12 relative">
+                  <div className="absolute top-0 right-12 opacity-5">
+                    <Quote className="w-40 h-40 text-primary" />
+                  </div>
+                  
+                  <div className="space-y-8 relative z-10">
+                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider">
+                      <span className="w-2 h-2 rounded-full bg-secondary animate-ping" />
+                      Mot de bienvenue
+                    </div>
+
+                    <div className="relative">
+                      <Quote className="w-12 h-12 text-secondary absolute -top-6 -left-4 opacity-50" />
+                      <blockquote className="text-xl md:text-2xl font-medium text-foreground leading-relaxed italic pl-8">
+                        {presidentData?.president_message || "Le Conseil National de la Concurrence œuvre sans relâche pour garantir un marché équitable où chaque opérateur économique peut prospérer dans le respect des règles. Notre mission est de bâtir un environnement de confiance propice au développement économique de notre nation."} 
+                      </blockquote>
+                    </div>
+
+                    <div className="pt-4 flex flex-col sm:flex-row items-center gap-6">
+                      <Link to="/presentation">
+                        <Button size="lg" className="rounded-full px-8 py-6 bg-primary hover:bg-primary/90 text-white font-bold gap-3 shadow-xl shadow-primary/20 group">
+                          Lire le message complet 
+                          <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                        </Button>
+                      </Link>
+                      
+                      <div className="flex items-center gap-4 text-muted-foreground">
+                        <div className="w-12 h-[1px] bg-border" />
+                        <span className="text-sm font-medium italic">Vision 2025-2030</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -196,28 +236,68 @@ export default function HomePage() {
 
 
 
-      {/* Accès rapide */}
-      <section className="py-24 bg-primary text-primary-foreground border-y border-white/5 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10 pointer-events-none">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-white rounded-full blur-[120px]" />
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-secondary rounded-full blur-[120px]" />
+      {/* Nos Services en Ligne — Nouveau Design Modernisé */}
+      <section className="py-28 bg-surface relative overflow-hidden border-t border-border">
+        {/* Éléments de fond décoratifs */}
+        <div className="absolute top-0 right-0 w-full h-full pointer-events-none opacity-40">
+           <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px]" />
+           <div className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-secondary/10 rounded-full blur-[100px]" />
         </div>
+
         <div className="container-page relative z-10">
           <FadeIn>
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-5xl font-extrabold mb-4 text-white">Nos services en ligne</h2>
-              <p className="text-lg md:text-xl opacity-80 max-w-2xl mx-auto">Vos démarches administratives simplifiées et accessibles en tout temps</p>
+            <div className="flex flex-col lg:flex-row items-end justify-between mb-16 gap-6">
+              <div className="max-w-2xl text-center lg:text-left">
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/5 text-primary text-xs font-bold uppercase tracking-widest mb-4">
+                  <Shield className="w-4 h-4" />
+                  Services Publics
+                </div>
+                <h2 className="text-4xl md:text-5xl font-black text-foreground mb-4 leading-tight">
+                  Nos <span className="text-primary italic">services</span> en ligne
+                </h2>
+                <p className="text-lg text-muted-foreground">
+                  Vos démarches administratives simplifiées, sécurisées et accessibles en tout temps pour un service public plus proche de vous.
+                </p>
+              </div>
+              <div className="hidden lg:block pb-2">
+                <div className="flex items-center gap-4 text-sm font-bold text-muted-foreground uppercase tracking-widest">
+                  <span className="w-12 h-1 bg-primary rounded-full" />
+                  Accessibilité
+                </div>
+              </div>
             </div>
           </FadeIn>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {acceRapide.map((s, i) => (
               <FadeIn key={s.titre} delay={i * 100}>
-                <Link to={s.lien} className="bg-white/5 backdrop-blur-sm p-10 rounded-2xl border border-white/10 hover:bg-white/10 hover:border-secondary/50 transition-all duration-500 group text-center flex flex-col items-center">
-                  <div className="w-20 h-20 rounded-2xl bg-white/10 flex items-center justify-center text-white group-hover:text-secondary group-hover:scale-110 mb-6 transition-all duration-300 shadow-inner">
-                    {s.icone}
+                <Link to={s.lien} className="group relative block h-full">
+                  <div className="h-full bg-background rounded-[2rem] p-8 border border-border shadow-soft hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2 transition-all duration-500 overflow-hidden relative">
+                    
+                    {/* Motif de fond stylisé sur la carte */}
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-[5rem] -mr-10 -mt-10 group-hover:scale-150 transition-transform duration-700" />
+                    
+                    <div className="relative z-10 space-y-6">
+                      <div className="w-16 h-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all duration-300 shadow-inner group-hover:rotate-6">
+                        {s.icone}
+                      </div>
+                      
+                      <div className="space-y-3">
+                        <h3 className="font-extrabold text-2xl text-foreground group-hover:text-primary transition-colors">{s.titre}</h3>
+                        <p className="text-base text-muted-foreground leading-relaxed">
+                          {s.desc}
+                        </p>
+                      </div>
+
+                      <div className="pt-4 flex items-center gap-3 text-sm font-bold text-primary opacity-0 group-hover:opacity-100 translate-x-[-10px] group-hover:translate-x-0 transition-all duration-300">
+                        Accéder au service
+                        <ArrowRight className="w-4 h-4" />
+                      </div>
+                    </div>
+
+                    {/* Ligne d'accent en bas */}
+                    <div className="absolute bottom-0 left-0 w-0 h-1.5 bg-primary group-hover:w-full transition-all duration-700" />
                   </div>
-                  <h3 className="font-bold text-xl text-white mb-3 group-hover:text-secondary transition-colors">{s.titre}</h3>
-                  <p className="text-base text-white/70 leading-relaxed">{s.desc}</p>
                 </Link>
               </FadeIn>
             ))}
@@ -227,36 +307,76 @@ export default function HomePage() {
 
 
 
-      {/* Actualités récentes */}
-      <section className="py-20 bg-surface border-t border-border">
+      {/* Actualités récentes — Nouveau Design Magazine */}
+      <section className="py-24 bg-background relative overflow-hidden">
         <div className="container-page">
           <FadeIn>
-            <div className="text-center mb-16">
-              <h2 className="section-title">Actualités récentes</h2>
-              <p className="section-subtitle">Les dernières nouvelles du Conseil National de la Concurrence</p>
+            <div className="flex flex-col md:flex-row items-center justify-between mb-16 gap-6">
+              <div className="text-center md:text-left">
+                <h2 className="text-4xl md:text-5xl font-black text-foreground mb-4">Actualités <span className="text-secondary italic">récentes</span></h2>
+                <div className="flex items-center justify-center md:justify-start gap-4">
+                   <div className="h-1 w-20 bg-secondary rounded-full" />
+                   <p className="text-muted-foreground font-medium">L'essentiel de l'activité du Conseil</p>
+                </div>
+              </div>
+              <Link to="/actualites" className="hidden md:block">
+                <Button variant="ghost" className="group gap-2 hover:bg-primary/5 text-primary font-bold">
+                  Voir tout le blog <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
             </div>
           </FadeIn>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             {(!Array.isArray(recentArticles) || recentArticles.length === 0) ? (
-              <p className="text-center col-span-3 text-muted-foreground">Aucune actualité récente pour le moment.</p>
+              <div className="col-span-3 py-20 text-center bg-surface rounded-3xl border-2 border-dashed border-border">
+                <p className="text-muted-foreground">Aucune actualité disponible pour le moment.</p>
+              </div>
             ) : (
               recentArticles.map((a: any, i: number) => (
                 <FadeIn key={a.slug || a.id} delay={i * 100}>
-                  <div className="bg-background rounded-xl border border-border overflow-hidden card-hover shadow-soft h-full flex flex-col">
-                    {/* Image cover for news */}
-                    <div className="h-48 bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center relative overflow-hidden group">
-                      <img src={getImgUrl(a.image_url, `https://images.unsplash.com/photo-${i === 0 ? '1507679799987-c7cf7ee3face' : i === 1 ? '1557804506-669a67965ba0' : '1454165804606-c3d57bc86b40'}?auto=format&fit=crop&q=80&w=800`)} alt={a.titre} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                      <div className="absolute inset-0 bg-primary/20 group-hover:bg-transparent transition-colors duration-500" />
-                    </div>
-                    <div className="p-6 flex flex-col flex-grow">
-                      <div className="flex items-center gap-3 mb-4">
+                  <div className="group flex flex-col h-full bg-surface rounded-[2rem] overflow-hidden border border-border shadow-soft hover:shadow-2xl transition-all duration-500">
+                    {/* Media Area */}
+                    <div className="relative h-64 overflow-hidden">
+                      <img 
+                        src={getImgUrl(a.image_url, `https://images.unsplash.com/photo-${i === 0 ? '1507679799987-c7cf7ee3face' : i === 1 ? '1557804506-669a67965ba0' : '1454165804606-c3d57bc86b40'}?auto=format&fit=crop&q=80&w=800`)} 
+                        alt={a.titre} 
+                        className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                      
+                      {/* Category Badge Floating */}
+                      <div className="absolute top-4 left-4 z-20">
                         {categorieBadge(a.categorie || 'autre')}
-                        <span className="text-sm font-medium text-muted-foreground">{(a.date_publication || a.created_at || '').slice(0, 10)}</span>
                       </div>
-                      <h3 className="text-lg font-bold text-foreground mb-3 line-clamp-2">{a.titre}</h3>
-                      <p className="text-base text-muted-foreground line-clamp-3 mb-6 flex-grow">{a.extrait}</p>
-                      <Link to={`/actualites/${a.slug}`} className="text-sm font-bold text-primary hover:text-secondary transition-colors inline-flex items-center gap-2 mt-auto group">
-                        Lire la suite <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </div>
+
+                    {/* Content Area */}
+                    <div className="p-8 flex flex-col flex-grow">
+                      <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground uppercase tracking-wider mb-4">
+                        <Clock className="w-3.5 h-3.5 text-secondary" />
+                        <span>{(a.date_publication || a.created_at || '').slice(0, 10)}</span>
+                        <span className="mx-2">•</span>
+                        <span>5 min de lecture</span>
+                      </div>
+                      
+                      <h3 className="text-xl font-bold text-foreground mb-4 leading-tight group-hover:text-primary transition-colors line-clamp-2">
+                        {a.titre}
+                      </h3>
+                      
+                      <p className="text-muted-foreground text-sm leading-relaxed line-clamp-3 mb-8">
+                        {a.extrait}
+                      </p>
+
+                      <Link 
+                        to={`/actualites/${a.slug}`} 
+                        className="mt-auto inline-flex items-center gap-2 text-sm font-black text-primary group/link"
+                      >
+                        <span className="relative">
+                          Lire l'article
+                          <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary group-hover/link:w-full transition-all duration-300" />
+                        </span>
+                        <ArrowRight className="w-4 h-4 group-hover/link:translate-x-1 transition-transform" />
                       </Link>
                     </div>
                   </div>
@@ -264,12 +384,12 @@ export default function HomePage() {
               ))
             )}
           </div>
-          <FadeIn delay={300}>
-            <div className="text-center mt-12">
+
+          <FadeIn delay={400}>
+            <div className="mt-16 text-center md:hidden">
               <Link to="/actualites">
-                <Button variant="outline" size="lg" className="gap-2 border-border hover:bg-muted">
-                  Toutes les actualités
-                  <ArrowRight className="w-4 h-4" />
+                <Button variant="outline" size="lg" className="w-full rounded-full border-primary text-primary font-bold">
+                  Explorer toutes les actualités
                 </Button>
               </Link>
             </div>

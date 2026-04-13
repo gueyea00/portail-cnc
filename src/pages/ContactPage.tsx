@@ -58,12 +58,18 @@ export default function ContactPage() {
               </div>
             </div>
 
-            {/* Plan d'accès placeholder */}
-            <div className="bg-gradient-to-br from-primary/5 to-secondary/5 rounded-2xl shadow-inner h-64 flex items-center justify-center">
-              <div className="text-center">
-                <MapPin className="w-10 h-10 text-primary/30 mx-auto mb-2" />
-                <p className="text-sm text-muted-foreground">Plan d'accès — N'Djamena, Tchad</p>
-              </div>
+            {/* Plan d'accès réel */}
+            <div className="overflow-hidden rounded-2xl shadow-soft h-64 border border-border">
+              <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15444.6468725832!2d15.0441!3d12.1131!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x10f76527503f1947%3A0xd3f89e1b213b918f!2sAvenue%20Charles%20de%20Gaulle%2C%20N'Djamena!5e0!3m2!1sfr!2std!4v1712762000000!5m2!1sfr!2std" 
+                width="100%" 
+                height="100%" 
+                style={{ border: 0 }} 
+                allowFullScreen={true} 
+                loading="lazy" 
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Google Maps - Avenue Charles de Gaulle, N'Djamena"
+              ></iframe>
             </div>
 
             {/* Réseaux sociaux */}
