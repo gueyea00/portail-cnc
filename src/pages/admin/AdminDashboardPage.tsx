@@ -520,18 +520,25 @@ export default function AdminDashboardPage() {
   };
 
 
-  const handleUpdateParametre = async (cle: string, valeur: string) => {
+  const handleUpdateParametre = async (cle: string, valeur: string | File) => {
+    setIsLoadingTab(true);
     try {
+      const isFile = valeur instanceof File;
       const res = await authFetch(`/api/parametres/admin`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ cle, valeur }),
+        headers: isFile ? {} : { "Content-Type": "application/json" },
+        body: isFile 
+          ? (() => { const fd = new FormData(); fd.append("president_photo_file", valeur); return fd; })()
+          : JSON.stringify({ [cle]: valeur }),
       });
       if (!res.ok) throw new Error("Erreur paramètre");
       toast.success("Paramètre mis à jour");
       fetchParametres();
     } catch (error: any) {
       toast.error(error.message);
+    } finally {
+      setIsLoadingTab(true);
+      setTimeout(() => setIsLoadingTab(false), 500);
     }
   };
 
@@ -1493,19 +1500,92 @@ export default function AdminDashboardPage() {
               {isLoadingTab ? (
                 <p className="text-sm text-slate-500">Chargement...</p>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {Object.entries(parametres).map(([cle, valeur]) => (
-                    <div key={cle} className="bg-white rounded-2xl border border-slate-100 p-6 space-y-3 shadow-sm">
-                      <p className="text-xs font-black uppercase text-primary tracking-widest">{cle.replace(/_/g, " ")}</p>
-                      <Input 
-                        defaultValue={valeur} 
-                        className="h-11 rounded-xl bg-slate-50 border-transparent focus:bg-white"
-                        onBlur={(e) => {
-                          if (e.target.value !== valeur) handleUpdateParametre(cle, e.target.value);
-                        }}
-                      />
+                <div className="space-y-8">
+                  <div className="bg-white rounded-[32px] border border-slate-100 p-8 shadow-sm space-y-6">
+                    <div className="flex items-center gap-4 mb-2">
+                       <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
+                         <Users className="w-6 h-6" />
+                       </div>
+                       <div>
+                         <h3 className="text-lg font-bold text-slate-800">Identité du Président</h3>
+                         <p className="text-xs text-slate-500">Photo et informations du dirigeant</p>
+                       </div>
                     </div>
-                  ))}
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-50">
+                      <div className="space-y-4">
+                        <p className="text-xs font-black uppercase text-slate-400 tracking-widest">Photo officielle</p>
+                        <div className="flex items-center gap-6">
+                           <div className="w-24 h-24 rounded-2xl bg-slate-100 border-2 border-dashed border-slate-200 overflow-hidden flex items-center justify-center group relative">
+                             {parametres.president_photo_path ? (
+                               <img 
+                                 src={`/${parametres.president_photo_path}`} 
+                                 className="w-full h-full object-cover" 
+                                 onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                               />
+                             ) : (
+                               <Users className="w-8 h-8 text-slate-300" />
+                             )}
+                             <label className="absolute inset-0 bg-black/40 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-opacity text-[10px] font-bold">
+                               CHANGER
+                               <input 
+                                 type="file" 
+                                 className="hidden" 
+                                 accept="image/*"
+                                 onChange={(e) => {
+                                   const file = e.target.files?.[0];
+                                   if (file) handleUpdateParametre("president_photo_path", file);
+                                 }} 
+                               />
+                             </label>
+                           </div>
+                           <div className="flex-1 space-y-1">
+                             <p className="text-sm font-bold text-slate-700">Changer la photo</p>
+                             <p className="text-[10px] text-slate-400">Format JPG, PNG. Max 5Mo.</p>
+                           </div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-4">
+                         <p className="text-xs font-black uppercase text-slate-400 tracking-widest">Nom complet</p>
+                         <Input 
+                            defaultValue={parametres.president_nom} 
+                            className="h-12 rounded-xl bg-slate-50 border-transparent focus:bg-white font-bold"
+                            onBlur={(e) => {
+                              if (e.target.value !== parametres.president_nom) handleUpdateParametre("president_nom", e.target.value);
+                            }}
+                          />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {Object.entries(parametres)
+                      .filter(([cle]) => !['president_nom', 'president_photo_path'].includes(cle))
+                      .map(([cle, valeur]) => (
+                      <div key={cle} className="bg-white rounded-[24px] border border-slate-100 p-6 space-y-3 shadow-sm hover:border-primary/20 transition-colors">
+                        <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">{cle.replace(/_/g, " ")}</p>
+                        {valeur.length > 50 ? (
+                           <Textarea
+                             defaultValue={valeur}
+                             rows={3}
+                             className="rounded-xl bg-slate-50 border-transparent focus:bg-white resize-none text-sm leading-relaxed"
+                             onBlur={(e) => {
+                              if (e.target.value !== valeur) handleUpdateParametre(cle, e.target.value);
+                            }}
+                           />
+                        ) : (
+                          <Input 
+                            defaultValue={valeur} 
+                            className="h-11 rounded-xl bg-slate-50 border-transparent focus:bg-white text-sm"
+                            onBlur={(e) => {
+                              if (e.target.value !== valeur) handleUpdateParametre(cle, e.target.value);
+                            }}
+                          />
+                        )}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
