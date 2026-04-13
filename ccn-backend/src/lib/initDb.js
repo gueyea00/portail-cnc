@@ -4,9 +4,10 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 async function initDb() {
-  const client = await pool.connect();
+  let client;
   try {
     console.log('🔗 Connexion à PostgreSQL...');
+    client = await pool.connect();
     
     console.log('📋 Création des tables...');
     await client.query(schema);
@@ -17,8 +18,9 @@ async function initDb() {
     console.log('✅ Base de données initialisée avec succès !');
   } catch (err) {
     console.error('❌ Erreur lors de l\'initialisation :', err.message);
+    process.exit(1); // Exit with error code if initialization fails
   } finally {
-    client.release();
+    if (client) client.release();
     process.exit(0);
   }
 }

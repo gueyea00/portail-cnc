@@ -9,4 +9,5 @@ COPY . .
 
 EXPOSE 8080
 
-CMD ["node", "src/server.js"]
+# Lancer l'initialisation de la DB puis démarrer le serveur
+CMD ["sh", "-c", "npm run db:init && npm start"]
