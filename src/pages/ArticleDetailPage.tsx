@@ -62,16 +62,16 @@ export default function ArticleDetailPage() {
       <section className="relative h-[600px] w-full overflow-hidden flex items-center">
         {/* Image de fond */}
         <div className="absolute inset-0">
-          <img 
-            src={getImgUrl(article.image_path || article.image_url, "/hero-bg.jpg")} 
-            alt={article.titre} 
+          <img
+            src={getImgUrl(article.image_path || article.image_url, "/hero-bg.jpg")}
+            alt={article.titre}
             className="w-full h-full object-cover"
           />
         </div>
-        
+
         {/* Superposition Dégradé Bleu Tchad (#002664) */}
         <div className="absolute inset-0 bg-gradient-to-r from-[#002664] via-[#002664]/80 to-transparent z-10" />
-        
+
         {/* Motif de points (Dot Pattern) */}
         <div className="absolute inset-0 z-20 opacity-20" style={{ backgroundImage: `radial-gradient(circle, #ffffff 1px, transparent 1px)`, backgroundSize: '30px 30px' }} />
 
@@ -79,21 +79,21 @@ export default function ArticleDetailPage() {
           <FadeIn>
             <div className="max-w-4xl">
               <div className="flex items-center gap-3 mb-6">
-                 <span className="px-4 py-1.5 rounded-full bg-secondary text-primary font-black text-[10px] uppercase tracking-[0.2em]">
-                   {catLabels[article.categorie || 'autre']}
-                 </span>
-                 <span className="w-12 h-[1px] bg-white/30" />
-                 <span className="text-sm font-medium opacity-80 flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-secondary" />
-                    {new Date(article.date_publication || article.created_at).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
-                 </span>
+                <span className="px-4 py-1.5 rounded-full bg-secondary text-primary font-black text-[10px] uppercase tracking-[0.2em]">
+                  {catLabels[article.categorie || 'autre']}
+                </span>
+                <span className="w-12 h-[1px] bg-white/30" />
+                <span className="text-sm font-medium opacity-80 flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-secondary" />
+                  {new Date(article.date_publication || article.created_at).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
+                </span>
               </div>
-              
+
               {/* Titre extra-gras 64px */}
               <h1 className="text-4xl md:text-[64px] font-black leading-[1.1] mb-6 drop-shadow-2xl">
                 {article.titre}
               </h1>
-              
+
               {/* Sous-titre en italique */}
               <p className="text-xl md:text-2xl font-light italic text-white/90 leading-relaxed max-w-2xl border-l-2 border-secondary pl-6">
                 Explorez les détails de cette actualité majeure concernant le Conseil National de la Concurrence.
@@ -105,24 +105,24 @@ export default function ArticleDetailPage() {
 
       {/* 2. Mise en page "News" avec Fil d'Ariane spécialisé */}
       <div className="relative -mt-10 z-40 container-page mb-16 px-4 md:px-0">
-          <div className="bg-white p-6 rounded-2xl shadow-2xl border border-primary/5 flex items-center justify-between">
-             <div className="font-black text-xs uppercase tracking-widest text-primary flex items-center gap-3">
-                <Link to="/" className="hover:text-secondary">ACCUEIL</Link>
-                <span className="text-muted-foreground/30">/</span>
-                <Link to="/actualites" className="hover:text-secondary">ACTUALITÉS</Link>
-                <span className="text-muted-foreground/30">/</span>
-                <span className="text-muted-foreground font-medium truncate max-w-[200px]">{article.titre}</span>
-             </div>
-             <div className="hidden md:flex items-center gap-2 text-primary">
-                <Share2 className="w-5 h-5" />
-                <span className="text-[10px] font-bold">PARTAGER</span>
-             </div>
+        <div className="bg-white p-6 rounded-2xl shadow-2xl border border-primary/5 flex items-center justify-between">
+          <div className="font-black text-xs uppercase tracking-widest text-primary flex items-center gap-3">
+            <Link to="/" className="hover:text-secondary">ACCUEIL</Link>
+            <span className="text-muted-foreground/30">/</span>
+            <Link to="/actualites" className="hover:text-secondary">ACTUALITÉS</Link>
+            <span className="text-muted-foreground/30">/</span>
+            <span className="text-muted-foreground font-medium truncate max-w-[200px]">{article.titre}</span>
           </div>
+          <div className="hidden md:flex items-center gap-2 text-primary">
+            <Share2 className="w-5 h-5" />
+            <span className="text-[10px] font-bold">PARTAGER</span>
+          </div>
+        </div>
       </div>
 
       <div className="container-page pb-24">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
-          
+
           {/* Article Content (2/3) */}
           <div className="lg:col-span-8">
             <FadeIn>
@@ -131,7 +131,8 @@ export default function ArticleDetailPage() {
                 <div className="prose-ebenx max-w-none">
                   {/* Premier paragraphe avec lettrine (simulé via styles CSS inline pour le premier bloc) */}
                   <div className="text-[22px] leading-[1.8] text-foreground font-medium mb-12 text-justify">
-                    <style dangerouslySetInnerHTML={{ __html: `
+                    <style dangerouslySetInnerHTML={{
+                      __html: `
                       .ebenx-content p:first-of-type::first-letter {
                         float: left;
                         font-size: 84px;
@@ -150,18 +151,18 @@ export default function ArticleDetailPage() {
 
                 {/* Tags & Related Info */}
                 <div className="mt-16 pt-10 border-t border-border flex flex-wrap gap-4">
-                   <div className="flex items-center gap-2 px-6 py-3 bg-muted rounded-xl text-sm font-bold text-primary">
-                      <Tag className="w-4 h-4" />
-                      MARCHÉ
-                   </div>
-                   <div className="flex items-center gap-2 px-6 py-3 bg-muted rounded-xl text-sm font-bold text-primary">
-                      <Tag className="w-4 h-4" />
-                      RÉGULATION
-                   </div>
-                   <div className="flex items-center gap-2 px-6 py-3 bg-muted rounded-xl text-sm font-bold text-primary">
-                      <Tag className="w-4 h-4" />
-                      TCHAD
-                   </div>
+                  <div className="flex items-center gap-2 px-6 py-3 bg-muted rounded-xl text-sm font-bold text-primary">
+                    <Tag className="w-4 h-4" />
+                    MARCHÉ
+                  </div>
+                  <div className="flex items-center gap-2 px-6 py-3 bg-muted rounded-xl text-sm font-bold text-primary">
+                    <Tag className="w-4 h-4" />
+                    RÉGULATION
+                  </div>
+                  <div className="flex items-center gap-2 px-6 py-3 bg-muted rounded-xl text-sm font-bold text-primary">
+                    <Tag className="w-4 h-4" />
+                    TCHAD
+                  </div>
                 </div>
               </article>
             </FadeIn>
@@ -169,7 +170,7 @@ export default function ArticleDetailPage() {
 
           {/* 4. Barre Latérale (1/3) */}
           <aside className="lg:col-span-4 space-y-12">
-            
+
             {/* Social Share Blocks */}
             <div className="bg-surface p-10 rounded-[2.5rem] shadow-soft border border-border">
               <h3 className="text-xl font-black text-primary uppercase tracking-tighter mb-8 flex items-center gap-3">
@@ -190,36 +191,6 @@ export default function ArticleDetailPage() {
               </div>
             </div>
 
-            {/* Newsletter Ebenyx Widget */}
-            <div className="bg-[#002664] p-10 rounded-[2.5rem] shadow-2xl relative overflow-hidden group">
-               {/* Pattern for widget */}
-              <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `radial-gradient(circle, #ffffff 1px, transparent 1px)`, backgroundSize: '15px 15px' }} />
-              
-              <div className="relative z-10">
-                <div className="w-16 h-16 bg-secondary rounded-2xl flex items-center justify-center text-primary mb-6 shadow-xl group-hover:rotate-12 transition-transform duration-500">
-                  <Send className="w-8 h-8" />
-                </div>
-                <h3 className="text-2xl font-black text-white mb-3">Newsletter</h3>
-                <p className="text-sm text-white/70 mb-8 leading-relaxed italic">
-                  Restez informé des dernières décisions et actualités du CNC directement dans votre boîte mail.
-                </p>
-                <div className="space-y-4">
-                  <input 
-                    type="email" 
-                    placeholder="votre@email.com" 
-                    className="w-full px-6 py-4 rounded-2xl bg-white/10 border border-white/20 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-secondary/50 font-medium"
-                  />
-                  <Button className="w-full py-7 rounded-2xl bg-secondary text-primary hover:bg-secondary/90 font-black text-sm uppercase tracking-widest shadow-xl">
-                    S'ABONNER MAINTENANT
-                  </Button>
-                </div>
-                <div className="mt-6 flex items-center gap-2 text-[10px] text-white/40 font-bold tracking-widest uppercase">
-                  <CheckCircle2 className="w-3 h-3 text-secondary" />
-                  CONFIDENTIALITÉ GARANTIE
-                </div>
-              </div>
-            </div>
-
             {/* Recent Posts List */}
             <div className="p-2">
               <h3 className="text-xl font-black text-primary uppercase tracking-tighter mb-8 flex items-center gap-3">
@@ -231,10 +202,10 @@ export default function ArticleDetailPage() {
                   <Link key={a.slug || a.id} to={`/actualites/${a.slug}`} className="group block">
                     <div className="flex gap-5 items-start">
                       <div className="w-24 h-24 rounded-2xl overflow-hidden shrink-0 shadow-soft border border-border">
-                        <img 
-                          src={getImgUrl(a.image_path || a.image_url, "/hero-bg.jpg")} 
-                          alt="" 
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                        <img
+                          src={getImgUrl(a.image_path || a.image_url, "/hero-bg.jpg")}
+                          alt=""
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                         />
                       </div>
                       <div className="space-y-2">
