@@ -348,7 +348,7 @@ export default function HomePage() {
                     {/* Media Area */}
                     <div className="relative h-64 overflow-hidden">
                       <img 
-                        src={getImgUrl(a.image_url, `https://images.unsplash.com/photo-${i === 0 ? '1507679799987-c7cf7ee3face' : i === 1 ? '1557804506-669a67965ba0' : '1454165804606-c3d57bc86b40'}?auto=format&fit=crop&q=80&w=800`)} 
+                        src={getImgUrl(a.image_path || a.image_url, `https://images.unsplash.com/photo-${i === 0 ? '1507679799987-c7cf7ee3face' : i === 1 ? '1557804506-669a67965ba0' : '1454165804606-c3d57bc86b40'}?auto=format&fit=crop&q=80&w=800`)} 
                         alt={a.titre} 
                         className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
                       />
