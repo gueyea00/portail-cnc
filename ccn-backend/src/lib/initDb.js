@@ -16,12 +16,12 @@ async function initDb() {
     await seedDatabase(client);
     
     console.log('✅ Base de données initialisée avec succès !');
-  } catch (err) {
-    console.error('❌ Erreur lors de l\'initialisation :', err.message);
-    process.exit(1); // Exit with error code if initialization fails
-  } finally {
     if (client) client.release();
     process.exit(0);
+  } catch (err) {
+    console.error('❌ Erreur lors de l\'initialisation :', err.message);
+    if (client) client.release();
+    process.exit(1); 
   }
 }
 
