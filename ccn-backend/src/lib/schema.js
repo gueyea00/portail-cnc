@@ -199,4 +199,14 @@ CREATE TABLE IF NOT EXISTS liens_institutionnels (
   ordre           INT DEFAULT 0,
   created_at      TIMESTAMPTZ DEFAULT NOW()
 );
+-- ============================================================
+-- INDEX UNIQUES (Sécurité pour le seeding)
+-- ============================================================
+CREATE UNIQUE INDEX IF NOT EXISTS idx_services_titre ON services(titre);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_missions_titre ON missions(titre);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_membres_nom ON membres(nom);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_articles_slug ON articles(slug);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_galerie_titre ON galerie_items(titre);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_faq_question ON faq(question);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_etapes_titre ON etapes_intervention(titre);
 `;
