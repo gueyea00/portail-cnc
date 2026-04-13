@@ -24,9 +24,13 @@ export default function ActualitesPage() {
   const [page, setPage] = useState(1);
   const perPage = 6;
 
-  const { data: articles = [], isLoading } = useQuery({
+  const { data: articles = [], isLoading, isError } = useQuery({
     queryKey: ["articles"],
-    queryFn: () => fetch("/api/articles").then(res => res.json())
+    queryFn: async () => {
+      const res = await fetch("/api/articles");
+      if (!res.ok) throw new Error("Erreur serveur");
+      return res.json();
+    }
   });
 
   const filtered = filtre === "Tous" ? articles : articles.filter((a: any) => (a.categorie || 'autre') === filtre);
@@ -65,7 +69,14 @@ export default function ActualitesPage() {
         </div>
 
         {isLoading ? (
-          <div className="text-center py-20 text-muted-foreground">Chargement des actualités...</div>
+          <div className="text-center py-20 text-muted-foreground">
+            <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            Chargement des actualités...
+          </div>
+        ) : isError ? (
+           <div className="text-center py-20 text-red-500 font-medium">
+             Une erreur est survenue lors de la récupération des actualités. Veuillez réessayer plus tard.
+           </div>
         ) : filtered.length === 0 ? (
           <div className="text-center py-20 text-muted-foreground">Aucune actualité trouvée.</div>
         ) : (

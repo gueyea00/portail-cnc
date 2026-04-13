@@ -44,9 +44,13 @@ const getImgUrl = (path: string | null | undefined, fallback: string) => {
 
 export default function HomePage() {
   const { t } = useTranslation();
-  const { data: recentArticles = [] } = useQuery({
+  const { data: recentArticles = [], isLoading: isLoadingArticles, isError: isErrorArticles } = useQuery({
     queryKey: ["articles", "home"],
-    queryFn: () => fetch("/api/articles?limit=3").then(res => res.json())
+    queryFn: async () => {
+      const res = await fetch("/api/articles?limit=3");
+      if (!res.ok) throw new Error("Erreur serveur");
+      return res.json();
+    }
   });
 
   const { data: galeriePreview = [] } = useQuery({
@@ -328,9 +332,14 @@ export default function HomePage() {
           </FadeIn>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            {(!Array.isArray(recentArticles) || recentArticles.length === 0) ? (
+            {isLoadingArticles ? (
+              <div className="col-span-3 py-20 text-center bg-surface rounded-3xl border border-dashed border-border">
+                <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <p className="text-muted-foreground italic">Chargement des actualités...</p>
+              </div>
+            ) : isErrorArticles || (!Array.isArray(recentArticles) || recentArticles.length === 0) ? (
               <div className="col-span-3 py-20 text-center bg-surface rounded-3xl border-2 border-dashed border-border">
-                <p className="text-muted-foreground">Aucune actualité disponible pour le moment.</p>
+                <p className="text-muted-foreground">{isErrorArticles ? "Une erreur est survenue lors du chargement." : "Aucune actualité disponible pour le moment."}</p>
               </div>
             ) : (
               recentArticles.map((a: any, i: number) => (
