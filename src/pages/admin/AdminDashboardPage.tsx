@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
-import { 
-  LayoutDashboard, 
-  FileText, 
-  Users, 
-  Image as ImageIcon, 
-  Settings, 
-  LogOut, 
-  Plus, 
-  Search, 
-  Edit, 
-  Trash2, 
+import {
+  LayoutDashboard,
+  FileText,
+  Users,
+  Image as ImageIcon,
+  Settings,
+  LogOut,
+  Plus,
+  Search,
+  Edit,
+  Trash2,
   ExternalLink,
   CheckCircle2,
   AlertCircle,
@@ -534,7 +534,7 @@ export default function AdminDashboardPage() {
       if (presidentPhotoFile) {
         formData.append("president_photo_file", presidentPhotoFile);
       }
-      
+
       const res = await authFetch(`/api/parametres/admin`, {
         method: "PUT",
         body: formData,
@@ -649,11 +649,10 @@ export default function AdminDashboardPage() {
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id as TabType)}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-medium ${
-                activeTab === item.id 
-                ? "bg-white/15 text-white shadow-inner" 
-                : "text-white/70 hover:bg-white/5 hover:text-white"
-              }`}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-medium ${activeTab === item.id
+                  ? "bg-white/15 text-white shadow-inner"
+                  : "text-white/70 hover:bg-white/5 hover:text-white"
+                }`}
             >
               {item.icon}
               {item.label}
@@ -673,7 +672,7 @@ export default function AdminDashboardPage() {
               </div>
             </div>
           </div>
-          <button 
+          <button
             onClick={handleLogout}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-300 hover:bg-red-500/10 hover:text-red-400 transition-all font-medium"
           >
@@ -746,16 +745,16 @@ export default function AdminDashboardPage() {
                     <p className="text-white/70 max-w-md font-medium">Vous pouvez gérer tous les contenus du portail institutionnel depuis cet espace de contrôle centralisé.</p>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
-                     <Button
-                        className="bg-white text-primary hover:bg-white/90 rounded-2xl h-14 px-8 font-bold gap-2"
-                        onClick={openArticleForm}
-                     >
-                        <Plus className="w-5 h-5" />
-                        Nouvel Article
-                     </Button>
-                     <Button variant="outline" className="border-white/20 text-white hover:bg-white/10 rounded-2xl h-14 px-8 font-bold">
-                        Paramètres
-                     </Button>
+                    <Button
+                      className="bg-white text-primary hover:bg-white/90 rounded-2xl h-14 px-8 font-bold gap-2"
+                      onClick={openArticleForm}
+                    >
+                      <Plus className="w-5 h-5" />
+                      Nouvel Article
+                    </Button>
+                    <Button variant="outline" className="border-white/20 text-white hover:bg-white/10 rounded-2xl h-14 px-8 font-bold">
+                      Paramètres
+                    </Button>
                   </div>
                 </div>
                 <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
@@ -769,8 +768,8 @@ export default function AdminDashboardPage() {
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="relative flex-1 max-w-md">
                   <Search className="absolute left-3 top-3 w-4 h-4 text-slate-400" />
-                  <Input 
-                    placeholder="Rechercher un article..." 
+                  <Input
+                    placeholder="Rechercher un article..."
                     className="pl-10 h-10 rounded-xl border-slate-200"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -921,60 +920,59 @@ export default function AdminDashboardPage() {
                           .includes(searchTerm.toLowerCase())
                       )
                       .map((art) => (
-                      <tr key={art.id} className="hover:bg-slate-50/50 transition-colors group">
-                        <td className="px-6 py-4">
-                          <div className="w-16 h-10 rounded-lg bg-slate-100 overflow-hidden">
-                            <img 
-                                src={art.image_path ? `/uploads/articles/${art.image_path.split('/').pop()}` : art.image_url} 
-                                alt="" 
+                        <tr key={art.id} className="hover:bg-slate-50/50 transition-colors group">
+                          <td className="px-6 py-4">
+                            <div className="w-16 h-10 rounded-lg bg-slate-100 overflow-hidden">
+                              <img
+                                src={art.image_path ? `/uploads/articles/${art.image_path.split('/').pop()}` : art.image_url}
+                                alt=""
                                 className="w-full h-full object-cover"
-                            />
-                          </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <p className="text-sm font-bold text-slate-800 line-clamp-1">{art.titre}</p>
-                          <p className="text-[10px] text-slate-400 font-mono">/{art.slug}</p>
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className={`text-[10px] font-black uppercase px-2 py-1 rounded-full ${
-                             art.categorie === 'communique' ? 'bg-green-100 text-green-700' :
-                             art.categorie === 'evenement' ? 'bg-blue-100 text-blue-700' :
-                             'bg-orange-100 text-orange-700'
-                          }`}>
-                            {art.categorie}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 text-sm text-slate-500 font-medium whitespace-nowrap">
-                          {new Date(art.date_publication).toLocaleDateString()}
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Button 
-                              variant="ghost" 
-                              size="icon" 
-                              className="h-8 w-8 rounded-lg text-blue-600 hover:bg-blue-50"
-                              onClick={() => openArticleForm(art)}
-                            >
-                              <Edit className="w-4 h-4" />
-                            </Button>
-                            <Button 
-                              variant="ghost" 
-                              size="icon" 
-                              className="h-8 w-8 rounded-lg text-red-600 hover:bg-red-50"
-                              onClick={() => handleDeleteArticle(art.id)}
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </div>
+                              />
+                            </div>
+                          </td>
+                          <td className="px-6 py-4">
+                            <p className="text-sm font-bold text-slate-800 line-clamp-1">{art.titre}</p>
+                            <p className="text-[10px] text-slate-400 font-mono">/{art.slug}</p>
+                          </td>
+                          <td className="px-6 py-4">
+                            <span className={`text-[10px] font-black uppercase px-2 py-1 rounded-full ${art.categorie === 'communique' ? 'bg-green-100 text-green-700' :
+                                art.categorie === 'evenement' ? 'bg-blue-100 text-blue-700' :
+                                  'bg-orange-100 text-orange-700'
+                              }`}>
+                              {art.categorie}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 text-sm text-slate-500 font-medium whitespace-nowrap">
+                            {new Date(art.date_publication).toLocaleDateString()}
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="flex items-center gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 rounded-lg text-blue-600 hover:bg-blue-50"
+                                onClick={() => openArticleForm(art)}
+                              >
+                                <Edit className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 rounded-lg text-red-600 hover:bg-red-50"
+                                onClick={() => handleDeleteArticle(art.id)}
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    {articles.length === 0 && (
+                      <tr>
+                        <td colSpan={5} className="px-6 py-12 text-center text-slate-400 font-medium">
+                          Aucun article trouvé.
                         </td>
                       </tr>
-                    ))}
-                    {articles.length === 0 && (
-                        <tr>
-                            <td colSpan={5} className="px-6 py-12 text-center text-slate-400 font-medium">
-                                Aucun article trouvé.
-                            </td>
-                        </tr>
                     )}
                   </tbody>
                 </table>
@@ -1019,28 +1017,28 @@ export default function AdminDashboardPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                       <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Initiales</p>
-                       <Input
-                         value={membreForm.initiales}
-                         onChange={(e) => setMembreForm(prev => ({ ...prev, initiales: e.target.value }))}
-                         className="h-11 rounded-xl border-slate-200"
-                       />
+                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Initiales</p>
+                      <Input
+                        value={membreForm.initiales}
+                        onChange={(e) => setMembreForm(prev => ({ ...prev, initiales: e.target.value }))}
+                        className="h-11 rounded-xl border-slate-200"
+                      />
                     </div>
                     <div className="space-y-2">
-                       <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Photo</p>
-                       <input
-                         type="file"
-                         accept="image/*"
-                         onChange={(e) => setMembreImage(e.target.files?.[0] || null)}
-                       />
+                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Photo</p>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => setMembreImage(e.target.files?.[0] || null)}
+                      />
                     </div>
                     <div className="space-y-2 md:col-span-2">
-                       <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Biographie</p>
-                       <Textarea
-                         value={membreForm.bio}
-                         onChange={(e) => setMembreForm(prev => ({ ...prev, bio: e.target.value }))}
-                         className="min-h-[100px] rounded-xl border-slate-200"
-                       />
+                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Biographie</p>
+                      <Textarea
+                        value={membreForm.bio}
+                        onChange={(e) => setMembreForm(prev => ({ ...prev, bio: e.target.value }))}
+                        className="min-h-[100px] rounded-xl border-slate-200"
+                      />
                     </div>
                   </div>
                   <div className="flex gap-3">
@@ -1126,20 +1124,20 @@ export default function AdminDashboardPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                       <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Image</p>
-                       <input
-                         type="file"
-                         accept="image/*"
-                         onChange={(e) => setGalerieImage(e.target.files?.[0] || null)}
-                       />
+                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Image</p>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => setGalerieImage(e.target.files?.[0] || null)}
+                      />
                     </div>
                     <div className="space-y-2 md:col-span-2">
-                       <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Description</p>
-                       <Textarea
-                         value={galerieForm.description}
-                         onChange={(e) => setGalerieForm(prev => ({ ...prev, description: e.target.value }))}
-                         className="min-h-[100px] rounded-xl border-slate-200"
-                       />
+                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Description</p>
+                      <Textarea
+                        value={galerieForm.description}
+                        onChange={(e) => setGalerieForm(prev => ({ ...prev, description: e.target.value }))}
+                        className="min-h-[100px] rounded-xl border-slate-200"
+                      />
                     </div>
                   </div>
                   <div className="flex gap-3">
@@ -1221,20 +1219,20 @@ export default function AdminDashboardPage() {
                         onChange={(e) => setDocumentForm(prev => ({ ...prev, categorie: e.target.value }))}
                         className="h-11 w-full rounded-xl border border-slate-200 px-3 bg-white text-sm"
                       >
-                         <option value="Loi">Loi</option>
-                         <option value="Décret">Décret</option>
-                         <option value="Arrêté">Arrêté</option>
-                         <option value="Note">Note circulaire</option>
-                         <option value="Rapport">Rapport</option>
+                        <option value="Loi">Loi</option>
+                        <option value="Décret">Décret</option>
+                        <option value="Arrêté">Arrêté</option>
+                        <option value="Note">Note circulaire</option>
+                        <option value="Rapport">Rapport</option>
                       </select>
                     </div>
                     <div className="space-y-2">
-                       <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Fichier (PDF)</p>
-                       <input
-                         type="file"
-                         accept="application/pdf"
-                         onChange={(e) => setDocumentFile(e.target.files?.[0] || null)}
-                       />
+                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Fichier (PDF)</p>
+                      <input
+                        type="file"
+                        accept="application/pdf"
+                        onChange={(e) => setDocumentFile(e.target.files?.[0] || null)}
+                      />
                     </div>
                   </div>
                   <div className="flex gap-3">
@@ -1312,28 +1310,27 @@ export default function AdminDashboardPage() {
                       <div className="flex items-start justify-between gap-4">
                         <div className="space-y-2 flex-1">
                           <div className="flex items-center gap-2">
-                             <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
-                               p.statut === 'traite' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
-                             }`}>
-                               {p.statut === 'traite' ? 'Traitée' : 'Nouvelle'}
-                             </span>
-                             <p className="text-xs text-slate-400 font-medium">#{p.id} • {new Date(p.created_at).toLocaleString()}</p>
+                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${p.statut === 'traite' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
+                              }`}>
+                              {p.statut === 'traite' ? 'Traitée' : 'Nouvelle'}
+                            </span>
+                            <p className="text-xs text-slate-400 font-medium">#{p.id} • {new Date(p.created_at).toLocaleString()}</p>
                           </div>
                           <h4 className="font-bold text-slate-800">{p.objet}</h4>
                           <p className="text-sm text-slate-600 leading-relaxed">{p.message}</p>
                           <div className="flex flex-wrap gap-4 pt-2 border-t border-slate-50">
                             <div>
-                               <p className="text-[10px] font-black uppercase text-slate-400">Plaignant</p>
-                               <p className="text-sm font-bold text-slate-700">{p.nom}</p>
+                              <p className="text-[10px] font-black uppercase text-slate-400">Plaignant</p>
+                              <p className="text-sm font-bold text-slate-700">{p.nom}</p>
                             </div>
                             <div>
-                               <p className="text-[10px] font-black uppercase text-slate-400">Email / Tel</p>
-                               <p className="text-sm text-slate-600">{p.email} {p.telephone && `• ${p.telephone}`}</p>
+                              <p className="text-[10px] font-black uppercase text-slate-400">Email / Tel</p>
+                              <p className="text-sm text-slate-600">{p.email} {p.telephone && `• ${p.telephone}`}</p>
                             </div>
                             {p.entreprise_visee && (
                               <div>
-                                 <p className="text-[10px] font-black uppercase text-slate-400">Entreprise Visée</p>
-                                 <p className="text-sm font-bold text-orange-600">{p.entreprise_visee}</p>
+                                <p className="text-[10px] font-black uppercase text-slate-400">Entreprise Visée</p>
+                                <p className="text-sm font-bold text-orange-600">{p.entreprise_visee}</p>
                               </div>
                             )}
                           </div>
@@ -1505,8 +1502,8 @@ export default function AdminDashboardPage() {
                   <h2 className="text-lg font-bold text-slate-800">Paramètres</h2>
                   <p className="text-xs text-muted-foreground">Configuration générale</p>
                 </div>
-                <Button 
-                  onClick={handleSaveAllParametres} 
+                <Button
+                  onClick={handleSaveAllParametres}
                   disabled={isSavingParametres}
                   className="rounded-xl font-bold px-6"
                 >
@@ -1520,90 +1517,123 @@ export default function AdminDashboardPage() {
                 <div className="space-y-8">
                   <div className="bg-white rounded-[32px] border border-slate-100 p-8 shadow-sm space-y-6">
                     <div className="flex items-center gap-4 mb-2">
-                       <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
-                         <Users className="w-6 h-6" />
-                       </div>
-                       <div>
-                         <h3 className="text-lg font-bold text-slate-800">Identité du Président</h3>
-                         <p className="text-xs text-slate-500">Photo et informations du dirigeant</p>
-                       </div>
+                      <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
+                        <Users className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-bold text-slate-800">Identité du Président</h3>
+                        <p className="text-xs text-slate-500">Photo et informations du dirigeant</p>
+                      </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-50">
                       <div className="space-y-4">
                         <p className="text-xs font-black uppercase text-slate-400 tracking-widest">Photo officielle</p>
                         <div className="flex items-center gap-6">
-                           <div className="w-24 h-24 rounded-2xl bg-slate-100 border-2 border-dashed border-slate-200 overflow-hidden flex items-center justify-center group relative">
-                             {presidentPhotoFile ? (
-                               <img 
-                                 src={URL.createObjectURL(presidentPhotoFile)} 
-                                 className="w-full h-full object-cover" 
-                               />
-                             ) : parametres.president_photo_path ? (
-                               <img 
-                                 src={`/${parametres.president_photo_path}`} 
-                                 className="w-full h-full object-cover" 
-                                 onError={(e) => { e.currentTarget.style.display = 'none'; }}
-                               />
-                             ) : (
-                               <Users className="w-8 h-8 text-slate-300" />
-                             )}
-                             <label className="absolute inset-0 bg-black/40 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-opacity text-[10px] font-bold">
-                               CHANGER
-                               <input 
-                                 type="file" 
-                                 className="hidden" 
-                                 accept="image/*"
-                                 onChange={(e) => {
-                                   const file = e.target.files?.[0];
-                                   if (file) {
-                                     setPresidentPhotoFile(file);
-                                     // Pour prévisualiser l'image, on pourrait utiliser URL.createObjectURL
-                                   }
-                                 }} 
-                               />
-                             </label>
-                           </div>
-                           <div className="flex-1 space-y-1">
-                             <p className="text-sm font-bold text-slate-700">Changer la photo</p>
-                             <p className="text-[10px] text-slate-400">Format JPG, PNG. Max 5Mo.</p>
-                           </div>
+                          <div className="w-24 h-24 rounded-2xl bg-slate-100 border-2 border-dashed border-slate-200 overflow-hidden flex items-center justify-center group relative">
+                            {presidentPhotoFile ? (
+                              <img
+                                src={URL.createObjectURL(presidentPhotoFile)}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : parametres.president_photo_path ? (
+                              <img
+                                src={`/${parametres.president_photo_path}`}
+                                className="w-full h-full object-cover"
+                                onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                              />
+                            ) : (
+                              <Users className="w-8 h-8 text-slate-300" />
+                            )}
+                            <label className="absolute inset-0 bg-black/40 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-opacity text-[10px] font-bold">
+                              CHANGER
+                              <input
+                                type="file"
+                                className="hidden"
+                                accept="image/*"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) {
+                                    setPresidentPhotoFile(file);
+                                    // Pour prévisualiser l'image, on pourrait utiliser URL.createObjectURL
+                                  }
+                                }}
+                              />
+                            </label>
+                          </div>
+                          <div className="flex-1 space-y-1">
+                            <p className="text-sm font-bold text-slate-700">Changer la photo</p>
+                            <p className="text-[10px] text-slate-400">Format JPG, PNG. Max 5Mo.</p>
+                          </div>
                         </div>
                       </div>
 
                       <div className="space-y-4">
-                         <p className="text-xs font-black uppercase text-slate-400 tracking-widest">Nom complet</p>
-                         <Input 
-                            value={parametres.president_nom || ""} 
-                            className="h-12 rounded-xl bg-slate-50 border-transparent focus:bg-white font-bold"
-                            onChange={(e) => setParametres(prev => ({ ...prev, president_nom: e.target.value }))}
-                          />
+                        <p className="text-xs font-black uppercase text-slate-400 tracking-widest">Nom complet</p>
+                        <Input
+                          value={parametres.president_nom || ""}
+                          className="h-12 rounded-xl bg-slate-50 border-transparent focus:bg-white font-bold"
+                          onChange={(e) => setParametres(prev => ({ ...prev, president_nom: e.target.value }))}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-white rounded-[32px] border border-slate-100 p-8 shadow-sm space-y-6">
+                    <div className="flex items-center gap-4 mb-2">
+                      <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
+                        <FileText className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-bold text-slate-800">Identité du Site</h3>
+                        <p className="text-xs text-slate-500">Nom de l'institution affiché en haut à gauche</p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-50">
+                      <div className="space-y-4">
+                        <p className="text-xs font-black uppercase text-slate-400 tracking-widest">Nom du site (Ligne 1)</p>
+                        <Input
+                          value={parametres.nom_site_ligne1 || ""}
+                          placeholder="Ex: Conseil National"
+                          className="h-12 rounded-xl bg-slate-50 border-transparent focus:bg-white font-bold"
+                          onChange={(e) => setParametres(prev => ({ ...prev, nom_site_ligne1: e.target.value }))}
+                        />
+                      </div>
+                      <div className="space-y-4">
+                        <p className="text-xs font-black uppercase text-slate-400 tracking-widest">Nom du site (Ligne 2)</p>
+                        <Input
+                          value={parametres.nom_site_ligne2 || ""}
+                          placeholder="Ex: de la Concurrence"
+                          className="h-12 rounded-xl bg-slate-50 border-transparent focus:bg-white font-bold"
+                          onChange={(e) => setParametres(prev => ({ ...prev, nom_site_ligne2: e.target.value }))}
+                        />
                       </div>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {Object.entries(parametres)
-                      .filter(([cle]) => !['president_nom', 'president_photo_path'].includes(cle))
+                      .filter(([cle]) => !['president_nom', 'president_photo_path', 'nom_site_ligne1', 'nom_site_ligne2'].includes(cle))
                       .map(([cle, valeur]) => (
-                      <div key={cle} className="bg-white rounded-[24px] border border-slate-100 p-6 space-y-3 shadow-sm hover:border-primary/20 transition-colors">
-                        <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">{cle.replace(/_/g, " ")}</p>
-                        {valeur.length > 50 ? (
-                           <Textarea
-                             value={valeur || ""}
-                             rows={3}
-                             className="rounded-xl bg-slate-50 border-transparent focus:bg-white resize-none text-sm leading-relaxed"
-                             onChange={(e) => setParametres(prev => ({ ...prev, [cle]: e.target.value }))}
-                           />
-                        ) : (
-                          <Input 
-                            value={valeur || ""} 
-                            className="h-11 rounded-xl bg-slate-50 border-transparent focus:bg-white text-sm"
-                            onChange={(e) => setParametres(prev => ({ ...prev, [cle]: e.target.value }))}
-                          />
-                        )}
-                      </div>
-                    ))}
+                        <div key={cle} className="bg-white rounded-[24px] border border-slate-100 p-6 space-y-3 shadow-sm hover:border-primary/20 transition-colors">
+                          <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">{cle.replace(/_/g, " ")}</p>
+                          {valeur.length > 50 ? (
+                            <Textarea
+                              value={valeur || ""}
+                              rows={3}
+                              className="rounded-xl bg-slate-50 border-transparent focus:bg-white resize-none text-sm leading-relaxed"
+                              onChange={(e) => setParametres(prev => ({ ...prev, [cle]: e.target.value }))}
+                            />
+                          ) : (
+                            <Input
+                              value={valeur || ""}
+                              className="h-11 rounded-xl bg-slate-50 border-transparent focus:bg-white text-sm"
+                              onChange={(e) => setParametres(prev => ({ ...prev, [cle]: e.target.value }))}
+                            />
+                          )}
+                        </div>
+                      ))}
                   </div>
                 </div>
               )}
