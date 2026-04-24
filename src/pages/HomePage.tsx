@@ -78,20 +78,19 @@ export default function HomePage() {
         <div className="w-full px-4 md:px-12 relative z-10">
           {/* Informations flottantes sur l'image */}
           <div className="absolute top-0 right-4 md:right-12 hidden md:flex items-center gap-6">
-            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2 rounded-2xl shadow-xl">
-              <Clock className="w-4 h-4 text-secondary" />
+            {/* <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2 rounded-2xl shadow-xl">
               <div className="text-right font-sans">
                 <p className="text-[10px] uppercase tracking-wider text-white/60 font-medium">{t("header.hours")}</p>
                 <p className="text-xs font-bold text-white">{presidentData?.horaires_ouverture || "07h30 – 15h30"}</p>
               </div>
-            </div>
-            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2 rounded-2xl shadow-xl">
+            </div> */}
+            {/* <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2 rounded-2xl shadow-xl">
               <MapPin className="w-4 h-4 text-destructive" />
               <div className="text-right font-sans">
                 <p className="text-[10px] uppercase tracking-wider text-white/60 font-medium">{t("header.seat")}</p>
                 <p className="text-xs font-bold text-white">{presidentData?.siege_social || "N'Djamena, Tchad"}</p>
               </div>
-            </div>
+            </div> */}
           </div>
 
           <FadeIn>
@@ -126,24 +125,24 @@ export default function HomePage() {
           <FadeIn>
             <div className="max-w-6xl mx-auto">
               <div className="relative grid grid-cols-1 lg:grid-cols-12 gap-0 lg:gap-8 items-center bg-surface rounded-[2.5rem] p-4 lg:p-8 shadow-2xl shadow-primary/10 border border-border">
-                
+
                 {/* Image Section avec découpe décorative */}
                 <div className="lg:col-span-5 relative group">
                   <div className="aspect-[4/5] rounded-[2rem] overflow-hidden shadow-2xl relative z-10">
-                    <img 
-                      src={getImgUrl(presidentData?.president_photo_path, "/president.png")} 
-                      alt={presidentData?.president_nom || "M. Vissia Bouranga"} 
-                      className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105" 
-                      onError={(e) => { e.currentTarget.src = '/president.png'; }} 
+                    <img
+                      src={getImgUrl(presidentData?.president_photo_path, "/president.png")}
+                      alt={presidentData?.president_nom || "M. Vissia Bouranga"}
+                      className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                      onError={(e) => { e.currentTarget.src = '/president.png'; }}
                     />
                     {/* Overlay dégradé subtil */}
                     <div className="absolute inset-0 bg-gradient-to-t from-primary/60 via-transparent to-transparent opacity-60" />
                   </div>
-                  
+
                   {/* Éléments décoratifs flottants */}
                   <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-secondary rounded-3xl -z-0 rotate-12" />
                   <div className="absolute -top-6 -left-6 w-24 h-24 border-4 border-primary/20 rounded-full -z-0 animate-pulse" />
-                  
+
                   {/* Badge de fonction flottant */}
                   <div className="absolute bottom-8 left-8 right-8 bg-white/10 backdrop-blur-xl border border-white/20 p-6 rounded-2xl shadow-xl z-20">
                     <h3 className="text-xl font-bold text-white mb-0.5">{presidentData?.president_nom || "M. Vissia Bouranga"}</h3>
@@ -156,7 +155,7 @@ export default function HomePage() {
                   <div className="absolute top-0 right-12 opacity-5">
                     <Quote className="w-40 h-40 text-primary" />
                   </div>
-                  
+
                   <div className="space-y-8 relative z-10">
                     <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider">
                       <span className="w-2 h-2 rounded-full bg-secondary animate-ping" />
@@ -166,18 +165,18 @@ export default function HomePage() {
                     <div className="relative">
                       <Quote className="w-12 h-12 text-secondary absolute -top-6 -left-4 opacity-50" />
                       <blockquote className="text-xl md:text-2xl font-medium text-foreground leading-relaxed italic pl-8">
-                        {presidentData?.president_message || "Le Conseil National de la Concurrence œuvre sans relâche pour garantir un marché équitable où chaque opérateur économique peut prospérer dans le respect des règles. Notre mission est de bâtir un environnement de confiance propice au développement économique de notre nation."} 
+                        {presidentData?.president_message || "Le Conseil National de la Concurrence œuvre sans relâche pour garantir un marché équitable où chaque opérateur économique peut prospérer dans le respect des règles. Notre mission est de bâtir un environnement de confiance propice au développement économique de notre nation."}
                       </blockquote>
                     </div>
 
                     <div className="pt-4 flex flex-col sm:flex-row items-center gap-6">
                       <Link to="/presentation">
                         <Button size="lg" className="rounded-full px-8 py-6 bg-primary hover:bg-primary/90 text-white font-bold gap-3 shadow-xl shadow-primary/20 group">
-                          Lire le message complet 
+                          Lire le message complet
                           <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                         </Button>
                       </Link>
-                      
+
                       <div className="flex items-center gap-4 text-muted-foreground">
                         <div className="w-12 h-[1px] bg-border" />
                         <span className="text-sm font-medium italic">Vision 2025-2030</span>
@@ -244,8 +243,8 @@ export default function HomePage() {
       <section className="py-28 bg-surface relative overflow-hidden border-t border-border">
         {/* Éléments de fond décoratifs */}
         <div className="absolute top-0 right-0 w-full h-full pointer-events-none opacity-40">
-           <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px]" />
-           <div className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-secondary/10 rounded-full blur-[100px]" />
+          <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px]" />
+          <div className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-secondary/10 rounded-full blur-[100px]" />
         </div>
 
         <div className="container-page relative z-10">
@@ -277,15 +276,15 @@ export default function HomePage() {
               <FadeIn key={s.titre} delay={i * 100}>
                 <Link to={s.lien} className="group relative block h-full">
                   <div className="h-full bg-background rounded-[2rem] p-8 border border-border shadow-soft hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2 transition-all duration-500 overflow-hidden relative">
-                    
+
                     {/* Motif de fond stylisé sur la carte */}
                     <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-[5rem] -mr-10 -mt-10 group-hover:scale-150 transition-transform duration-700" />
-                    
+
                     <div className="relative z-10 space-y-6">
                       <div className="w-16 h-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all duration-300 shadow-inner group-hover:rotate-6">
                         {s.icone}
                       </div>
-                      
+
                       <div className="space-y-3">
                         <h3 className="font-extrabold text-2xl text-foreground group-hover:text-primary transition-colors">{s.titre}</h3>
                         <p className="text-base text-muted-foreground leading-relaxed">
@@ -319,8 +318,8 @@ export default function HomePage() {
               <div className="text-center md:text-left">
                 <h2 className="text-4xl md:text-5xl font-black text-foreground mb-4">Actualités <span className="text-secondary italic">récentes</span></h2>
                 <div className="flex items-center justify-center md:justify-start gap-4">
-                   <div className="h-1 w-20 bg-secondary rounded-full" />
-                   <p className="text-muted-foreground font-medium">L'essentiel de l'activité du Conseil</p>
+                  <div className="h-1 w-20 bg-secondary rounded-full" />
+                  <p className="text-muted-foreground font-medium">L'essentiel de l'activité du Conseil</p>
                 </div>
               </div>
               <Link to="/actualites" className="hidden md:block">
@@ -347,13 +346,13 @@ export default function HomePage() {
                   <div className="group flex flex-col h-full bg-surface rounded-[2rem] overflow-hidden border border-border shadow-soft hover:shadow-2xl transition-all duration-500">
                     {/* Media Area */}
                     <div className="relative h-64 overflow-hidden">
-                      <img 
-                        src={getImgUrl(a.image_path || a.image_url, `https://images.unsplash.com/photo-${i === 0 ? '1507679799987-c7cf7ee3face' : i === 1 ? '1557804506-669a67965ba0' : '1454165804606-c3d57bc86b40'}?auto=format&fit=crop&q=80&w=800`)} 
-                        alt={a.titre} 
-                        className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
+                      <img
+                        src={getImgUrl(a.image_path || a.image_url, `https://images.unsplash.com/photo-${i === 0 ? '1507679799987-c7cf7ee3face' : i === 1 ? '1557804506-669a67965ba0' : '1454165804606-c3d57bc86b40'}?auto=format&fit=crop&q=80&w=800`)}
+                        alt={a.titre}
+                        className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                      
+
                       {/* Category Badge Floating */}
                       <div className="absolute top-4 left-4 z-20">
                         {categorieBadge(a.categorie || 'autre')}
@@ -368,17 +367,17 @@ export default function HomePage() {
                         <span className="mx-2">•</span>
                         <span>5 min de lecture</span>
                       </div>
-                      
+
                       <h3 className="text-xl font-bold text-foreground mb-4 leading-tight group-hover:text-primary transition-colors line-clamp-2">
                         {a.titre}
                       </h3>
-                      
+
                       <p className="text-muted-foreground text-sm leading-relaxed line-clamp-3 mb-8">
                         {a.extrait}
                       </p>
 
-                      <Link 
-                        to={`/actualites/${a.slug}`} 
+                      <Link
+                        to={`/actualites/${a.slug}`}
                         className="mt-auto inline-flex items-center gap-2 text-sm font-black text-primary group/link"
                       >
                         <span className="relative">

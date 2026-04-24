@@ -33,6 +33,8 @@ export default function AdminDashboardPage() {
   const [documents, setDocuments] = useState<any[]>([]);
   const [plaintes, setPlaintes] = useState<any[]>([]);
   const [parametres, setParametres] = useState<Record<string, string>>({});
+  const [presidentPhotoFile, setPresidentPhotoFile] = useState<File | null>(null);
+  const [isSavingParametres, setIsSavingParametres] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingTab, setIsLoadingTab] = useState(false);
   const [showArticleForm, setShowArticleForm] = useState(false);
@@ -520,25 +522,31 @@ export default function AdminDashboardPage() {
   };
 
 
-  const handleUpdateParametre = async (cle: string, valeur: string | File) => {
-    setIsLoadingTab(true);
+  const handleSaveAllParametres = async () => {
+    setIsSavingParametres(true);
     try {
-      const isFile = valeur instanceof File;
+      const formData = new FormData();
+      Object.entries(parametres).forEach(([key, value]) => {
+        if (key !== "president_photo_path") {
+          formData.append(key, value);
+        }
+      });
+      if (presidentPhotoFile) {
+        formData.append("president_photo_file", presidentPhotoFile);
+      }
+      
       const res = await authFetch(`/api/parametres/admin`, {
         method: "PUT",
-        headers: isFile ? {} : { "Content-Type": "application/json" },
-        body: isFile 
-          ? (() => { const fd = new FormData(); fd.append("president_photo_file", valeur); return fd; })()
-          : JSON.stringify({ [cle]: valeur }),
+        body: formData,
       });
       if (!res.ok) throw new Error("Erreur paramètre");
-      toast.success("Paramètre mis à jour");
+      toast.success("Paramètres mis à jour");
       fetchParametres();
+      setPresidentPhotoFile(null);
     } catch (error: any) {
       toast.error(error.message);
     } finally {
-      setIsLoadingTab(true);
-      setTimeout(() => setIsLoadingTab(false), 500);
+      setIsSavingParametres(false);
     }
   };
 
@@ -1492,9 +1500,18 @@ export default function AdminDashboardPage() {
 
           {activeTab === "parametres" && (
             <div className="space-y-6 animate-in fade-in duration-300">
-              <div>
-                <h2 className="text-lg font-bold text-slate-800">Paramètres</h2>
-                <p className="text-xs text-muted-foreground">Configuration générale</p>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-bold text-slate-800">Paramètres</h2>
+                  <p className="text-xs text-muted-foreground">Configuration générale</p>
+                </div>
+                <Button 
+                  onClick={handleSaveAllParametres} 
+                  disabled={isSavingParametres}
+                  className="rounded-xl font-bold px-6"
+                >
+                  {isSavingParametres ? "Enregistrement..." : "Enregistrer les modifications"}
+                </Button>
               </div>
 
               {isLoadingTab ? (
@@ -1517,7 +1534,12 @@ export default function AdminDashboardPage() {
                         <p className="text-xs font-black uppercase text-slate-400 tracking-widest">Photo officielle</p>
                         <div className="flex items-center gap-6">
                            <div className="w-24 h-24 rounded-2xl bg-slate-100 border-2 border-dashed border-slate-200 overflow-hidden flex items-center justify-center group relative">
-                             {parametres.president_photo_path ? (
+                             {presidentPhotoFile ? (
+                               <img 
+                                 src={URL.createObjectURL(presidentPhotoFile)} 
+                                 className="w-full h-full object-cover" 
+                               />
+                             ) : parametres.president_photo_path ? (
                                <img 
                                  src={`/${parametres.president_photo_path}`} 
                                  className="w-full h-full object-cover" 
@@ -1534,7 +1556,10 @@ export default function AdminDashboardPage() {
                                  accept="image/*"
                                  onChange={(e) => {
                                    const file = e.target.files?.[0];
-                                   if (file) handleUpdateParametre("president_photo_path", file);
+                                   if (file) {
+                                     setPresidentPhotoFile(file);
+                                     // Pour prévisualiser l'image, on pourrait utiliser URL.createObjectURL
+                                   }
                                  }} 
                                />
                              </label>
@@ -1549,11 +1574,9 @@ export default function AdminDashboardPage() {
                       <div className="space-y-4">
                          <p className="text-xs font-black uppercase text-slate-400 tracking-widest">Nom complet</p>
                          <Input 
-                            defaultValue={parametres.president_nom} 
+                            value={parametres.president_nom || ""} 
                             className="h-12 rounded-xl bg-slate-50 border-transparent focus:bg-white font-bold"
-                            onBlur={(e) => {
-                              if (e.target.value !== parametres.president_nom) handleUpdateParametre("president_nom", e.target.value);
-                            }}
+                            onChange={(e) => setParametres(prev => ({ ...prev, president_nom: e.target.value }))}
                           />
                       </div>
                     </div>
@@ -1567,20 +1590,16 @@ export default function AdminDashboardPage() {
                         <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">{cle.replace(/_/g, " ")}</p>
                         {valeur.length > 50 ? (
                            <Textarea
-                             defaultValue={valeur}
+                             value={valeur || ""}
                              rows={3}
                              className="rounded-xl bg-slate-50 border-transparent focus:bg-white resize-none text-sm leading-relaxed"
-                             onBlur={(e) => {
-                              if (e.target.value !== valeur) handleUpdateParametre(cle, e.target.value);
-                            }}
+                             onChange={(e) => setParametres(prev => ({ ...prev, [cle]: e.target.value }))}
                            />
                         ) : (
                           <Input 
-                            defaultValue={valeur} 
+                            value={valeur || ""} 
                             className="h-11 rounded-xl bg-slate-50 border-transparent focus:bg-white text-sm"
-                            onBlur={(e) => {
-                              if (e.target.value !== valeur) handleUpdateParametre(cle, e.target.value);
-                            }}
+                            onChange={(e) => setParametres(prev => ({ ...prev, [cle]: e.target.value }))}
                           />
                         )}
                       </div>

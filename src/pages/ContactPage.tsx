@@ -3,10 +3,16 @@ import Breadcrumb from "@/components/layout/Breadcrumb";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { MapPin, Phone, Mail, Clock, Loader2, Facebook, Linkedin, PhoneCall } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 
 export default function ContactPage() {
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ nom: "", email: "", objet: "", message: "" });
+
+  const { data: parametres } = useQuery({
+    queryKey: ["parametres_contact"],
+    queryFn: () => fetch("/api/parametres").then(res => res.json())
+  });
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,19 +48,19 @@ export default function ContactPage() {
               <h2 className="text-xl font-bold text-foreground">Coordonnées</h2>
               <div className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                <div><p className="text-sm font-medium text-foreground">Adresse</p><p className="text-sm text-muted-foreground">Avenue Charles de Gaulle, N'Djamena, République du Tchad</p></div>
+                <div><p className="text-sm font-medium text-foreground">Adresse</p><p className="text-sm text-muted-foreground whitespace-pre-line">{parametres?.contact_adresse || parametres?.footer_adresse || "Avenue Charles de Gaulle, N'Djamena, République du Tchad"}</p></div>
               </div>
               <div className="flex items-start gap-3">
                 <Phone className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                <div><p className="text-sm font-medium text-foreground">Téléphone</p><p className="text-sm text-muted-foreground">+235 22 52 XX XX</p></div>
+                <div><p className="text-sm font-medium text-foreground">Téléphone</p><p className="text-sm text-muted-foreground">{parametres?.contact_telephone || parametres?.footer_telephone || "+235 22 52 XX XX"}</p></div>
               </div>
               <div className="flex items-start gap-3">
                 <Mail className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                <div><p className="text-sm font-medium text-foreground">Email</p><p className="text-sm text-muted-foreground">contact@cnc-tchad.td</p></div>
+                <div><p className="text-sm font-medium text-foreground">Email</p><p className="text-sm text-muted-foreground">{parametres?.contact_email || parametres?.footer_email || "contact@cnc-tchad.td"}</p></div>
               </div>
               <div className="flex items-start gap-3">
                 <Clock className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                <div><p className="text-sm font-medium text-foreground">Horaires</p><p className="text-sm text-muted-foreground">Lundi – Vendredi : 07h30 – 15h30</p></div>
+                <div><p className="text-sm font-medium text-foreground">Horaires</p><p className="text-sm text-muted-foreground">{parametres?.horaires_ouverture || "Lundi – Vendredi : 07h30 – 15h30"}</p></div>
               </div>
             </div>
 
@@ -76,9 +82,9 @@ export default function ContactPage() {
             <div className="bg-surface p-8 rounded-2xl shadow-soft">
               <h3 className="font-semibold text-foreground mb-3">Suivez-nous</h3>
               <div className="flex gap-3">
-                <a href="#" className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors" aria-label="Facebook"><Facebook className="w-5 h-5" /></a>
-                <a href="#" className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors" aria-label="LinkedIn"><Linkedin className="w-5 h-5" /></a>
-                <a href="#" className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors" aria-label="X (anciennement Twitter)">
+                <a href={parametres?.lien_facebook || "#"} className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors" aria-label="Facebook"><Facebook className="w-5 h-5" /></a>
+                <a href={parametres?.lien_linkedin || "#"} className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors" aria-label="LinkedIn"><Linkedin className="w-5 h-5" /></a>
+                <a href={parametres?.lien_twitter || "#"} className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors" aria-label="X (anciennement Twitter)">
                   <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" className="w-5 h-5">
                     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 22.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
                   </svg>

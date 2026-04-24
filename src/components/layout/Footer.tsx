@@ -47,20 +47,23 @@ export default function Footer() {
             <div className="flex items-center gap-3">
               <img src="/armoiries-tchad.png" alt="Armoiries du Tchad" className="w-12 h-14 object-contain bg-white rounded p-1 shadow-sm" />
               <div>
-                <p className="font-extrabold text-base leading-tight tracking-wide">Conseil National<br />de la Concurrence</p>
+                <p className="font-extrabold text-base leading-tight tracking-wide">
+                  {parametres?.nom_site_ligne1 || "Conseil National"}<br />
+                  {parametres?.nom_site_ligne2 || "de la Concurrence"}
+                </p>
               </div>
             </div>
             <p className="text-sm text-white/60 leading-relaxed">
               {parametres?.footer_description || "Autorité administrative indépendante chargée de veiller au respect des règles de la concurrence en République du Tchad."}
             </p>
             <div className="flex gap-3 pt-2">
-              <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/80 hover:bg-gold hover:text-primary hover:-translate-y-1 transition-all duration-300 shadow-sm" aria-label="Facebook">
+              <a href={parametres?.lien_facebook || "#"} className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/80 hover:bg-gold hover:text-primary hover:-translate-y-1 transition-all duration-300 shadow-sm" aria-label="Facebook">
                 <Facebook className="w-4 h-4" />
               </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/80 hover:bg-gold hover:text-primary hover:-translate-y-1 transition-all duration-300 shadow-sm" aria-label="LinkedIn">
+              <a href={parametres?.lien_linkedin || "#"} className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/80 hover:bg-gold hover:text-primary hover:-translate-y-1 transition-all duration-300 shadow-sm" aria-label="LinkedIn">
                 <Linkedin className="w-4 h-4" />
               </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/80 hover:bg-gold hover:text-primary hover:-translate-y-1 transition-all duration-300 shadow-sm" aria-label="X (anciennement Twitter)">
+              <a href={parametres?.lien_twitter || "#"} className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/80 hover:bg-gold hover:text-primary hover:-translate-y-1 transition-all duration-300 shadow-sm" aria-label="X (anciennement Twitter)">
                 <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
                   <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 22.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                 </svg>

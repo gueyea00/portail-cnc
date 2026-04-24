@@ -1,14 +1,21 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, Facebook, Linkedin, Mail, Clock, Phone } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "./LanguageSwitcher";
+
+import { useQuery } from "@tanstack/react-query";
 
 export default function Header() {
   const { t } = useTranslation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const location = useLocation();
+
+  const { data: parametres } = useQuery({
+    queryKey: ["parametres_header"],
+    queryFn: () => fetch("/api/parametres").then(res => res.json())
+  });
 
   const navItems = [
     { label: t("nav.accueil"), path: "/" },
@@ -31,8 +38,54 @@ export default function Header() {
 
   return (
     <>
-      <header className="bg-surface shadow-sm sticky top-0 z-50 border-b border-border">
-        <div className="w-full px-4 md:px-8">
+      <header className="bg-surface shadow-sm sticky top-0 z-50 flex flex-col">
+        {/* Topbar */}
+        <div className="bg-[#f8f9fa] border-b border-border px-4 md:px-8 py-2 hidden md:flex items-center justify-between text-sm text-slate-600">
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-4">
+              {parametres?.lien_twitter && (
+                <a href={parametres.lien_twitter} className="hover:text-primary transition-colors">
+                  <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 22.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                  </svg>
+                </a>
+              )}
+              {parametres?.lien_facebook && (
+                <a href={parametres.lien_facebook} className="hover:text-primary transition-colors"><Facebook className="w-4 h-4" /></a>
+              )}
+              {parametres?.lien_linkedin && (
+                <a href={parametres.lien_linkedin} className="hover:text-primary transition-colors"><Linkedin className="w-4 h-4" /></a>
+              )}
+              {(!parametres?.lien_twitter && !parametres?.lien_facebook && !parametres?.lien_linkedin) && (
+                <>
+                  <a href="#" className="hover:text-primary transition-colors">
+                    <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 22.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                    </svg>
+                  </a>
+                  <a href="#" className="hover:text-primary transition-colors"><Facebook className="w-4 h-4" /></a>
+                  <a href="#" className="hover:text-primary transition-colors"><Linkedin className="w-4 h-4" /></a>
+                </>
+              )}
+            </div>
+            <div className="w-px h-4 bg-slate-300"></div>
+            <div className="flex items-center gap-2 hover:text-primary transition-colors cursor-pointer">
+              <Mail className="w-4 h-4 text-primary" />
+              <span>{parametres?.contact_email || "contact@cnc-tchad.td"}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Clock className="w-4 h-4 text-yellow-500" />
+              <span>{parametres?.horaires_ouverture || "Lun – Ven 7h30 – 15h30"}</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 font-bold text-slate-900">
+            <Phone className="w-4 h-4 text-primary" />
+            <span>{parametres?.contact_telephone || "+235 22 52 12 34"}</span>
+          </div>
+        </div>
+
+        {/* Main Header */}
+        <div className="w-full px-4 md:px-8 border-b border-border">
           <div className="flex items-center justify-between h-20 md:h-24">
             {/* Logo section â€” Armoiries | Titre | Logo CNC */}
             <Link to="/" className="flex items-center gap-3 shrink-0">
@@ -44,7 +97,10 @@ export default function Header() {
               />
               {/* Texte institutionnel */}
               <div className="hidden sm:block">
-                <p className="text-base font-bold text-primary leading-tight">Conseil National<br />de la Concurrence</p>
+                <p className="text-base font-bold text-primary leading-tight">
+                  {parametres?.nom_site_ligne1 || "Conseil National"}<br />
+                  {parametres?.nom_site_ligne2 || "de la Concurrence"}
+                </p>
               </div>
 
 
