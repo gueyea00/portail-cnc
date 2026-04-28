@@ -1,0 +1,56 @@
+services:
+  # Service Backend (Node.js)
+  - type: web
+    name: cnc-backend
+    env: node
+    plan: free
+    rootDir: ccn-backend
+    buildCommand: npm install
+    startCommand: npm run db:init && npm start
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: DB_HOST
+        fromDatabase:
+          name: cnc-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: cnc-db
+          property: port
+      - key: DB_USER
+        fromDatabase:
+          name: cnc-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: cnc-db
+          property: password
+      - key: DB_NAME
+        fromDatabase:
+          name: cnc-db
+          property: database
+      - key: DB_SSL
+        value: "true"
+      - key: CORS_ORIGIN
+        value: "*" # Remplacez par l'URL de votre frontend après déploiement
+
+  # Service Frontend (Static Site - Optionnel mais recommandé)
+  - type: static
+    name: cnc-frontend
+    env: static
+    plan: free
+    rootDir: .
+    buildCommand: npm install && npm run build
+    staticPublishDir: dist
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: cnc-backend
+          property: host
+
+# Base de données PostgreSQL gérée par Render
+databases:
+  - name: cnc-db
+    plan: free
