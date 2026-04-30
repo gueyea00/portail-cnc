@@ -94,8 +94,8 @@ app.use((req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`\n🚀 Serveur CNC Tchad démarré sur http://148.230.124.48:${PORT}`);
-  console.log(`📊 Interface Admin  : http://148.230.124.48:${PORT}/admin/login`);
-  console.log(`🔗 API Health       : http://148.230.124.48:${PORT}/health\n`);
+  console.log(`\n🚀 Serveur CNC Tchad démarré sur http://188.165.77.237:${PORT}`);
+  console.log(`📊 Interface Admin  : http://188.165.77.237:${PORT}/admin/login`);
+  console.log(`🔗 API Health       : http://188.165.77.237:${PORT}/health\n`);
 });
 
