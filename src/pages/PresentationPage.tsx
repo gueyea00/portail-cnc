@@ -115,18 +115,20 @@ export default function PresentationPage() {
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
               {activeMembres.map((m: any, idx: number) => (
-                <div key={m.id} className="bg-surface p-4 rounded-xl shadow-sm border border-border text-center hover:shadow-md transition-all group">
+                <div key={m.id} className="bg-surface p-4 rounded-xl shadow-sm border border-border text-center hover:shadow-md transition-all group flex flex-col h-full">
                   {m.photo_path ? (
-                    <div className="w-16 h-16 rounded-full overflow-hidden mx-auto mb-3 border-2 border-primary/20 group-hover:border-primary transition-colors">
+                    <div className="w-16 h-16 rounded-full overflow-hidden mx-auto mb-3 border-2 border-primary/20 group-hover:border-primary transition-colors shrink-0">
                       <img src={getImgUrl(m.photo_path, "")} alt={m.nom} className="w-full h-full object-cover" />
                     </div>
                   ) : (
-                    <div className={`w-16 h-16 rounded-full ${bgColors[idx % bgColors.length]} text-primary-foreground flex items-center justify-center mx-auto mb-3 shadow-sm text-sm`}>
+                    <div className={`w-16 h-16 rounded-full ${bgColors[idx % bgColors.length]} text-primary-foreground flex items-center justify-center mx-auto mb-3 shadow-sm text-sm shrink-0`}>
                       <span className="font-bold">{m.initiales || m.nom.substring(0, 2).toUpperCase()}</span>
                     </div>
                   )}
-                  <h3 className="font-bold text-sm text-foreground line-clamp-1 group-hover:text-primary transition-colors">{m.nom}</h3>
-                  <p className="text-[10px] uppercase tracking-wide text-muted-foreground mt-1 font-semibold">{m.fonction}</p>
+                  <div className="flex-1 flex flex-col items-center justify-start mt-1">
+                    <h3 className="font-bold text-sm text-foreground group-hover:text-primary transition-colors leading-tight mb-1">{m.nom}</h3>
+                    <p className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold leading-tight">{m.fonction}</p>
+                  </div>
                 </div>
               ))}
             </div>
