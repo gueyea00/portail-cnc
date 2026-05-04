@@ -532,7 +532,8 @@ export default function AdminDashboardPage() {
         }
       });
       if (presidentPhotoFile) {
-        formData.append("president_photo_file", presidentPhotoFile);
+        // Changed field name from "president_photo_file" to "photo"
+        formData.append("photo", presidentPhotoFile);
       }
 
       const res = await authFetch(`/api/parametres/admin`, {
