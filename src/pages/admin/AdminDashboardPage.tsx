@@ -2219,6 +2219,16 @@ export default function AdminDashboardPage() {
                           onChange={(e) => setParametres(prev => ({ ...prev, president_nom: e.target.value }))}
                         />
                       </div>
+
+                      <div className="space-y-4 md:col-span-2">
+                        <p className="text-xs font-black uppercase text-slate-400 tracking-widest">Mot du Président (Message)</p>
+                        <Textarea
+                          value={parametres.president_mot || ""}
+                          rows={4}
+                          className="rounded-xl bg-slate-50 border-transparent focus:bg-white text-sm leading-relaxed"
+                          onChange={(e) => setParametres(prev => ({ ...prev, president_mot: e.target.value }))}
+                        />
+                      </div>
                     </div>
                   </div>
 
@@ -2265,7 +2275,7 @@ export default function AdminDashboardPage() {
                       { title: "Autres Pages", keys: ['news_hero_title', 'news_hero_subtitle', 'docs_hero_title', 'docs_hero_subtitle', 'faq_hero_title', 'faq_hero_subtitle', 'galerie_hero_title', 'galerie_hero_subtitle', 'services_hero_title', 'services_hero_subtitle', 'sig_hero_title', 'sig_hero_subtitle', 'plainte_hero_title', 'plainte_hero_subtitle'] },
                     ];
 
-                    const assignedKeys = new Set(groups.flatMap(g => g.keys).concat(['president_nom', 'president_photo_path', 'nom_site_ligne1', 'nom_site_ligne2']));
+                    const assignedKeys = new Set(groups.flatMap(g => g.keys).concat(['president_nom', 'president_mot', 'president_photo_path', 'nom_site_ligne1', 'nom_site_ligne2']));
                     const otherKeys = Object.keys(parametres).filter(k => !assignedKeys.has(k));
 
                     if (otherKeys.length > 0) {
