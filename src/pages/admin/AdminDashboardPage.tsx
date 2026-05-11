@@ -549,7 +549,32 @@ export default function AdminDashboardPage() {
     try {
       const res = await fetch("/api/parametres");
       const data = await res.json();
-      setParametres(data);
+      
+      // On s'assure que toutes les clés importantes sont présentes pour l'admin
+      const standardKeys = [
+        'home_welcome_badge', 'home_missions_title', 'home_missions_subtitle', 'home_services_title', 'home_services_subtitle', 'home_news_title', 'home_news_subtitle',
+        'pres_hero_title', 'pres_hero_subtitle', 'pres_section_title', 'pres_timeline_title', 'pres_timeline_subtitle', 'pres_members_title', 'presentation_p1', 'presentation_p2', 'presentation_p3',
+        'missions_hero_title', 'missions_hero_subtitle', 'missions_section_subtitle', 'missions_process_title', 'missions_process_subtitle',
+        'news_hero_title', 'news_hero_subtitle',
+        'contact_hero_title', 'contact_hero_subtitle', 'contact_adresse', 'contact_telephone', 'contact_email',
+        'docs_hero_title', 'docs_hero_subtitle',
+        'faq_hero_title', 'faq_hero_subtitle',
+        'galerie_hero_title', 'galerie_hero_subtitle',
+        'services_hero_title', 'services_hero_subtitle',
+        'sig_hero_title', 'sig_hero_subtitle',
+        'plainte_hero_title', 'plainte_hero_subtitle',
+        'footer_description', 'footer_adresse', 'footer_telephone', 'footer_email', 'footer_quick_links_title', 'footer_services_title', 'footer_contact_title', 'footer_newsletter_title', 'footer_copyright',
+        'nom_site_ligne1', 'nom_site_ligne2', 'president_nom', 'president_photo_path', 'horaires_ouverture', 'lien_facebook', 'lien_linkedin', 'lien_twitter'
+      ];
+
+      const merged = { ...data };
+      standardKeys.forEach(key => {
+        if (merged[key] === undefined) {
+          merged[key] = "";
+        }
+      });
+
+      setParametres(merged);
     } catch (error) {
       toast.error("Erreur lors du chargement des paramètres");
     } finally {
