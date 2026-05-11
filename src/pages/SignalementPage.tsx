@@ -1,13 +1,19 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import Breadcrumb from "@/components/layout/Breadcrumb";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { CheckCircle, Loader2, ShieldAlert } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 
 export default function SignalementPage() {
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [form, setForm] = useState({ description: "", secteur: "", entreprises: "" });
+
+  const { data: pageConfig } = useQuery({
+    queryKey: ["parametres"],
+    queryFn: () => fetch("/api/parametres").then(res => res.json())
+  });
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,9 +52,9 @@ export default function SignalementPage() {
         <div className="container-page">
           <h1 className="text-3xl md:text-4xl font-bold flex items-center justify-center md:justify-start gap-4">
             <ShieldAlert className="w-8 h-8 md:w-10 md:h-10 text-gold" />
-            Signalement anonyme
+            {pageConfig?.sig_hero_title || "Signalement anonyme"}
           </h1>
-          <p className="mt-2 opacity-90 text-lg">Signalez une pratique suspecte en toute confidentialité</p>
+          <p className="mt-2 opacity-90 text-lg">{pageConfig?.sig_hero_subtitle || "Signalez une pratique suspecte en toute confidentialité"}</p>
         </div>
       </section>
       <Breadcrumb />

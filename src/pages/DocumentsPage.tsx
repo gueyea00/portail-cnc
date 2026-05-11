@@ -28,6 +28,11 @@ function formatBytes(bytes: number, decimals = 2) {
 }
 
 export default function DocumentsPage() {
+  const { data: pageConfig } = useQuery({
+    queryKey: ["parametres"],
+    queryFn: () => fetch("/api/parametres").then(res => res.json())
+  });
+
   const { data: documents = [], isLoading } = useQuery({
     queryKey: ["documents"],
     queryFn: () => fetch("/api/documents").then(res => res.json())
@@ -47,9 +52,9 @@ export default function DocumentsPage() {
         <div className="container-page">
           <h1 className="text-3xl md:text-4xl font-bold flex items-center justify-center md:justify-start gap-4">
             <FileText className="w-8 h-8 md:w-10 md:h-10 text-gold" />
-            Documents officiels
+            {pageConfig?.docs_hero_title || "Documents officiels"}
           </h1>
-          <p className="mt-2 opacity-90 text-lg">Lois, règlements, rapports et guides pratiques</p>
+          <p className="mt-2 opacity-90 text-lg">{pageConfig?.docs_hero_subtitle || "Lois, règlements, rapports et guides pratiques"}</p>
         </div>
       </section>
       <Breadcrumb />

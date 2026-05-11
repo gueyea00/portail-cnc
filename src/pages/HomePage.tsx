@@ -14,6 +14,19 @@ const missionsPreview = [
   { titre: "Sensibilisation", desc: "Promouvoir la culture de concurrence loyale.", icone: <Users className="w-5 h-5" />, color: "text-primary", bg: "bg-primary", baseColor: "border-primary/30" },
 ];
 
+const iconMap: Record<string, React.ReactNode> = {
+  FileWarning: <ShieldAlert className="w-8 h-8" />,
+  ShieldAlert: <ShieldAlert className="w-8 h-8" />,
+  ClipboardList: <FileText className="w-8 h-8" />,
+  MessageSquare: <Quote className="w-8 h-8" />,
+  BookOpen: <FileText className="w-8 h-8" />,
+  Calendar: <Clock className="w-8 h-8" />,
+  Search: <BarChart3 className="w-8 h-8" />,
+  FileText: <FileText className="w-8 h-8" />,
+  PenSquare: <PenSquare className="w-8 h-8" />,
+  FileSignature: <FileSignature className="w-8 h-8" />,
+};
+
 const acceRapide = [
   { titre: "Déposer une plainte", desc: "Formulaire en ligne sécurisé", lien: "/plainte", icone: <PenSquare className="w-8 h-8" /> },
   { titre: "Documents officiels", desc: "Lois, rapports et guides", lien: "/documents", icone: <FileSignature className="w-8 h-8" /> },
@@ -62,6 +75,19 @@ export default function HomePage() {
     queryKey: ["president"],
     queryFn: () => fetch("/api/parametres").then(res => res.json())
   });
+
+  const { data: missionsApi = [] } = useQuery({
+    queryKey: ["missions"],
+    queryFn: () => fetch("/api/missions").then(res => res.json())
+  });
+
+  const { data: servicesApi = [] } = useQuery({
+    queryKey: ["services"],
+    queryFn: () => fetch("/api/services").then(res => res.json())
+  });
+
+  const displayedMissions = missionsApi.slice(0, 6);
+  const activeServices = (servicesApi || []).filter((s: any) => s.actif !== false).slice(0, 3);
 
   return (
     <div>
@@ -159,7 +185,7 @@ export default function HomePage() {
                   <div className="space-y-8 relative z-10">
                     <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider">
                       <span className="w-2 h-2 rounded-full bg-secondary animate-ping" />
-                      Mot de bienvenue
+                      {presidentData?.home_welcome_badge || "Mot de bienvenue"}
                     </div>
 
                     <div className="relative">
@@ -195,30 +221,36 @@ export default function HomePage() {
         <div className="container-page">
           <FadeIn>
             <div className="text-center mb-16">
-              <h2 className="section-title">Nos missions</h2>
-              <p className="section-subtitle">Garantir une concurrence loyale pour le développement économique du Tchad</p>
+              <h2 className="section-title">{presidentData?.home_missions_title || "Nos missions"}</h2>
+              <p className="section-subtitle">{presidentData?.home_missions_subtitle || "Garantir une concurrence loyale pour le développement économique du Tchad"}</p>
             </div>
           </FadeIn>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {missionsPreview.map((m, i) => {
+            {(displayedMissions.length > 0 ? displayedMissions : missionsPreview).map((m: any, i: number) => {
+              const isDynamic = !!m.id;
+              const title = m.titre;
+              const desc = isDynamic ? m.description : m.desc;
+              const icon = isDynamic ? <Shield className="w-5 h-5" /> : m.icone;
+              const baseColor = isDynamic ? "border-primary/30" : m.baseColor;
+              const bg = isDynamic ? "bg-primary" : m.bg;
+
               return (
-                <FadeIn key={m.titre} delay={i * 100}>
-                  {/* Container principal de la carte */}
-                  <div className={`relative bg-surface p-8 pt-10 rounded-[1.5rem] border-2 ${m.baseColor} hover:shadow-xl transition-all duration-300 h-full flex flex-col items-center text-center mt-6`}>
+                <FadeIn key={title + i} delay={i * 100}>
+                  <div className={`relative bg-surface p-8 pt-10 rounded-[1.5rem] border-2 ${baseColor} hover:shadow-xl transition-all duration-300 h-full flex flex-col items-center text-center mt-6`}>
 
                     {/* Encoche Concave (Notch) simulée par une forme superposée */}
-                    <div className={`absolute -top-[2px] -left-[2px] w-[3.5rem] h-[3.5rem] bg-muted rounded-br-[3.5rem] border-b-2 border-r-2 ${m.baseColor} z-0 pointer-events-none`} />
+                    <div className={`absolute -top-[2px] -left-[2px] w-[3.5rem] h-[3.5rem] bg-muted rounded-br-[3.5rem] border-b-2 border-r-2 ${baseColor} z-0 pointer-events-none`} />
 
                     {/* Icône nichée avec précision dans l'encoche */}
-                    <div className={`absolute -top-4 -left-3 w-[3.25rem] h-[3.25rem] rounded-full ${m.bg} text-white flex items-center justify-center shadow-lg z-10 hover:scale-110 transition-transform`}>
-                      {m.icone}
+                    <div className={`absolute -top-4 -left-3 w-[3.25rem] h-[3.25rem] rounded-full ${bg} text-white flex items-center justify-center shadow-lg z-10 hover:scale-110 transition-transform`}>
+                      {icon}
                     </div>
 
-                    <h3 className="text-lg font-extrabold text-foreground mb-3 leading-snug">{m.titre}</h3>
+                    <h3 className="text-lg font-extrabold text-foreground mb-3 leading-snug">{title}</h3>
 
                     <div className="w-12 h-[2px] bg-border my-1 mb-4 rounded-full" />
 
-                    <p className="text-sm font-medium text-muted-foreground leading-relaxed">{m.desc}</p>
+                    <p className="text-sm font-medium text-muted-foreground leading-relaxed">{desc}</p>
                   </div>
                 </FadeIn>
               );
@@ -256,10 +288,10 @@ export default function HomePage() {
                   Services Publics
                 </div>
                 <h2 className="text-4xl md:text-5xl font-black text-foreground mb-4 leading-tight">
-                  Nos <span className="text-primary italic">services</span> en ligne
+                  {presidentData?.home_services_title || <>Nos <span className="text-primary italic">services</span> en ligne</>}
                 </h2>
                 <p className="text-lg text-muted-foreground">
-                  Vos démarches administratives simplifiées, sécurisées et accessibles en tout temps pour un service public plus proche de vous.
+                  {presidentData?.home_services_subtitle || "Vos démarches administratives simplifiées, sécurisées et accessibles en tout temps pour un service public plus proche de vous."}
                 </p>
               </div>
               <div className="hidden lg:block pb-2">
@@ -272,38 +304,46 @@ export default function HomePage() {
           </FadeIn>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {acceRapide.map((s, i) => (
-              <FadeIn key={s.titre} delay={i * 100}>
-                <Link to={s.lien} className="group relative block h-full">
-                  <div className="h-full bg-background rounded-[2rem] p-8 border border-border shadow-soft hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2 transition-all duration-500 overflow-hidden relative">
+            {(activeServices.length > 0 ? activeServices : acceRapide).map((s: any, i: number) => {
+              const isDynamic = !!s.id;
+              const title = s.titre;
+              const desc = isDynamic ? s.description : s.desc;
+              const link = s.lien;
+              const icon = isDynamic ? (iconMap[s.icone] || <Shield className="w-8 h-8" />) : s.icone;
 
-                    {/* Motif de fond stylisé sur la carte */}
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-[5rem] -mr-10 -mt-10 group-hover:scale-150 transition-transform duration-700" />
+              return (
+                <FadeIn key={title + i} delay={i * 100}>
+                  <Link to={link} className="group relative block h-full">
+                    <div className="h-full bg-background rounded-[2rem] p-8 border border-border shadow-soft hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2 transition-all duration-500 overflow-hidden relative">
 
-                    <div className="relative z-10 space-y-6">
-                      <div className="w-16 h-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all duration-300 shadow-inner group-hover:rotate-6">
-                        {s.icone}
+                      {/* Motif de fond stylisé sur la carte */}
+                      <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-[5rem] -mr-10 -mt-10 group-hover:scale-150 transition-transform duration-700" />
+
+                      <div className="relative z-10 space-y-6">
+                        <div className="w-16 h-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all duration-300 shadow-inner group-hover:rotate-6">
+                          {icon}
+                        </div>
+
+                        <div className="space-y-3">
+                          <h3 className="font-extrabold text-2xl text-foreground group-hover:text-primary transition-colors">{title}</h3>
+                          <p className="text-base text-muted-foreground leading-relaxed">
+                            {desc}
+                          </p>
+                        </div>
+
+                        <div className="pt-4 flex items-center gap-3 text-sm font-bold text-primary opacity-0 group-hover:opacity-100 translate-x-[-10px] group-hover:translate-x-0 transition-all duration-300">
+                          Accéder au service
+                          <ArrowRight className="w-4 h-4" />
+                        </div>
                       </div>
 
-                      <div className="space-y-3">
-                        <h3 className="font-extrabold text-2xl text-foreground group-hover:text-primary transition-colors">{s.titre}</h3>
-                        <p className="text-base text-muted-foreground leading-relaxed">
-                          {s.desc}
-                        </p>
-                      </div>
-
-                      <div className="pt-4 flex items-center gap-3 text-sm font-bold text-primary opacity-0 group-hover:opacity-100 translate-x-[-10px] group-hover:translate-x-0 transition-all duration-300">
-                        Accéder au service
-                        <ArrowRight className="w-4 h-4" />
-                      </div>
+                      {/* Ligne d'accent en bas */}
+                      <div className="absolute bottom-0 left-0 w-0 h-1.5 bg-primary group-hover:w-full transition-all duration-700" />
                     </div>
-
-                    {/* Ligne d'accent en bas */}
-                    <div className="absolute bottom-0 left-0 w-0 h-1.5 bg-primary group-hover:w-full transition-all duration-700" />
-                  </div>
-                </Link>
-              </FadeIn>
-            ))}
+                  </Link>
+                </FadeIn>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -316,10 +356,12 @@ export default function HomePage() {
           <FadeIn>
             <div className="flex flex-col md:flex-row items-center justify-between mb-16 gap-6">
               <div className="text-center md:text-left">
-                <h2 className="text-4xl md:text-5xl font-black text-foreground mb-4">Actualités <span className="text-secondary italic">récentes</span></h2>
+                <h2 className="text-4xl md:text-5xl font-black text-foreground mb-4">
+                  {presidentData?.home_news_title || <>Actualités <span className="text-secondary italic">récentes</span></>}
+                </h2>
                 <div className="flex items-center justify-center md:justify-start gap-4">
                   <div className="h-1 w-20 bg-secondary rounded-full" />
-                  <p className="text-muted-foreground font-medium">L'essentiel de l'activité du Conseil</p>
+                  <p className="text-muted-foreground font-medium">{presidentData?.home_news_subtitle || "L'essentiel de l'activité du Conseil"}</p>
                 </div>
               </div>
               <Link to="/actualites" className="hidden md:block">

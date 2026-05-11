@@ -33,9 +33,9 @@ export default function ContactPage() {
         <div className="container-page">
           <h1 className="text-3xl md:text-4xl font-bold flex items-center justify-center md:justify-start gap-4">
             <PhoneCall className="w-8 h-8 md:w-10 md:h-10 text-gold" />
-            Contact & Accès
+            {parametres?.contact_hero_title || "Contact & Accès"}
           </h1>
-          <p className="mt-2 opacity-90 text-lg">Prenez contact avec le CNC</p>
+          <p className="mt-2 opacity-90 text-lg">{parametres?.contact_hero_subtitle || "Prenez contact avec le CNC"}</p>
         </div>
       </section>
       <Breadcrumb />

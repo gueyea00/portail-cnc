@@ -29,22 +29,27 @@ export default function MissionsPage() {
 
   const sortedEtapes = Array.isArray(etapesApi) ? [...etapesApi].sort((a: any, b: any) => (a.ordre || 0) - (b.ordre || 0)) : [];
 
+  const { data: pageConfig } = useQuery({
+    queryKey: ["parametres"],
+    queryFn: () => fetch("/api/parametres").then(res => res.json())
+  });
+
   return (
     <div>
       <section className="page-hero">
         <div className="container-page">
           <h1 className="text-3xl md:text-4xl font-bold flex items-center justify-center md:justify-start gap-4">
             <Target className="w-8 h-8 md:w-10 md:h-10 text-gold" />
-            Missions & Attributions
+            {pageConfig?.missions_hero_title || "Missions & Attributions"}
           </h1>
-          <p className="mt-2 opacity-90 text-lg">Les missions fondamentales du CNC</p>
+          <p className="mt-2 opacity-90 text-lg">{pageConfig?.missions_hero_subtitle || "Les missions fondamentales du CNC"}</p>
         </div>
       </section>
       <Breadcrumb />
 
       <div className="bg-muted/50 py-16">
         <div className="container-page">
-          <p className="section-subtitle mb-12">Le CNC assure la régulation et le bon fonctionnement des marchés au Tchad.</p>
+          <p className="section-subtitle mb-12">{pageConfig?.missions_section_subtitle || "Le CNC assure la régulation et le bon fonctionnement des marchés au Tchad."}</p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {(missionsApi.length > 0 ? missionsApi : []).map((m: any, i: number) => (
@@ -67,8 +72,8 @@ export default function MissionsPage() {
 
       <section className="bg-surface py-20 border-t border-border">
         <div className="container-page">
-          <h2 className="section-title text-center">Types d'interventions</h2>
-          <p className="section-subtitle text-center mb-16">Le parcours d'une affaire devant le Conseil National de la Concurrence</p>
+          <h2 className="section-title text-center">{pageConfig?.missions_process_title || "Types d'interventions"}</h2>
+          <p className="section-subtitle text-center mb-16">{pageConfig?.missions_process_subtitle || "Le parcours d'une affaire devant le Conseil National de la Concurrence"}</p>
 
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4 relative">
             {/* Ligne de connexion sur desktop - Placée derrière (z-0) */}

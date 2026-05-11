@@ -105,6 +105,11 @@ export default function GaleriePage() {
   const [activeFilter, setActiveFilter] = useState("Tous");
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
+  const { data: pageConfig } = useQuery({
+    queryKey: ["parametres"],
+    queryFn: () => fetch("/api/parametres").then(res => res.json())
+  });
+
   const { data: galerieItems = [], isLoading } = useQuery({
     queryKey: ["galerie"],
     queryFn: () => fetch("/api/galerie").then(res => res.json())
@@ -141,9 +146,9 @@ export default function GaleriePage() {
         <div className="container-page">
           <h1 className="text-3xl md:text-4xl font-bold flex items-center justify-center md:justify-start gap-4">
             <Camera className="w-8 h-8 md:w-10 md:h-10 text-gold" />
-            Galerie institutionnelle
+            {pageConfig?.galerie_hero_title || "Galerie institutionnelle"}
           </h1>
-          <p className="mt-2 opacity-90 text-lg">Les activités et événements du Conseil National de la Concurrence</p>
+          <p className="mt-2 opacity-90 text-lg">{pageConfig?.galerie_hero_subtitle || "Les activités et événements du Conseil National de la Concurrence"}</p>
         </div>
       </section>
       <Breadcrumb />

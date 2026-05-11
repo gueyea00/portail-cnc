@@ -9,6 +9,11 @@ export default function FaqPage() {
   const [filtre, setFiltre] = useState("Tous");
   const [open, setOpen] = useState<number | null>(null);
 
+  const { data: pageConfig } = useQuery({
+    queryKey: ["parametres"],
+    queryFn: () => fetch("/api/parametres").then(res => res.json())
+  });
+
   const { data: faqApi = [] } = useQuery({
     queryKey: ["faq"],
     queryFn: () => fetch("/api/faq").then(res => res.json())
@@ -22,9 +27,9 @@ export default function FaqPage() {
         <div className="container-page">
           <h1 className="text-3xl md:text-4xl font-bold flex items-center justify-center md:justify-start gap-4">
             <HelpCircle className="w-8 h-8 md:w-10 md:h-10 text-gold" />
-            Foire aux questions
+            {pageConfig?.faq_hero_title || "Foire aux questions"}
           </h1>
-          <p className="mt-2 opacity-90 text-lg">Trouvez les réponses à vos questions</p>
+          <p className="mt-2 opacity-90 text-lg">{pageConfig?.faq_hero_subtitle || "Trouvez les réponses à vos questions"}</p>
         </div>
       </section>
       <Breadcrumb />

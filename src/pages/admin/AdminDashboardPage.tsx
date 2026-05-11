@@ -22,7 +22,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 
-type TabType = "dashboard" | "articles" | "membres" | "galerie" | "documents" | "plaintes" | "liens" | "parametres";
+type TabType = "dashboard" | "articles" | "membres" | "galerie" | "documents" | "plaintes" | "liens" | "missions" | "historique" | "etapes" | "faq" | "services" | "parametres";
 
 
 export default function AdminDashboardPage() {
@@ -91,6 +91,31 @@ export default function AdminDashboardPage() {
   const [showLienForm, setShowLienForm] = useState(false);
   const [editingLien, setEditingLien] = useState<any>(null);
 
+  const [missions, setMissions] = useState<any[]>([]);
+  const [showMissionForm, setShowMissionForm] = useState(false);
+  const [editingMission, setEditingMission] = useState<any>(null);
+  const [missionForm, setMissionForm] = useState({ titre: "", description: "", icone: "Shield", ordre: 0, actif: true });
+
+  const [historique, setHistorique] = useState<any[]>([]);
+  const [showHistoriqueForm, setShowHistoriqueForm] = useState(false);
+  const [editingHistorique, setEditingHistorique] = useState<any>(null);
+  const [historiqueForm, setHistoriqueForm] = useState({ annee: "", description: "", ordre: 0 });
+
+  const [etapes, setEtapes] = useState<any[]>([]);
+  const [showEtapeForm, setShowEtapeForm] = useState(false);
+  const [editingEtape, setEditingEtape] = useState<any>(null);
+  const [etapeForm, setEtapeForm] = useState({ titre: "", description: "", ordre: 0 });
+
+  const [faq, setFaq] = useState<any[]>([]);
+  const [showFaqForm, setShowFaqForm] = useState(false);
+  const [editingFaq, setEditingFaq] = useState<any>(null);
+  const [faqForm, setFaqForm] = useState({ question: "", reponse: "", theme: "Généralités", ordre: 0 });
+
+  const [services, setServices] = useState<any[]>([]);
+  const [showServiceForm, setShowServiceForm] = useState(false);
+  const [editingService, setEditingService] = useState<any>(null);
+  const [serviceForm, setServiceForm] = useState({ titre: "", description: "", icone: "ShieldAlert", lien: "", ordre: 0 });
+
   const navigate = useNavigate();
   const admin = JSON.parse(localStorage.getItem("cnc_admin") || "{}");
   const token = localStorage.getItem("cnc_token");
@@ -106,6 +131,11 @@ export default function AdminDashboardPage() {
     if (activeTab === "documents") fetchDocuments();
     if (activeTab === "plaintes") fetchPlaintes();
     if (activeTab === "liens") fetchLiens();
+    if (activeTab === "missions") fetchMissions();
+    if (activeTab === "historique") fetchHistorique();
+    if (activeTab === "etapes") fetchEtapes();
+    if (activeTab === "faq") fetchFaq();
+    if (activeTab === "services") fetchServices();
     if (activeTab === "parametres") fetchParametres();
 
   }, [activeTab]);
@@ -209,6 +239,71 @@ export default function AdminDashboardPage() {
       setPlaintes(Array.isArray(data) ? data : []);
     } catch (error) {
       toast.error("Erreur lors du chargement des plaintes");
+    } finally {
+      setIsLoadingTab(false);
+    }
+  };
+
+  const fetchMissions = async () => {
+    setIsLoadingTab(true);
+    try {
+      const res = await fetch("/api/missions");
+      const data = await res.json();
+      setMissions(Array.isArray(data) ? data : []);
+    } catch (error) {
+      toast.error("Erreur lors du chargement des missions");
+    } finally {
+      setIsLoadingTab(false);
+    }
+  };
+
+  const fetchHistorique = async () => {
+    setIsLoadingTab(true);
+    try {
+      const res = await authFetch("/api/missions/admin/historique");
+      const data = await res.json();
+      setHistorique(Array.isArray(data) ? data : []);
+    } catch (error) {
+      toast.error("Erreur lors du chargement de l'historique");
+    } finally {
+      setIsLoadingTab(false);
+    }
+  };
+
+  const fetchEtapes = async () => {
+    setIsLoadingTab(true);
+    try {
+      const res = await authFetch("/api/missions/admin/etapes");
+      const data = await res.json();
+      setEtapes(Array.isArray(data) ? data : []);
+    } catch (error) {
+      toast.error("Erreur lors du chargement des étapes");
+    } finally {
+      setIsLoadingTab(false);
+    }
+  };
+
+  const fetchFaq = async () => {
+    setIsLoadingTab(true);
+    try {
+      const res = await fetch("/api/faq");
+      const data = await res.json();
+      setFaq(Array.isArray(data) ? data : []);
+    } catch (error) {
+      toast.error("Erreur lors du chargement de la FAQ");
+    } finally {
+      setIsLoadingTab(false);
+    }
+  };
+
+  const fetchServices = async () => {
+    setIsLoadingTab(true);
+    try {
+      const res = await fetch("/api/services");
+      const data = await res.json();
+      setServices(Array.isArray(data) ? data : []);
+    } catch (error) {
+      toast.error("Erreur lors du chargement des services");
     } finally {
       setIsLoadingTab(false);
     }
@@ -521,6 +616,231 @@ export default function AdminDashboardPage() {
     }
   };
 
+  const openMissionForm = (m: any = null) => {
+    if (m) {
+      setEditingMission(m);
+      setMissionForm({ titre: m.titre, description: m.description || "", icone: m.icone || "Shield", ordre: m.ordre || 0, actif: m.actif !== false });
+    } else {
+      setEditingMission(null);
+      setMissionForm({ titre: "", description: "", icone: "Shield", ordre: 0, actif: true });
+    }
+    setShowMissionForm(true);
+  };
+
+  const handleSaveMission = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoadingTab(true);
+    try {
+      const url = editingMission ? `/api/missions/${editingMission.id}` : "/api/missions";
+      const method = editingMission ? "PUT" : "POST";
+      const res = await authFetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(missionForm),
+      });
+      if (!res.ok) throw new Error("Erreur mission");
+      toast.success(editingMission ? "Mission mise à jour" : "Mission ajoutée");
+      setShowMissionForm(false);
+      fetchMissions();
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setIsLoadingTab(false);
+    }
+  };
+
+  const handleDeleteMission = async (id: number) => {
+    if (!confirm("Supprimer cette mission ?")) return;
+    try {
+      const res = await authFetch(`/api/missions/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Erreur suppression");
+      toast.success("Mission supprimée");
+      fetchMissions();
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
+
+  const openHistoriqueForm = (h: any = null) => {
+    if (h) {
+      setEditingHistorique(h);
+      setHistoriqueForm({ annee: h.annee, description: h.description, ordre: h.ordre || 0 });
+    } else {
+      setEditingHistorique(null);
+      setHistoriqueForm({ annee: "", description: "", ordre: 0 });
+    }
+    setShowHistoriqueForm(true);
+  };
+
+  const handleSaveHistorique = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoadingTab(true);
+    try {
+      const url = editingHistorique ? `/api/missions/admin/historique/${editingHistorique.id}` : "/api/missions/admin/historique";
+      const method = editingHistorique ? "PUT" : "POST";
+      const res = await authFetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(historiqueForm),
+      });
+      if (!res.ok) throw new Error("Erreur historique");
+      toast.success(editingHistorique ? "Historique mis à jour" : "Historique ajouté");
+      setShowHistoriqueForm(false);
+      fetchHistorique();
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setIsLoadingTab(false);
+    }
+  };
+
+  const handleDeleteHistorique = async (id: number) => {
+    if (!confirm("Supprimer cet élément ?")) return;
+    try {
+      const res = await authFetch(`/api/missions/admin/historique/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Erreur suppression");
+      toast.success("Supprimé");
+      fetchHistorique();
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
+
+  const openEtapeForm = (e: any = null) => {
+    if (e) {
+      setEditingEtape(e);
+      setEtapeForm({ titre: e.titre, description: e.description || "", ordre: e.ordre || 0 });
+    } else {
+      setEditingEtape(null);
+      setEtapeForm({ titre: "", description: "", ordre: 0 });
+    }
+    setShowEtapeForm(true);
+  };
+
+  const handleSaveEtape = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoadingTab(true);
+    try {
+      const url = editingEtape ? `/api/missions/admin/etapes/${editingEtape.id}` : "/api/missions/admin/etapes";
+      const method = editingEtape ? "PUT" : "POST";
+      const res = await authFetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(etapeForm),
+      });
+      if (!res.ok) throw new Error("Erreur étape");
+      toast.success(editingEtape ? "Étape mise à jour" : "Étape ajoutée");
+      setShowEtapeForm(false);
+      fetchEtapes();
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setIsLoadingTab(false);
+    }
+  };
+
+  const handleDeleteEtape = async (id: number) => {
+    if (!confirm("Supprimer cette étape ?")) return;
+    try {
+      const res = await authFetch(`/api/missions/admin/etapes/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Erreur suppression");
+      toast.success("Supprimée");
+      fetchEtapes();
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
+
+  const openFaqForm = (f: any = null) => {
+    if (f) {
+      setEditingFaq(f);
+      setFaqForm({ question: f.question, reponse: f.reponse || "", theme: f.theme || "Généralités", ordre: f.ordre || 0 });
+    } else {
+      setEditingFaq(null);
+      setFaqForm({ question: "", reponse: "", theme: "Généralités", ordre: 0 });
+    }
+    setShowFaqForm(true);
+  };
+
+  const handleSaveFaq = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoadingTab(true);
+    try {
+      const url = editingFaq ? `/api/faq/${editingFaq.id}` : "/api/faq";
+      const method = editingFaq ? "PUT" : "POST";
+      const res = await authFetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(faqForm),
+      });
+      if (!res.ok) throw new Error("Erreur FAQ");
+      toast.success(editingFaq ? "FAQ mise à jour" : "FAQ ajoutée");
+      setShowFaqForm(false);
+      fetchFaq();
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setIsLoadingTab(false);
+    }
+  };
+
+  const handleDeleteFaq = async (id: number) => {
+    if (!confirm("Supprimer cette FAQ ?")) return;
+    try {
+      const res = await authFetch(`/api/faq/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Erreur suppression");
+      toast.success("Supprimée");
+      fetchFaq();
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
+
+  const openServiceForm = (s: any = null) => {
+    if (s) {
+      setEditingService(s);
+      setServiceForm({ titre: s.titre, description: s.description || "", icone: s.icone || "ShieldAlert", lien: s.lien || "", ordre: s.ordre || 0 });
+    } else {
+      setEditingService(null);
+      setServiceForm({ titre: "", description: "", icone: "ShieldAlert", lien: "", ordre: 0 });
+    }
+    setShowServiceForm(true);
+  };
+
+  const handleSaveService = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoadingTab(true);
+    try {
+      const url = editingService ? `/api/services/admin/${editingService.id}` : "/api/services/admin";
+      const method = editingService ? "PUT" : "POST";
+      const res = await authFetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(serviceForm),
+      });
+      if (!res.ok) throw new Error("Erreur service");
+      toast.success(editingService ? "Service mis à jour" : "Service ajouté");
+      setShowServiceForm(false);
+      fetchServices();
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setIsLoadingTab(false);
+    }
+  };
+
+  const handleDeleteService = async (id: number) => {
+    if (!confirm("Supprimer ce service ?")) return;
+    try {
+      const res = await authFetch(`/api/services/admin/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Erreur suppression");
+      toast.success("Supprimé");
+      fetchServices();
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
+
 
   const handleSaveAllParametres = async () => {
     setIsSavingParametres(true);
@@ -532,8 +852,7 @@ export default function AdminDashboardPage() {
         }
       });
       if (presidentPhotoFile) {
-        // Changed field name from "president_photo_file" to "photo"
-        formData.append("photo", presidentPhotoFile);
+        formData.append("president_photo_file", presidentPhotoFile);
       }
 
       const res = await authFetch(`/api/parametres/admin`, {
@@ -620,13 +939,17 @@ export default function AdminDashboardPage() {
   const menuItems = [
     { id: "dashboard", label: "Tableau de Bord", icon: <LayoutDashboard className="w-5 h-5" /> },
     { id: "articles", label: "Actualités", icon: <FileText className="w-5 h-5" /> },
+    { id: "missions", label: "Missions", icon: <CheckCircle2 className="w-5 h-5" /> },
+    { id: "historique", label: "Historique", icon: <FileText className="w-5 h-5" /> },
+    { id: "etapes", label: "Étapes", icon: <FileText className="w-5 h-5" /> },
+    { id: "services", label: "Services", icon: <Settings className="w-5 h-5" /> },
+    { id: "faq", label: "FAQ", icon: <MessageSquare className="w-5 h-5" /> },
     { id: "membres", label: "Membres", icon: <Users className="w-5 h-5" /> },
     { id: "galerie", label: "Galerie", icon: <ImageIcon className="w-5 h-5" /> },
     { id: "documents", label: "Documents", icon: <FileBadge className="w-5 h-5" /> },
     { id: "plaintes", label: "Plaintes", icon: <MessageSquare className="w-5 h-5" /> },
     { id: "liens", label: "Liens institutionnels", icon: <ExternalLink className="w-5 h-5" /> },
     { id: "parametres", label: "Paramètres", icon: <Settings className="w-5 h-5" /> },
-
   ];
 
   return (
@@ -645,7 +968,7 @@ export default function AdminDashboardPage() {
           </div>
         </div>
 
-        <nav className="flex-1 p-4 space-y-1 overflow-y-auto mt-4">
+        <nav className="flex-1 p-4 space-y-1 overflow-y-auto mt-4 custom-scrollbar">
           {menuItems.map((item) => (
             <button
               key={item.id}
@@ -977,6 +1300,284 @@ export default function AdminDashboardPage() {
                     )}
                   </tbody>
                 </table>
+              </div>
+            </div>
+          )}
+
+          {activeTab === "missions" && (
+            <div className="space-y-6 animate-in fade-in duration-300">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-bold text-slate-800">Missions</h2>
+                  <p className="text-xs text-muted-foreground">Missions institutionnelles du CNC</p>
+                </div>
+                <Button onClick={() => openMissionForm()} className="rounded-xl gap-2 font-bold">
+                  <Plus className="w-4 h-4" />
+                  Ajouter une mission
+                </Button>
+              </div>
+
+              {showMissionForm && (
+                <form onSubmit={handleSaveMission} className="bg-white rounded-[32px] border border-slate-100 shadow-sm p-6 space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <p className="text-xs font-bold text-slate-600 tracking-widest uppercase">Titre</p>
+                      <Input value={missionForm.titre} onChange={e => setMissionForm({ ...missionForm, titre: e.target.value })} required />
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-xs font-bold text-slate-600 tracking-widest uppercase">Ordre</p>
+                      <Input type="number" value={missionForm.ordre} onChange={e => setMissionForm({ ...missionForm, ordre: parseInt(e.target.value) || 0 })} />
+                    </div>
+                    <div className="space-y-2 md:col-span-2">
+                      <p className="text-xs font-bold text-slate-600 tracking-widest uppercase">Description</p>
+                      <Textarea value={missionForm.description} onChange={e => setMissionForm({ ...missionForm, description: e.target.value })} />
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <Button type="submit">Enregistrer</Button>
+                    <Button type="button" variant="outline" onClick={() => setShowMissionForm(false)}>Annuler</Button>
+                  </div>
+                </form>
+              )}
+
+              <div className="grid grid-cols-1 gap-4">
+                {missions.map(m => (
+                  <div key={m.id} className="bg-white p-4 rounded-2xl border border-slate-100 flex justify-between items-center group">
+                    <div>
+                      <p className="font-bold text-slate-800">{m.titre}</p>
+                      <p className="text-xs text-slate-500 line-clamp-1">{m.description}</p>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button variant="ghost" size="icon" onClick={() => openMissionForm(m)}><Edit className="w-4 h-4" /></Button>
+                      <Button variant="ghost" size="icon" className="text-red-600" onClick={() => handleDeleteMission(m.id)}><Trash2 className="w-4 h-4" /></Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {activeTab === "historique" && (
+            <div className="space-y-6 animate-in fade-in duration-300">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-bold text-slate-800">Historique / Timeline</h2>
+                  <p className="text-xs text-muted-foreground">Dates clés de l'institution</p>
+                </div>
+                <Button onClick={() => openHistoriqueForm()} className="rounded-xl gap-2 font-bold">
+                  <Plus className="w-4 h-4" />
+                  Ajouter un événement
+                </Button>
+              </div>
+
+              {showHistoriqueForm && (
+                <form onSubmit={handleSaveHistorique} className="bg-white rounded-[32px] border border-slate-100 shadow-sm p-6 space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <p className="text-xs font-bold text-slate-600 tracking-widest uppercase">Année / Date</p>
+                      <Input value={historiqueForm.annee} onChange={e => setHistoriqueForm({ ...historiqueForm, annee: e.target.value })} required />
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-xs font-bold text-slate-600 tracking-widest uppercase">Ordre</p>
+                      <Input type="number" value={historiqueForm.ordre} onChange={e => setHistoriqueForm({ ...historiqueForm, ordre: parseInt(e.target.value) || 0 })} />
+                    </div>
+                    <div className="space-y-2 md:col-span-2">
+                      <p className="text-xs font-bold text-slate-600 tracking-widest uppercase">Description</p>
+                      <Textarea value={historiqueForm.description} onChange={e => setHistoriqueForm({ ...historiqueForm, description: e.target.value })} required />
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <Button type="submit">Enregistrer</Button>
+                    <Button type="button" variant="outline" onClick={() => setShowHistoriqueForm(false)}>Annuler</Button>
+                  </div>
+                </form>
+              )}
+
+              <div className="space-y-4">
+                {historique.map(h => (
+                  <div key={h.id} className="bg-white p-4 rounded-2xl border border-slate-100 flex justify-between items-center group">
+                    <div className="flex gap-4 items-center">
+                      <span className="font-black text-primary bg-primary/5 px-3 py-1 rounded-lg">{h.annee}</span>
+                      <p className="text-sm text-slate-600">{h.description}</p>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button variant="ghost" size="icon" onClick={() => openHistoriqueForm(h)}><Edit className="w-4 h-4" /></Button>
+                      <Button variant="ghost" size="icon" className="text-red-600" onClick={() => handleDeleteHistorique(h.id)}><Trash2 className="w-4 h-4" /></Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {activeTab === "etapes" && (
+            <div className="space-y-6 animate-in fade-in duration-300">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-bold text-slate-800">Étapes d'intervention</h2>
+                  <p className="text-xs text-muted-foreground">Processus d'intervention du CNC</p>
+                </div>
+                <Button onClick={() => openEtapeForm()} className="rounded-xl gap-2 font-bold">
+                  <Plus className="w-4 h-4" />
+                  Ajouter une étape
+                </Button>
+              </div>
+
+              {showEtapeForm && (
+                <form onSubmit={handleSaveEtape} className="bg-white rounded-[32px] border border-slate-100 shadow-sm p-6 space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <p className="text-xs font-bold text-slate-600 tracking-widest uppercase">Titre</p>
+                      <Input value={etapeForm.titre} onChange={e => setEtapeForm({ ...etapeForm, titre: e.target.value })} required />
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-xs font-bold text-slate-600 tracking-widest uppercase">Ordre</p>
+                      <Input type="number" value={etapeForm.ordre} onChange={e => setEtapeForm({ ...etapeForm, ordre: parseInt(e.target.value) || 0 })} />
+                    </div>
+                    <div className="space-y-2 md:col-span-2">
+                      <p className="text-xs font-bold text-slate-600 tracking-widest uppercase">Description</p>
+                      <Textarea value={etapeForm.description} onChange={e => setEtapeForm({ ...etapeForm, description: e.target.value })} />
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <Button type="submit">Enregistrer</Button>
+                    <Button type="button" variant="outline" onClick={() => setShowEtapeForm(false)}>Annuler</Button>
+                  </div>
+                </form>
+              )}
+
+              <div className="space-y-4">
+                {etapes.map(e => (
+                  <div key={e.id} className="bg-white p-4 rounded-2xl border border-slate-100 flex justify-between items-center group">
+                    <div className="flex gap-4 items-center">
+                      <span className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center font-bold text-primary">{e.ordre}</span>
+                      <p className="font-bold text-slate-800">{e.titre}</p>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button variant="ghost" size="icon" onClick={() => openEtapeForm(e)}><Edit className="w-4 h-4" /></Button>
+                      <Button variant="ghost" size="icon" className="text-red-600" onClick={() => handleDeleteEtape(e.id)}><Trash2 className="w-4 h-4" /></Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {activeTab === "faq" && (
+            <div className="space-y-6 animate-in fade-in duration-300">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-bold text-slate-800">FAQ</h2>
+                  <p className="text-xs text-muted-foreground">Questions fréquemment posées</p>
+                </div>
+                <Button onClick={() => openFaqForm()} className="rounded-xl gap-2 font-bold">
+                  <Plus className="w-4 h-4" />
+                  Ajouter une FAQ
+                </Button>
+              </div>
+
+              {showFaqForm && (
+                <form onSubmit={handleSaveFaq} className="bg-white rounded-[32px] border border-slate-100 shadow-sm p-6 space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <p className="text-xs font-bold text-slate-600 tracking-widest uppercase">Thème</p>
+                      <Input value={faqForm.theme} onChange={e => setFaqForm({ ...faqForm, theme: e.target.value })} />
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-xs font-bold text-slate-600 tracking-widest uppercase">Ordre</p>
+                      <Input type="number" value={faqForm.ordre} onChange={e => setFaqForm({ ...faqForm, ordre: parseInt(e.target.value) || 0 })} />
+                    </div>
+                    <div className="space-y-2 md:col-span-2">
+                      <p className="text-xs font-bold text-slate-600 tracking-widest uppercase">Question</p>
+                      <Input value={faqForm.question} onChange={e => setFaqForm({ ...faqForm, question: e.target.value })} required />
+                    </div>
+                    <div className="space-y-2 md:col-span-2">
+                      <p className="text-xs font-bold text-slate-600 tracking-widest uppercase">Réponse</p>
+                      <Textarea value={faqForm.reponse} onChange={e => setFaqForm({ ...faqForm, reponse: e.target.value })} required />
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <Button type="submit">Enregistrer</Button>
+                    <Button type="button" variant="outline" onClick={() => setShowFaqForm(false)}>Annuler</Button>
+                  </div>
+                </form>
+              )}
+
+              <div className="space-y-4">
+                {faq.map(f => (
+                  <div key={f.id} className="bg-white p-4 rounded-2xl border border-slate-100 flex justify-between items-start group">
+                    <div className="flex-1">
+                      <p className="font-bold text-slate-800">{f.question}</p>
+                      <p className="text-xs text-slate-500 mt-1 line-clamp-2">{f.reponse}</p>
+                      <span className="text-[10px] bg-slate-100 px-2 py-0.5 rounded mt-2 inline-block">{f.theme}</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button variant="ghost" size="icon" onClick={() => openFaqForm(f)}><Edit className="w-4 h-4" /></Button>
+                      <Button variant="ghost" size="icon" className="text-red-600" onClick={() => handleDeleteFaq(f.id)}><Trash2 className="w-4 h-4" /></Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {activeTab === "services" && (
+            <div className="space-y-6 animate-in fade-in duration-300">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-bold text-slate-800">Services</h2>
+                  <p className="text-xs text-muted-foreground">Services proposés sur la page d'accueil</p>
+                </div>
+                <Button onClick={() => openServiceForm()} className="rounded-xl gap-2 font-bold">
+                  <Plus className="w-4 h-4" />
+                  Ajouter un service
+                </Button>
+              </div>
+
+              {showServiceForm && (
+                <form onSubmit={handleSaveService} className="bg-white rounded-[32px] border border-slate-100 shadow-sm p-6 space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <p className="text-xs font-bold text-slate-600 tracking-widest uppercase">Titre</p>
+                      <Input value={serviceForm.titre} onChange={e => setServiceForm({ ...serviceForm, titre: e.target.value })} required />
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-xs font-bold text-slate-600 tracking-widest uppercase">Icône (Lucide name)</p>
+                      <Input value={serviceForm.icone} onChange={e => setServiceForm({ ...serviceForm, icone: e.target.value })} />
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-xs font-bold text-slate-600 tracking-widest uppercase">Lien</p>
+                      <Input value={serviceForm.lien} onChange={e => setServiceForm({ ...serviceForm, lien: e.target.value })} />
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-xs font-bold text-slate-600 tracking-widest uppercase">Ordre</p>
+                      <Input type="number" value={serviceForm.ordre} onChange={e => setServiceForm({ ...serviceForm, ordre: parseInt(e.target.value) || 0 })} />
+                    </div>
+                    <div className="space-y-2 md:col-span-2">
+                      <p className="text-xs font-bold text-slate-600 tracking-widest uppercase">Description</p>
+                      <Textarea value={serviceForm.description} onChange={e => setServiceForm({ ...serviceForm, description: e.target.value })} required />
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <Button type="submit">Enregistrer</Button>
+                    <Button type="button" variant="outline" onClick={() => setShowServiceForm(false)}>Annuler</Button>
+                  </div>
+                </form>
+              )}
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {services.map(s => (
+                  <div key={s.id} className="bg-white p-4 rounded-2xl border border-slate-100 flex justify-between items-center group">
+                    <div>
+                      <p className="font-bold text-slate-800">{s.titre}</p>
+                      <p className="text-xs text-slate-500 line-clamp-1">{s.description}</p>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button variant="ghost" size="icon" onClick={() => openServiceForm(s)}><Edit className="w-4 h-4" /></Button>
+                      <Button variant="ghost" size="icon" className="text-red-600" onClick={() => handleDeleteService(s.id)}><Trash2 className="w-4 h-4" /></Button>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           )}
@@ -1501,15 +2102,31 @@ export default function AdminDashboardPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-lg font-bold text-slate-800">Paramètres</h2>
-                  <p className="text-xs text-muted-foreground">Configuration générale</p>
+                  <p className="text-xs text-muted-foreground">Configuration générale du site</p>
                 </div>
-                <Button
-                  onClick={handleSaveAllParametres}
-                  disabled={isSavingParametres}
-                  className="rounded-xl font-bold px-6"
-                >
-                  {isSavingParametres ? "Enregistrement..." : "Enregistrer les modifications"}
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      const key = prompt("Entrez le nom de la nouvelle clé (ex: contact_info) :");
+                      if (key) {
+                        const sanitizedKey = key.trim().toLowerCase().replace(/\s+/g, '_');
+                        setParametres(prev => ({ ...prev, [sanitizedKey]: "" }));
+                      }
+                    }}
+                    className="rounded-xl font-bold"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Nouvelle clé
+                  </Button>
+                  <Button
+                    onClick={handleSaveAllParametres}
+                    disabled={isSavingParametres}
+                    className="rounded-xl font-bold px-6"
+                  >
+                    {isSavingParametres ? "Enregistrement..." : "Enregistrer tout"}
+                  </Button>
+                </div>
               </div>
 
               {isLoadingTab ? (
@@ -1613,29 +2230,70 @@ export default function AdminDashboardPage() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {Object.entries(parametres)
-                      .filter(([cle]) => !['president_nom', 'president_photo_path', 'nom_site_ligne1', 'nom_site_ligne2'].includes(cle))
-                      .map(([cle, valeur]) => (
-                        <div key={cle} className="bg-white rounded-[24px] border border-slate-100 p-6 space-y-3 shadow-sm hover:border-primary/20 transition-colors">
-                          <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">{cle.replace(/_/g, " ")}</p>
-                          {valeur.length > 50 ? (
-                            <Textarea
-                              value={valeur || ""}
-                              rows={3}
-                              className="rounded-xl bg-slate-50 border-transparent focus:bg-white resize-none text-sm leading-relaxed"
-                              onChange={(e) => setParametres(prev => ({ ...prev, [cle]: e.target.value }))}
-                            />
-                          ) : (
-                            <Input
-                              value={valeur || ""}
-                              className="h-11 rounded-xl bg-slate-50 border-transparent focus:bg-white text-sm"
-                              onChange={(e) => setParametres(prev => ({ ...prev, [cle]: e.target.value }))}
-                            />
-                          )}
+                  {/* Grouped Parameters */}
+                  {(() => {
+                    const groups = [
+                      { title: "Accueil", keys: ['home_welcome_badge', 'home_missions_title', 'home_missions_subtitle', 'home_services_title', 'home_services_subtitle', 'home_news_title', 'home_news_subtitle'] },
+                      { title: "Présentation", keys: ['pres_hero_title', 'pres_hero_subtitle', 'pres_section_title', 'pres_timeline_title', 'pres_timeline_subtitle', 'pres_members_title', 'presentation_p1', 'presentation_p2', 'presentation_p3'] },
+                      { title: "Missions", keys: ['missions_hero_title', 'missions_hero_subtitle', 'missions_section_subtitle', 'missions_process_title', 'missions_process_subtitle'] },
+                      { title: "Contact & Footer", keys: ['contact_hero_title', 'contact_hero_subtitle', 'footer_description', 'footer_adresse', 'footer_telephone', 'footer_email', 'contact_adresse', 'contact_telephone', 'contact_email', 'horaires_ouverture', 'lien_facebook', 'lien_linkedin', 'lien_twitter'] },
+                      { title: "Autres Pages", keys: ['news_hero_title', 'news_hero_subtitle', 'docs_hero_title', 'docs_hero_subtitle', 'faq_hero_title', 'faq_hero_subtitle', 'galerie_hero_title', 'galerie_hero_subtitle', 'services_hero_title', 'services_hero_subtitle', 'sig_hero_title', 'sig_hero_subtitle', 'plainte_hero_title', 'plainte_hero_subtitle'] },
+                    ];
+
+                    const assignedKeys = new Set(groups.flatMap(g => g.keys).concat(['president_nom', 'president_photo_path', 'nom_site_ligne1', 'nom_site_ligne2']));
+                    const otherKeys = Object.keys(parametres).filter(k => !assignedKeys.has(k));
+
+                    if (otherKeys.length > 0) {
+                      groups.push({ title: "Autres paramètres", keys: otherKeys });
+                    }
+
+                    return groups.map(group => (
+                      <div key={group.title} className="space-y-4">
+                        <h4 className="text-sm font-black uppercase text-slate-400 tracking-widest pl-2">{group.title}</h4>
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                          {group.keys.map(cle => {
+                            const valeur = parametres[cle];
+                            if (valeur === undefined) return null;
+                            return (
+                              <div key={cle} className="bg-white rounded-[24px] border border-slate-100 p-6 space-y-3 shadow-sm hover:border-primary/20 transition-colors">
+                                <div className="flex justify-between items-center">
+                                  <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">{cle.replace(/_/g, " ")}</p>
+                                  {otherKeys.includes(cle) && (
+                                    <button
+                                      onClick={() => {
+                                        if (confirm(`Supprimer la clé "${cle}" ?`)) {
+                                          const newParams = { ...parametres };
+                                          delete newParams[cle];
+                                          setParametres(newParams);
+                                        }
+                                      }}
+                                      className="text-red-500 hover:text-red-700 transition-colors"
+                                    >
+                                      <Trash2 className="w-3 h-3" />
+                                    </button>
+                                  )}
+                                </div>
+                                {String(valeur).length > 60 ? (
+                                  <Textarea
+                                    value={valeur || ""}
+                                    rows={3}
+                                    className="rounded-xl bg-slate-50 border-transparent focus:bg-white resize-none text-sm leading-relaxed"
+                                    onChange={(e) => setParametres(prev => ({ ...prev, [cle]: e.target.value }))}
+                                  />
+                                ) : (
+                                  <Input
+                                    value={valeur || ""}
+                                    className="h-11 rounded-xl bg-slate-50 border-transparent focus:bg-white text-sm"
+                                    onChange={(e) => setParametres(prev => ({ ...prev, [cle]: e.target.value }))}
+                                  />
+                                )}
+                              </div>
+                            );
+                          })}
                         </div>
-                      ))}
-                  </div>
+                      </div>
+                    ));
+                  })()}
                 </div>
               )}
             </div>

@@ -36,9 +36,9 @@ export default function PresentationPage() {
         <div className="container-page">
           <h1 className="text-3xl md:text-4xl font-bold flex items-center justify-center md:justify-start gap-4">
             <Info className="w-8 h-8 md:w-10 md:h-10 text-gold" />
-            Présentation du CNC
+            {presidentData?.pres_hero_title || "Présentation du CNC"}
           </h1>
-          <p className="mt-2 opacity-90 text-lg">Découvrez le Conseil National de la Concurrence du Tchad</p>
+          <p className="mt-2 opacity-90 text-lg">{presidentData?.pres_hero_subtitle || "Découvrez le Conseil National de la Concurrence du Tchad"}</p>
         </div>
       </section>
       <Breadcrumb />
@@ -56,7 +56,7 @@ export default function PresentationPage() {
             <p className="text-[9px] uppercase tracking-widest text-muted-foreground text-center max-w-20 leading-tight">Armoiries du Tchad</p>
           </div>
           <div>
-            <h2 className="section-title">Le Conseil National de la Concurrence</h2>
+            <h2 className="section-title">{presidentData?.pres_section_title || "Le Conseil National de la Concurrence"}</h2>
             <div className="prose max-w-none text-foreground leading-relaxed space-y-4">
               <p>
                 {presidentData?.presentation_p1 || "Le Conseil National de la Concurrence (CNC) de la République du Tchad est une autorité administrative indépendante chargée de veiller au respect des règles de concurrence sur le marché national."}
@@ -77,9 +77,9 @@ export default function PresentationPage() {
 
       <section className="bg-muted py-20 border-y border-border">
         <div className="container-page">
-          <h2 className="section-title">Dates clés</h2>
+          <h2 className="section-title">{presidentData?.pres_timeline_title || "Dates clés"}</h2>
           <p className="section-subtitle mb-12">
-            Les jalons essentiels de la régulation de la concurrence au Tchad.
+            {presidentData?.pres_timeline_subtitle || "Les jalons essentiels de la régulation de la concurrence au Tchad."}
           </p>
 
           <div className="relative">
@@ -107,7 +107,7 @@ export default function PresentationPage() {
       <div className="container-page py-20">
         {/* Membres */}
         <section>
-          <h2 className="section-title">Les membres du Conseil</h2>
+          <h2 className="section-title">{presidentData?.pres_members_title || "Les membres du Conseil"}</h2>
           {isLoadingMembres ? (
             <div className="text-center py-10 text-muted-foreground">Chargement des membres...</div>
           ) : activeMembres.length === 0 ? (

@@ -7,6 +7,12 @@ export default function Footer() {
     queryKey: ["parametres_footer"],
     queryFn: () => fetch("/api/parametres").then(res => res.json())
   });
+
+  const { data: liens = [] } = useQuery({
+    queryKey: ["liens_footer"],
+    queryFn: () => fetch("/api/liens").then(res => res.json())
+  });
+
   return (
     <footer className="bg-primary text-primary-foreground pt-0 pb-8 relative overflow-hidden">
 
@@ -74,7 +80,7 @@ export default function Footer() {
           {/* Col 2 — Liens rapides */}
           <div>
             <h3 className="font-bold text-lg mb-6 flex items-center gap-3">
-              Liens rapides
+              {parametres?.footer_quick_links_title || "Liens rapides"}
             </h3>
             <ul className="space-y-3 text-sm text-white/70">
               {[
@@ -97,7 +103,7 @@ export default function Footer() {
           {/* Col 3 — Services */}
           <div>
             <h3 className="font-bold text-lg mb-6 flex items-center gap-3">
-              Services
+              {parametres?.footer_services_title || "Services"}
             </h3>
             <ul className="space-y-3 text-sm text-white/70">
               {[
@@ -120,7 +126,7 @@ export default function Footer() {
           <div className="space-y-8">
             <div>
               <h3 className="font-bold text-lg mb-6 flex items-center gap-3">
-                Contact
+                {parametres?.footer_contact_title || "Contact"}
               </h3>
               <ul className="space-y-4 text-sm text-white/70">
                 <li className="flex items-start gap-3 group cursor-default">
@@ -146,7 +152,7 @@ export default function Footer() {
 
             {/* Champ Newsletter (Input + Button) */}
             <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
-              <p className="text-sm font-semibold mb-3 text-white">S'abonner à la Newsletter</p>
+              <p className="text-sm font-semibold mb-3 text-white">{parametres?.footer_newsletter_title || "S'abonner à la Newsletter"}</p>
               <form className="relative flex items-center" onSubmit={(e) => { e.preventDefault(); alert("Abonnement réussi !"); }}>
                 <input
                   type="email"
@@ -172,19 +178,23 @@ export default function Footer() {
         {/* Liens institutionnels & Copyright */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-6 text-xs text-white/50">
           <div className="flex flex-wrap justify-center md:justify-start gap-x-6 gap-y-3">
-            <a href="#" className="hover:text-gold transition-colors">Ministère du Commerce</a>
-            <a href="#" className="hover:text-gold transition-colors">Gouvernement du Tchad</a>
-            <a href="#" className="hover:text-gold transition-colors">CEMAC</a>
-            <a href="#" className="hover:text-gold transition-colors">UEMOA</a>
+            {liens.filter((l: any) => l.categorie === "Organisation régionale" || l.categorie === "Ministère").map((l: any) => (
+              <a key={l.id} href={l.url} target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors">{l.nom}</a>
+            ))}
+            {liens.length === 0 && (
+              <>
+                <a href="#" className="hover:text-gold transition-colors">Ministère du Commerce</a>
+                <a href="#" className="hover:text-gold transition-colors">Gouvernement du Tchad</a>
+              </>
+            )}
           </div>
           <div className="text-center md:text-right">
-            <p>&copy; {new Date().getFullYear()} Ebenyx Technologies.</p>
+            <p>&copy; {new Date().getFullYear()} {parametres?.footer_copyright || "Ebenyx Technologies"}.</p>
           </div>
         </div>
       </div>
     </footer>
   );
 }
-
 
 

@@ -28,6 +28,8 @@ type Etape2Data = z.infer<typeof etape2Schema>;
 
 const etapes = ["Identité", "Nature de la plainte", "Pièces jointes", "Récapitulatif"];
 
+import { useQuery } from "@tanstack/react-query";
+
 export default function PlaintePage() {
   const [step, setStep] = useState(0);
   const [data1, setData1] = useState<Etape1Data | null>(null);
@@ -37,6 +39,11 @@ export default function PlaintePage() {
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [reference, setReference] = useState("");
+
+  const { data: pageConfig } = useQuery({
+    queryKey: ["parametres"],
+    queryFn: () => fetch("/api/parametres").then(res => res.json())
+  });
 
   const form1 = useForm<Etape1Data>({ resolver: zodResolver(etape1Schema), defaultValues: data1 || {} });
   const form2 = useForm<Etape2Data>({ resolver: zodResolver(etape2Schema), defaultValues: data2 || {} });
@@ -117,9 +124,9 @@ export default function PlaintePage() {
         <div className="container-page">
           <h1 className="text-3xl md:text-4xl font-bold flex items-center justify-center md:justify-start gap-4">
             <MessageSquareWarning className="w-8 h-8 md:w-10 md:h-10 text-gold" />
-            Dépôt de plainte en ligne
+            {pageConfig?.plainte_hero_title || "Dépôt de plainte en ligne"}
           </h1>
-          <p className="mt-2 opacity-90 text-lg">Formulaire sécurisé en 4 étapes</p>
+          <p className="mt-2 opacity-90 text-lg">{pageConfig?.plainte_hero_subtitle || "Formulaire sécurisé en 4 étapes"}</p>
         </div>
       </section>
       <Breadcrumb />

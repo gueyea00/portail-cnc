@@ -16,6 +16,11 @@ const iconMap: Record<string, React.ReactNode> = {
 };
 
 export default function ServicesPage() {
+  const { data: pageConfig } = useQuery({
+    queryKey: ["parametres"],
+    queryFn: () => fetch("/api/parametres").then(res => res.json())
+  });
+
   const { data: servicesApi = [] } = useQuery({
     queryKey: ["services"],
     queryFn: () => fetch("/api/services").then(res => res.json())
@@ -28,9 +33,9 @@ export default function ServicesPage() {
         <div className="container-page">
           <h1 className="text-3xl md:text-4xl font-bold flex items-center justify-center md:justify-start gap-4">
             <Laptop className="w-8 h-8 md:w-10 md:h-10 text-gold" />
-            Services en ligne
+            {pageConfig?.services_hero_title || "Services en ligne"}
           </h1>
-          <p className="mt-2 opacity-90 text-lg">Accédez à l'ensemble des services du CNC</p>
+          <p className="mt-2 opacity-90 text-lg">{pageConfig?.services_hero_subtitle || "Accédez à l'ensemble des services du CNC"}</p>
         </div>
       </section>
       <Breadcrumb />

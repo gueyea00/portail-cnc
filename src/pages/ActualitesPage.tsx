@@ -24,6 +24,11 @@ export default function ActualitesPage() {
   const [page, setPage] = useState(1);
   const perPage = 6;
 
+  const { data: pageConfig } = useQuery({
+    queryKey: ["parametres"],
+    queryFn: () => fetch("/api/parametres").then(res => res.json())
+  });
+
   const { data: articles = [], isLoading, isError } = useQuery({
     queryKey: ["articles"],
     queryFn: async () => {
@@ -43,9 +48,9 @@ export default function ActualitesPage() {
         <div className="container-page">
           <h1 className="text-3xl md:text-4xl font-bold flex items-center justify-center md:justify-start gap-4">
             <Newspaper className="w-8 h-8 md:w-10 md:h-10 text-gold" />
-            Actualités & Communiqués
+            {pageConfig?.news_hero_title || "Actualités & Communiqués"}
           </h1>
-          <p className="mt-2 opacity-90 text-lg">Suivez l'actualité du Conseil National de la Concurrence</p>
+          <p className="mt-2 opacity-90 text-lg">{pageConfig?.news_hero_subtitle || "Suivez l'actualité du Conseil National de la Concurrence"}</p>
         </div>
       </section>
       <Breadcrumb />
