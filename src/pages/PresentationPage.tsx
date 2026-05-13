@@ -49,7 +49,7 @@ export default function PresentationPage() {
         <section className="flex flex-col md:flex-row gap-10 items-start">
           <div className="shrink-0 flex flex-col items-center gap-2 md:pt-2">
             <img
-              src="/armoiries-tchad.png"
+              src={getImgUrl(presidentData?.armoiries_path, "/armoiries-tchad.png")}
               alt="Armoiries de la République du Tchad"
               className="w-12 h-14 object-contain"
             />

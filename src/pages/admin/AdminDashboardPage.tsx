@@ -34,6 +34,9 @@ export default function AdminDashboardPage() {
   const [plaintes, setPlaintes] = useState<any[]>([]);
   const [parametres, setParametres] = useState<Record<string, string>>({});
   const [presidentPhotoFile, setPresidentPhotoFile] = useState<File | null>(null);
+  const [heroBgFile, setHeroBgFile] = useState<File | null>(null);
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [armoiriesFile, setArmoiriesFile] = useState<File | null>(null);
   const [isSavingParametres, setIsSavingParametres] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingTab, setIsLoadingTab] = useState(false);
@@ -579,6 +582,39 @@ export default function AdminDashboardPage() {
       toast.error("Erreur lors du chargement des paramètres");
     } finally {
       setIsLoadingTab(false);
+    }
+  };
+
+  const handleSaveAllParametres = async () => {
+    setIsSavingParametres(true);
+    try {
+      const formData = new FormData();
+      Object.entries(parametres).forEach(([cle, valeur]) => {
+        formData.append(cle, valeur);
+      });
+
+      if (presidentPhotoFile) formData.append("president_photo_file", presidentPhotoFile);
+      if (heroBgFile) formData.append("hero_bg_file", heroBgFile);
+      if (logoFile) formData.append("logo_file", logoFile);
+      if (armoiriesFile) formData.append("armoiries_file", armoiriesFile);
+
+      const res = await authFetch("/api/parametres/admin", {
+        method: "PUT",
+        body: formData,
+      });
+
+      if (!res.ok) throw new Error("Erreur lors de l'enregistrement");
+
+      toast.success("Paramètres enregistrés avec succès");
+      setPresidentPhotoFile(null);
+      setHeroBgFile(null);
+      setLogoFile(null);
+      setArmoiriesFile(null);
+      fetchParametres();
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setIsSavingParametres(false);
     }
   };
 
@@ -2261,6 +2297,83 @@ export default function AdminDashboardPage() {
                           className="h-12 rounded-xl bg-slate-50 border-transparent focus:bg-white font-bold"
                           onChange={(e) => setParametres(prev => ({ ...prev, nom_site_ligne2: e.target.value }))}
                         />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-white rounded-[32px] border border-slate-100 p-8 shadow-sm space-y-6">
+                    <div className="flex items-center gap-4 mb-2">
+                      <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
+                        <ImageIcon className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-bold text-slate-800">Images du site</h3>
+                        <p className="text-xs text-slate-500">Logo, Arrière-plans et Armoiries</p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pt-4 border-t border-slate-50">
+                      {/* Hero Background */}
+                      <div className="space-y-4">
+                        <p className="text-xs font-black uppercase text-slate-400 tracking-widest">Image de fond (Hero Accueil)</p>
+                        <div className="flex flex-col gap-3">
+                          <div className="aspect-video w-full rounded-2xl bg-slate-100 border-2 border-dashed border-slate-200 overflow-hidden flex items-center justify-center group relative">
+                            {heroBgFile ? (
+                              <img src={URL.createObjectURL(heroBgFile)} className="w-full h-full object-cover" />
+                            ) : parametres.hero_bg_path ? (
+                              <img src={`/${parametres.hero_bg_path}`} className="w-full h-full object-cover" />
+                            ) : (
+                              <ImageIcon className="w-8 h-8 text-slate-300" />
+                            )}
+                            <label className="absolute inset-0 bg-black/40 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-opacity text-[10px] font-bold">
+                              CHANGER
+                              <input type="file" className="hidden" accept="image/*" onChange={(e) => setHeroBgFile(e.target.files?.[0] || null)} />
+                            </label>
+                          </div>
+                          <p className="text-[10px] text-slate-400 text-center">Recommandé: 1920x1080px</p>
+                        </div>
+                      </div>
+
+                      {/* Logo */}
+                      <div className="space-y-4">
+                        <p className="text-xs font-black uppercase text-slate-400 tracking-widest">Logo du site</p>
+                        <div className="flex flex-col gap-3">
+                          <div className="h-32 w-full rounded-2xl bg-slate-100 border-2 border-dashed border-slate-200 overflow-hidden flex items-center justify-center group relative">
+                            {logoFile ? (
+                              <img src={URL.createObjectURL(logoFile)} className="h-full object-contain p-4" />
+                            ) : parametres.logo_path ? (
+                              <img src={`/${parametres.logo_path}`} className="h-full object-contain p-4" />
+                            ) : (
+                              <ImageIcon className="w-8 h-8 text-slate-300" />
+                            )}
+                            <label className="absolute inset-0 bg-black/40 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-opacity text-[10px] font-bold">
+                              CHANGER
+                              <input type="file" className="hidden" accept="image/*" onChange={(e) => setLogoFile(e.target.files?.[0] || null)} />
+                            </label>
+                          </div>
+                          <p className="text-[10px] text-slate-400 text-center">Format PNG transparent recommandé</p>
+                        </div>
+                      </div>
+
+                      {/* Armoiries */}
+                      <div className="space-y-4">
+                        <p className="text-xs font-black uppercase text-slate-400 tracking-widest">Armoiries de la République</p>
+                        <div className="flex flex-col gap-3">
+                          <div className="h-32 w-full rounded-2xl bg-slate-100 border-2 border-dashed border-slate-200 overflow-hidden flex items-center justify-center group relative">
+                            {armoiriesFile ? (
+                              <img src={URL.createObjectURL(armoiriesFile)} className="h-full object-contain p-4" />
+                            ) : parametres.armoiries_path ? (
+                              <img src={`/${parametres.armoiries_path}`} className="h-full object-contain p-4" />
+                            ) : (
+                              <ImageIcon className="w-8 h-8 text-slate-300" />
+                            )}
+                            <label className="absolute inset-0 bg-black/40 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-opacity text-[10px] font-bold">
+                              CHANGER
+                              <input type="file" className="hidden" accept="image/*" onChange={(e) => setArmoiriesFile(e.target.files?.[0] || null)} />
+                            </label>
+                          </div>
+                          <p className="text-[10px] text-slate-400 text-center">S'affiche sur la page de présentation</p>
+                        </div>
                       </div>
                     </div>
                   </div>

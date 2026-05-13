@@ -94,7 +94,11 @@ export default function HomePage() {
       {/* Hero */}
       <section
         className="text-primary-foreground min-h-[90vh] flex items-center py-16 md:py-24 relative overflow-hidden"
-        style={{ backgroundImage: "url('/hero-bg.jpg')", backgroundSize: 'cover', backgroundPosition: 'center' }}
+        style={{ 
+          backgroundImage: `url('${getImgUrl(presidentData?.hero_bg_path, "/hero-bg.jpg")}')`, 
+          backgroundSize: 'cover', 
+          backgroundPosition: 'center' 
+        }}
       >
         <div className="absolute inset-0 bg-black/40 z-0" />
         <div className="absolute inset-0 opacity-20 z-0">

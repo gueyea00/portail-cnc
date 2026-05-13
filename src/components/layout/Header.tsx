@@ -36,6 +36,12 @@ export default function Header() {
 
   const isActive = (path: string) => location.pathname === path;
 
+  const getImgUrl = (path: string | null | undefined, fallback: string) => {
+    if (!path) return fallback;
+    if (path.startsWith('http')) return path;
+    return `/${path}`;
+  };
+
   return (
     <>
       <header className="bg-surface shadow-sm sticky top-0 z-50 flex flex-col">
@@ -91,19 +97,25 @@ export default function Header() {
             <Link to="/" className="flex items-center gap-3 shrink-0">
               {/* Armoiries du Tchad */}
               <img
-                src="/armoiries-tchad.png"
+                src={getImgUrl(parametres?.armoiries_path, "/armoiries-tchad.png")}
                 alt="Armoiries de la République du Tchad"
                 className="w-10 h-12 md:w-12 md:h-14 object-contain"
               />
+              {/* Logo personnalisé si présent */}
+              {parametres?.logo_path && (
+                 <img
+                 src={getImgUrl(parametres.logo_path, "")}
+                 alt="Logo CNC"
+                 className="w-10 h-10 md:w-12 md:h-12 object-contain"
+               />
+              )}
               {/* Texte institutionnel */}
               <div className="hidden sm:block">
-                <p className="text-base font-bold text-primary leading-tight">
+                <p className="text-sm md:text-base font-bold text-primary leading-tight">
                   {parametres?.nom_site_ligne1 || "Conseil National"}<br />
                   {parametres?.nom_site_ligne2 || "de la Concurrence"}
                 </p>
               </div>
-
-
             </Link>
 
             {/* Desktop nav */}

@@ -9,8 +9,11 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const router = Router();
 
 const storage = multer.diskStorage({
-  destination: join(__dirname, '../../uploads/president'),
-  filename: (req, file, cb) => cb(null, `president${extname(file.originalname)}`)
+  destination: join(__dirname, '../../uploads/site'),
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, file.fieldname + '-' + uniqueSuffix + extname(file.originalname));
+  }
 });
 const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } });
 
@@ -18,6 +21,11 @@ const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } });
 router.get('/', ParametreController.getAll);
 
 // Admin routes
-router.put('/admin', authMiddleware, requireRole('super_admin'), upload.single('president_photo_file'), ParametreController.update);
+router.put('/admin', authMiddleware, requireRole('super_admin'), upload.fields([
+  { name: 'president_photo_file', maxCount: 1 },
+  { name: 'hero_bg_file', maxCount: 1 },
+  { name: 'logo_file', maxCount: 1 },
+  { name: 'armoiries_file', maxCount: 1 }
+]), ParametreController.update);
 
 export default router;
