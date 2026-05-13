@@ -195,11 +195,10 @@ export default function HomePage() {
                       </blockquote>
                     </div>
 
-                    <div className="pt-4 flex flex-col sm:flex-row items-center gap-6">
+                    {/* <div className="pt-4 flex flex-col sm:flex-row items-center gap-6">
                       <Link to="/presentation">
                         <Button size="lg" className="rounded-full px-8 py-6 bg-primary hover:bg-primary/90 text-white font-bold gap-3 shadow-xl shadow-primary/20 group">
-                          Lire le message complet
-                          <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                          {t("home.readMore")} <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                         </Button>
                       </Link>
 
@@ -207,7 +206,7 @@ export default function HomePage() {
                         <div className="w-12 h-[1px] bg-border" />
                         <span className="text-sm font-medium italic">Vision 2025-2030</span>
                       </div>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </div>
