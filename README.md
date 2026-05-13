@@ -25,7 +25,7 @@ docker-compose up -d db
 cd ccn-backend
 npm install
 # Créez un fichier .env basé sur .env.example
-npm run dev
+npm run dev .
 ```
 
 ### 4. Frontend
