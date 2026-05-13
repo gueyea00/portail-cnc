@@ -2164,17 +2164,19 @@ export default function AdminDashboardPage() {
               </div>
 
               {/* Sub-tabs for Parameters */}
-              <div className="flex items-center gap-2 bg-slate-100 p-1 rounded-2xl w-fit">
+              <div className="flex flex-wrap items-center gap-2 bg-slate-100 p-1 rounded-2xl w-fit">
                 {[
                   { id: "identite", label: "Identité & Images" },
-                  { id: "accueil", label: "Page d'Accueil" },
-                  { id: "pages", label: "Autres Pages" },
+                  { id: "accueil", label: "Accueil" },
+                  { id: "presentation", label: "Présentation" },
+                  { id: "missions", label: "Missions" },
+                  { id: "heros", label: "Titres des Pages" },
                   { id: "contact", label: "Contact & Footer" },
                 ].map((tab) => (
                   <button
                     key={tab.id}
                     onClick={() => setActiveParamTab(tab.id)}
-                    className={`px-6 py-2 rounded-xl text-xs font-bold transition-all ${activeParamTab === tab.id
+                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeParamTab === tab.id
                         ? "bg-white text-primary shadow-sm"
                         : "text-slate-500 hover:text-slate-700 hover:bg-white/50"
                       }`}
@@ -2379,19 +2381,22 @@ export default function AdminDashboardPage() {
                   {/* Other Tabs content logic */}
                   {(() => {
                     const groups = [
-                      { id: "accueil", title: "Page d'Accueil", keys: ['home_welcome_badge', 'home_missions_title', 'home_missions_subtitle', 'home_services_title', 'home_services_subtitle', 'home_news_title', 'home_news_subtitle'] },
-                      { id: "pages", title: "Présentation", keys: ['pres_hero_title', 'pres_hero_subtitle', 'pres_section_title', 'pres_timeline_title', 'pres_timeline_subtitle', 'pres_members_title', 'presentation_p1', 'presentation_p2', 'presentation_p3'] },
-                      { id: "pages", title: "Missions", keys: ['missions_hero_title', 'missions_hero_subtitle', 'missions_section_subtitle', 'missions_process_title', 'missions_process_subtitle'] },
-                      { id: "pages", title: "Autres Pages", keys: ['news_hero_title', 'news_hero_subtitle', 'docs_hero_title', 'docs_hero_subtitle', 'faq_hero_title', 'faq_hero_subtitle', 'galerie_hero_title', 'galerie_hero_subtitle', 'services_hero_title', 'services_hero_subtitle', 'sig_hero_title', 'sig_hero_subtitle', 'plainte_hero_title', 'plainte_hero_subtitle'] },
-                      { id: "contact", title: "Contact & Footer", keys: ['contact_hero_title', 'contact_hero_subtitle', 'footer_description', 'footer_adresse', 'footer_telephone', 'footer_email', 'contact_adresse', 'contact_telephone', 'contact_email', 'horaires_ouverture', 'lien_facebook', 'lien_linkedin', 'lien_twitter', 'footer_copyright'] },
+                      { id: "accueil", title: "Contenu de l'Accueil", keys: ['home_welcome_badge', 'home_missions_title', 'home_missions_subtitle', 'home_services_title', 'home_services_subtitle', 'home_news_title', 'home_news_subtitle'] },
+                      { id: "presentation", title: "Page Présentation", keys: ['pres_hero_title', 'pres_hero_subtitle', 'pres_section_title', 'pres_timeline_title', 'pres_timeline_subtitle', 'pres_members_title', 'presentation_p1', 'presentation_p2', 'presentation_p3'] },
+                      { id: "missions", title: "Page Missions", keys: ['missions_hero_title', 'missions_hero_subtitle', 'missions_section_subtitle', 'missions_process_title', 'missions_process_subtitle'] },
+                      { id: "heros", title: "En-têtes (Héros) des pages", keys: ['news_hero_title', 'news_hero_subtitle', 'docs_hero_title', 'docs_hero_subtitle', 'faq_hero_title', 'faq_hero_subtitle', 'galerie_hero_title', 'galerie_hero_subtitle', 'services_hero_title', 'services_hero_subtitle', 'sig_hero_title', 'sig_hero_subtitle', 'plainte_hero_title', 'plainte_hero_subtitle'] },
+                      { id: "contact", title: "Contact & Pied de page", keys: ['contact_hero_title', 'contact_hero_subtitle', 'footer_description', 'footer_adresse', 'footer_telephone', 'footer_email', 'contact_adresse', 'contact_telephone', 'contact_email', 'horaires_ouverture', 'lien_facebook', 'lien_linkedin', 'lien_twitter', 'footer_copyright'] },
                     ];
 
                     const assignedKeys = new Set(groups.flatMap(g => g.keys).concat(['president_nom', 'president_mot', 'president_photo_path', 'nom_site_ligne1', 'nom_site_ligne2', 'hero_bg_path', 'logo_path', 'armoiries_path']));
                     const otherKeys = Object.keys(parametres).filter(k => !assignedKeys.has(k));
 
                     const filteredGroups = groups.filter(g => g.id === activeParamTab);
-                    if (activeParamTab === "pages" && otherKeys.length > 0) {
-                      filteredGroups.push({ id: "pages", title: "Autres paramètres personnalisés", keys: otherKeys });
+                    
+                    // On peut imaginer un onglet "Avancé" pour les clés orphelines, ou les mettre dans Titres si besoin.
+                    // Pour l'instant on les met dans "heros" ou on crée un onglet "Autres" si elles existent.
+                    if (activeParamTab === "heros" && otherKeys.length > 0) {
+                      filteredGroups.push({ id: "heros", title: "Paramètres personnalisés", keys: otherKeys });
                     }
 
                     return filteredGroups.map(group => (
