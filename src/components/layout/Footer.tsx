@@ -13,6 +13,12 @@ export default function Footer() {
     queryFn: () => fetch("/api/liens").then(res => res.json())
   });
 
+  const getImgUrl = (path: string | null | undefined, fallback: string) => {
+    if (!path) return fallback;
+    if (path.startsWith('http')) return path;
+    return `/${path}`;
+  };
+
   return (
     <footer className="bg-primary text-primary-foreground pt-0 pb-8 relative overflow-hidden">
 
@@ -51,7 +57,7 @@ export default function Footer() {
           {/* Col 1 — Logo & Desc */}
           <div className="space-y-6">
             <div className="flex items-center gap-3">
-              <img src="/armoiries-tchad.png" alt="Armoiries du Tchad" className="w-12 h-14 object-contain bg-white rounded p-1 shadow-sm" />
+              <img src={getImgUrl(parametres?.armoiries_path, "/armoiries-tchad.png")} alt="Armoiries du Tchad" className="w-12 h-14 object-contain bg-white rounded p-1 shadow-sm" />
               <div>
                 <p className="font-extrabold text-base leading-tight tracking-wide">
                   {parametres?.nom_site_ligne1 || "Conseil National"}<br />
