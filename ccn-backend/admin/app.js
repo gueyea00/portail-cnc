@@ -308,13 +308,12 @@ function navigateToEditor(type, data = null) {
   const body = document.getElementById('editorBody');
 
   if (type === 'lien') {
-    document.getElementById('editorTitle').textContent = data ? 'Modifier le lien' : 'Nouveau lien';
+    document.getElementById('editorTitle').textContent = data ? 'Modifier le bailleur' : 'Nouveau bailleur';
     body.innerHTML = `
       <form id="editorForm" enctype="multipart/form-data">
         <input type="hidden" name="id" value="${data?.id || ''}" />
         <div class="form-group"><label>Nom *</label><input name="nom" value="${data?.nom || ''}" required /></div>
-        <div class="form-group"><label>URL *</label><input name="url" value="${data?.url || ''}" required /></div>
-        <div class="form-group"><label>Logo</label><input type="file" name="logo" accept="image/*" /></div>
+        <div class="form-group"><label>Logo *</label><input type="file" name="logo" accept="image/*" ${data ? '' : 'required'} /></div>
         <div class="form-group"><label>Description</label><textarea name="description" rows="2">${data?.description || ''}</textarea></div>
         <button type="submit" class="btn btn-primary">Enregistrer</button>
       </form>`;
