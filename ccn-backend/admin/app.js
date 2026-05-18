@@ -202,12 +202,19 @@ function openModal(type, data = null) {
     title.textContent = data ? 'Modifier le membre' : 'Nouveau membre';
     body.innerHTML = `
       <form id="membreForm" enctype="multipart/form-data">
+        <input type="hidden" name="id" value="${data?.id || ''}" />
         <div class="form-group"><label>Nom complet *</label><input name="nom" value="${data?.nom || ''}" required /></div>
         <div class="form-group"><label>Fonction</label><input name="fonction" value="${data?.fonction || ''}" /></div>
+        <div class="form-group"><label>Ordre d'affichage</label><input type="number" name="ordre" value="${data?.ordre || 0}" /></div>
         <div class="form-group"><label>Biographie</label><textarea name="bio" rows="3">${data?.bio || ''}</textarea></div>
         <div class="form-row">
           <div class="form-group"><label>Initiales</label><input name="initiales" value="${data?.initiales || ''}" maxlength="3" /></div>
-          <div class="form-group"><label>Ordre</label><input type="number" name="ordre" value="${data?.ordre || 0}" /></div>
+          <div class="form-group"><label>Actif</label>
+            <select name="actif">
+              <option value="true" ${data?.actif !== false ? 'selected' : ''}>Oui</option>
+              <option value="false" ${data?.actif === false ? 'selected' : ''}>Non</option>
+            </select>
+          </div>
         </div>
         <div class="form-group"><label>Photo</label><input type="file" name="photo" accept="image/*" /></div>
         <div class="modal-actions">
@@ -220,8 +227,9 @@ function openModal(type, data = null) {
     document.getElementById('membreForm').onsubmit = async (e) => {
       e.preventDefault();
       const fd = new FormData(e.target);
-      const url = data ? `/api/membres/admin/${data.id}` : '/api/membres/admin';
-      const method = data ? 'PUT' : 'POST';
+      const id = fd.get('id');
+      const url = id ? `/api/membres/admin/${id}` : '/api/membres/admin';
+      const method = id ? 'PUT' : 'POST';
       const res = await apiFetch(url, { method, headers: { Authorization: `Bearer ${token}` }, body: fd });
       if (res?.ok) { showToast('Membre enregistré !'); closeModal(); loadMembres(); }
       else showToast('Erreur', true);
