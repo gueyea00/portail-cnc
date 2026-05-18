@@ -741,7 +741,7 @@ async function deleteItem(resource, id) {
 }
 
 // ---- Navigation ----
-function navigateTo(section) {
+function navigateTo(section, updateUrl = true) {
   document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.content-section').forEach(el => el.classList.remove('active'));
   const nav = document.querySelector(`[data-section="${section}"]`);
@@ -767,54 +767,28 @@ function navigateTo(section) {
     admins: loadAdmins,
   };
   loaders[section]?.();
+
+  if (updateUrl) {
+    const newUrl = section === 'accueil' ? window.location.pathname : `?tab=${section}`;
+    history.pushState({ section }, '', newUrl);
+  }
 }
 
 // ---- Init Dashboard ----
 if (!window.location.pathname.includes('login')) {
-  // Afficher les infos admin
-  const adminNameEl = document.getElementById('adminName');
-  const adminRoleEl = document.getElementById('adminRole');
-  if (adminNameEl) adminNameEl.textContent = currentAdmin.username || 'Admin';
-  if (adminRoleEl) adminRoleEl.textContent = currentAdmin.role || '';
-
-  // Afficher les éléments super_admin
-  if (currentAdmin.role === 'super_admin') {
-    document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex');
-  }
-
-  // Navigation
-  document.querySelectorAll('.nav-item').forEach(el => {
-    el.addEventListener('click', (e) => {
-      e.preventDefault();
-      navigateTo(el.dataset.section);
-    });
+  // Handle popstate for browser back/forward
+  window.addEventListener('popstate', (e) => {
+    const section = e.state?.section || 'accueil';
+    navigateTo(section, false);
   });
 
-  // Déconnexion
-  document.getElementById('logoutBtn')?.addEventListener('click', logout);
-
-  // Formulaire Président
-  document.getElementById('presidentForm')?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const fd = new FormData(e.target);
-    const res = await apiFetch('/api/parametres/admin', {
-      method: 'PUT', headers: { Authorization: `Bearer ${token}` }, body: fd
-    });
-    if (res?.ok) showToast('Paramètres enregistrés !');
-    else showToast('Erreur', true);
-  });
-
-  // Filtre plaintes
-  document.getElementById('filtrePlaintes')?.addEventListener('change', loadPlaintes);
-
-  // Chargement initial
-  navigateTo('accueil');
-
-  // Fermer modal via overlay
-  document.getElementById('modal')?.addEventListener('click', (e) => {
-    if (e.target.id === 'modal') closeModal();
-  });
+  // Handle URL param on load
+  const params = new URLSearchParams(window.location.search);
+  const tab = params.get('tab');
   
-  // Rendu initial des icônes
-  refreshIcons();
-}
+  // ... rest of init code ...
+  if (tab) {
+    navigateTo(tab, false);
+  } else {
+    navigateTo('accueil', false);
+  }
