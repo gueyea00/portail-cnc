@@ -90,6 +90,7 @@ export default function AdminDashboardPage() {
   const [showDocumentForm, setShowDocumentForm] = useState(false);
   const [editingDocument, setEditingDocument] = useState<any>(null);
 
+  const [lienLogoFile, setLienLogoFile] = useState<File | null>(null);
   const [liens, setLiens] = useState<any[]>([]);
   const [lienForm, setLienForm] = useState({ nom: "", url: "", description: "", categorie: "Ministère", ordre: 0 });
   const [showLienForm, setShowLienForm] = useState(false);
@@ -635,11 +636,12 @@ export default function AdminDashboardPage() {
   const openLienForm = (lien: any = null) => {
     if (lien) {
       setEditingLien(lien);
-      setLienForm({ nom: lien.nom, url: lien.url, description: lien.description || "", categorie: lien.categorie || "Ministère", ordre: lien.ordre || 0 });
+      setLienForm({ nom: lien.nom, url: lien.url || "", description: lien.description || "", categorie: lien.categorie || "Ministère", ordre: lien.ordre || 0 });
     } else {
       setEditingLien(null);
       setLienForm({ nom: "", url: "", description: "", categorie: "Ministère", ordre: 0 });
     }
+    setLienLogoFile(null);
     setShowLienForm(true);
   };
 
@@ -647,17 +649,27 @@ export default function AdminDashboardPage() {
     e.preventDefault();
     setIsLoadingTab(true);
     try {
+      const formData = new FormData();
+      formData.append("nom", lienForm.nom);
+      formData.append("url", lienForm.url);
+      formData.append("description", lienForm.description);
+      formData.append("categorie", lienForm.categorie);
+      formData.append("ordre", String(lienForm.ordre));
+      if (lienLogoFile) formData.append("logo", lienLogoFile);
+
       const url = editingLien ? `/api/liens/admin/${editingLien.id}` : "/api/liens/admin";
       const method = editingLien ? "PUT" : "POST";
-      const res = await authFetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(lienForm),
-      });
-      if (!res.ok) throw new Error("Erreur enregistrement");
-      toast.success(editingLien ? "Lien mis à jour" : "Lien ajouté");
+
+      const res = await authFetch(url, { method, body: formData });
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || `Erreur ${res.status}`);
+      }
+      
+      toast.success(editingLien ? "Bailleur mis à jour" : "Bailleur ajouté");
       setShowLienForm(false);
       setEditingLien(null);
+      setLienLogoFile(null);
       fetchLiens();
     } catch (error: any) {
       toast.error(error.message);
@@ -970,133 +982,201 @@ export default function AdminDashboardPage() {
     navigate("/admin/login");
   };
 
-  const menuItems = [
-    { id: "dashboard", label: "Tableau de Bord", icon: <LayoutDashboard className="w-5 h-5" /> },
-    { id: "articles", label: "Actualités", icon: <FileText className="w-5 h-5" /> },
-    { id: "missions", label: "Missions", icon: <CheckCircle2 className="w-5 h-5" /> },
-    { id: "historique", label: "Historique", icon: <FileText className="w-5 h-5" /> },
-    { id: "etapes", label: "Étapes", icon: <FileText className="w-5 h-5" /> },
-    { id: "services", label: "Services", icon: <Settings className="w-5 h-5" /> },
-    { id: "faq", label: "FAQ", icon: <MessageSquare className="w-5 h-5" /> },
-    { id: "membres", label: "Membres", icon: <Users className="w-5 h-5" /> },
-    { id: "galerie", label: "Galerie", icon: <ImageIcon className="w-5 h-5" /> },
-    { id: "documents", label: "Documents", icon: <FileBadge className="w-5 h-5" /> },
-    { id: "plaintes", label: "Plaintes", icon: <MessageSquare className="w-5 h-5" /> },
-    { id: "liens", label: "Bailleurs", icon: <ExternalLink className="w-5 h-5" /> },
-    { id: "parametres", label: "Paramètres", icon: <Settings className="w-5 h-5" /> },
+  const menuGroups = [
+    {
+      label: "Principal",
+      items: [
+        { id: "dashboard", label: "Tableau de Bord", icon: <LayoutDashboard className="w-4 h-4" /> },
+        { id: "articles", label: "Actualités", icon: <FileText className="w-4 h-4" /> },
+      ]
+    },
+    {
+      label: "Institution",
+      items: [
+        { id: "missions", label: "Missions", icon: <CheckCircle2 className="w-4 h-4" /> },
+        { id: "historique", label: "Historique", icon: <FileText className="w-4 h-4" /> },
+        { id: "etapes", label: "Étapes", icon: <FileText className="w-4 h-4" /> },
+        { id: "membres", label: "Membres", icon: <Users className="w-4 h-4" /> },
+      ]
+    },
+    {
+      label: "Contenu",
+      items: [
+        { id: "services", label: "Services", icon: <Settings className="w-4 h-4" /> },
+        { id: "faq", label: "FAQ", icon: <MessageSquare className="w-4 h-4" /> },
+        { id: "galerie", label: "Galerie", icon: <ImageIcon className="w-4 h-4" /> },
+        { id: "documents", label: "Documents", icon: <FileBadge className="w-4 h-4" /> },
+      ]
+    },
+    {
+      label: "Relations",
+      items: [
+        { id: "plaintes", label: "Plaintes", icon: <MessageSquare className="w-4 h-4" /> },
+        { id: "liens", label: "Liens institutionnels", icon: <ExternalLink className="w-4 h-4" /> },
+      ]
+    },
+    {
+      label: "Configuration",
+      items: [
+        { id: "parametres", label: "Paramètres", icon: <Settings className="w-4 h-4" /> },
+      ]
+    },
   ];
+  const menuItems = menuGroups.flatMap(g => g.items);
 
   return (
-    <div className="flex min-h-screen bg-[#f8fafc]">
+    <div className="flex min-h-screen bg-slate-50">
       {/* Sidebar */}
-      <aside className="w-64 bg-[#002664] text-white flex flex-col fixed inset-y-0 z-50">
-        <div className="p-6 border-b border-white/10">
+      <aside className="w-60 bg-[#001a4d] text-white flex flex-col fixed inset-y-0 z-50 shadow-2xl">
+        {/* Logo */}
+        <div className="px-5 py-5 border-b border-white/[0.07]">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center p-1.5 shadow-lg">
+            <div className="w-9 h-9 bg-white rounded-xl flex items-center justify-center p-1.5 shadow-lg flex-shrink-0">
               <img src="/armoiries-tchad.png" alt="Logo" className="w-full h-full object-contain" />
             </div>
-            <div>
-              <h2 className="font-bold text-sm leading-tight">CNC TCHAD</h2>
-              <p className="text-[10px] text-white/60 uppercase tracking-widest font-bold">Admin Panel</p>
+            <div className="min-w-0">
+              <h2 className="font-black text-[13px] leading-tight tracking-tight">CNC Tchad</h2>
+              <p className="text-[9px] text-white/40 uppercase tracking-[0.15em] font-semibold mt-0.5">Administration</p>
             </div>
           </div>
         </div>
 
-        <nav className="flex-1 p-4 space-y-1 overflow-y-auto mt-4 custom-scrollbar">
-          {menuItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => setActiveTab(item.id as TabType)}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-medium ${activeTab === item.id
-                ? "bg-white/15 text-white shadow-inner"
-                : "text-white/70 hover:bg-white/5 hover:text-white"
-                }`}
-            >
-              {item.icon}
-              {item.label}
-            </button>
+        <nav className="flex-1 px-3 py-4 overflow-y-auto space-y-5">
+          {menuGroups.map((group) => (
+            <div key={group.label}>
+              <p className="text-[9px] font-black uppercase tracking-[0.15em] text-white/30 px-3 mb-1.5">{group.label}</p>
+              <div className="space-y-0.5">
+                {group.items.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => setActiveTab(item.id as TabType)}
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-150 text-sm font-medium ${
+                      activeTab === item.id
+                        ? "bg-white/[0.12] text-white"
+                        : "text-white/55 hover:bg-white/[0.06] hover:text-white/90"
+                    }`}
+                  >
+                    <span className={`flex-shrink-0 transition-colors ${
+                      activeTab === item.id ? "text-blue-300" : "text-white/40"
+                    }`}>{item.icon}</span>
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            </div>
           ))}
         </nav>
+
+        {/* User footer */}
+        <div className="px-3 py-4 border-t border-white/[0.07]">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/40 hover:bg-red-500/10 hover:text-red-300 transition-all text-sm font-medium"
+          >
+            <LogOut className="w-4 h-4" />
+            Déconnexion
+          </button>
+        </div>
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 ml-64 flex flex-col min-h-screen">
-        {/* Header Content */}
-        <header className="h-20 bg-white border-b border-border sticky top-0 z-40 px-8 flex items-center justify-between">
-          <div>
-            <h1 className="text-xl font-bold text-slate-800">
-              {activeTab === 'liens' ? 'Bailleurs' : menuItems.find(i => i.id === activeTab)?.label}
-            </h1>
-            <p className="text-xs text-muted-foreground">Gestion du portail CNC Tchad</p>
+      <main className="flex-1 ml-60 flex flex-col min-h-screen">
+        {/* Header */}
+        <header className="h-16 bg-white border-b border-slate-100 sticky top-0 z-40 px-8 flex items-center justify-between shadow-sm">
+          <div className="flex items-center gap-3">
+            <div className="w-1 h-6 bg-blue-600 rounded-full" />
+            <div>
+              <h1 className="text-base font-bold text-slate-800">
+                {menuItems.find(i => i.id === activeTab)?.label ?? 'Dashboard'}
+              </h1>
+              <p className="text-[11px] text-slate-400 font-medium">Portail CNC Tchad</p>
+            </div>
           </div>
-
-          <div className="flex items-center gap-4">
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-300 hover:bg-red-500/10 hover:text-red-400 transition-all font-medium"
-            >
-              <LogOut className="w-5 h-5" />
-              Déconnexion
-            </button>
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl bg-[#001a4d] flex items-center justify-center text-white text-xs font-black">
+              {admin.username?.charAt(0).toUpperCase()}
+            </div>
+            <div className="hidden sm:block">
+              <p className="text-xs font-bold text-slate-700">{admin.username}</p>
+              <p className="text-[10px] text-slate-400">Administrateur</p>
+            </div>
           </div>
         </header>
 
-        {/* Dynamic Body Content */}
-        <div className="p-8 pb-12 flex-1 overflow-auto">
+        <div className="p-6 pb-12 flex-1 overflow-auto">
           {activeTab === "dashboard" && (
-            <div className="space-y-8 animate-in fade-in duration-500">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-                  <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-4">
-                    <FileText className="w-6 h-6" />
-                  </div>
-                  <p className="text-sm font-medium text-slate-500">Articles publiés</p>
-                  <h3 className="text-2xl font-bold text-slate-800 mt-1">{articles.length}</h3>
-                </div>
-                <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-                  <div className="w-12 h-12 bg-green-50 text-green-600 rounded-2xl flex items-center justify-center mb-4">
-                    <CheckCircle2 className="w-6 h-6" />
-                  </div>
-                  <p className="text-sm font-medium text-slate-500">Plaintes reçues</p>
-                  <h3 className="text-2xl font-bold text-slate-800 mt-1">12</h3>
-                </div>
-                <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-                  <div className="w-12 h-12 bg-orange-50 text-orange-600 rounded-2xl flex items-center justify-center mb-4">
-                    <Users className="w-6 h-6" />
-                  </div>
-                  <p className="text-sm font-medium text-slate-500">Membres du CNC</p>
-                  <h3 className="text-2xl font-bold text-slate-800 mt-1">7</h3>
-                </div>
-                <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-                  <div className="w-12 h-12 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center mb-4">
-                    <AlertCircle className="w-6 h-6" />
-                  </div>
-                  <p className="text-sm font-medium text-slate-500">Signalements</p>
-                  <h3 className="text-2xl font-bold text-slate-800 mt-1">5</h3>
-                </div>
-              </div>
-
-              <div className="bg-[#002664] p-8 rounded-[40px] text-white relative overflow-hidden shadow-2xl shadow-blue-900/20">
-                <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="space-y-6 animate-in fade-in duration-500">
+              {/* Bannière de bienvenue */}
+              <div className="bg-gradient-to-r from-[#001a4d] to-[#003080] p-7 rounded-3xl text-white relative overflow-hidden shadow-xl shadow-blue-900/20">
+                <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
                   <div>
-                    <h2 className="text-3xl font-black mb-2 leading-tight tracking-tight">Bienvenue, {admin.username} !</h2>
-                    <p className="text-white/70 max-w-md font-medium">Vous pouvez gérer tous les contenus du portail institutionnel depuis cet espace de contrôle centralisé.</p>
+                    <p className="text-blue-300/80 text-xs font-bold uppercase tracking-widest mb-1">Tableau de bord</p>
+                    <h2 className="text-2xl font-black mb-2 leading-tight">Bienvenue, {admin.username} !</h2>
+                    <p className="text-white/60 max-w-md text-sm">Gérez tous les contenus du portail institutionnel depuis cet espace centralisé.</p>
                   </div>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="flex gap-3 flex-shrink-0">
                     <Button
-                      className="bg-white text-primary hover:bg-white/90 rounded-2xl h-14 px-8 font-bold gap-2"
+                      className="bg-white text-[#001a4d] hover:bg-white/90 rounded-xl h-11 px-6 font-bold gap-2 shadow-lg text-sm"
                       onClick={openArticleForm}
                     >
-                      <Plus className="w-5 h-5" />
+                      <Plus className="w-4 h-4" />
                       Nouvel Article
                     </Button>
-                    <Button variant="outline" className="border-white/20 text-white hover:bg-white/10 rounded-2xl h-14 px-8 font-bold">
+                    <Button
+                      variant="outline"
+                      className="border-white/20 text-white hover:bg-white/10 rounded-xl h-11 px-6 font-bold text-sm"
+                      onClick={() => setActiveTab("parametres")}
+                    >
                       Paramètres
                     </Button>
                   </div>
                 </div>
-                <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
-                <div className="absolute bottom-0 left-0 w-64 h-64 bg-secondary/10 rounded-full blur-3xl -ml-20 -mb-20 pointer-events-none" />
+                <div className="absolute top-0 right-0 w-72 h-72 bg-white/[0.04] rounded-full -mr-16 -mt-16 pointer-events-none" />
+                <div className="absolute bottom-0 left-1/2 w-48 h-48 bg-blue-400/[0.06] rounded-full -mb-12 pointer-events-none" />
+              </div>
+
+              {/* Statistiques */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center">
+                      <FileText className="w-5 h-5" />
+                    </div>
+                    <span className="text-[10px] font-black text-blue-500 uppercase tracking-wider bg-blue-50 px-2 py-0.5 rounded-lg">Articles</span>
+                  </div>
+                  <h3 className="text-3xl font-black text-slate-800">{articles.length}</h3>
+                  <p className="text-xs text-slate-400 mt-0.5 font-medium">publiés</p>
+                </div>
+                <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="w-10 h-10 bg-green-50 text-green-600 rounded-xl flex items-center justify-center">
+                      <CheckCircle2 className="w-5 h-5" />
+                    </div>
+                    <span className="text-[10px] font-black text-green-600 uppercase tracking-wider bg-green-50 px-2 py-0.5 rounded-lg">Plaintes</span>
+                  </div>
+                  <h3 className="text-3xl font-black text-slate-800">{plaintes.length}</h3>
+                  <p className="text-xs text-slate-400 mt-0.5 font-medium">reçues</p>
+                </div>
+                <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="w-10 h-10 bg-orange-50 text-orange-600 rounded-xl flex items-center justify-center">
+                      <Users className="w-5 h-5" />
+                    </div>
+                    <span className="text-[10px] font-black text-orange-600 uppercase tracking-wider bg-orange-50 px-2 py-0.5 rounded-lg">Membres</span>
+                  </div>
+                  <h3 className="text-3xl font-black text-slate-800">{membres.length}</h3>
+                  <p className="text-xs text-slate-400 mt-0.5 font-medium">du CNC</p>
+                </div>
+                <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="w-10 h-10 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center">
+                      <ExternalLink className="w-5 h-5" />
+                    </div>
+                    <span className="text-[10px] font-black text-purple-600 uppercase tracking-wider bg-purple-50 px-2 py-0.5 rounded-lg">Partenaires</span>
+                  </div>
+                  <h3 className="text-3xl font-black text-slate-800">{liens.length}</h3>
+                  <p className="text-xs text-slate-400 mt-0.5 font-medium">institutionnels</p>
+                </div>
               </div>
             </div>
           )}
@@ -2219,7 +2299,7 @@ export default function AdminDashboardPage() {
             </div>
           )}
 
-          {activeTab === "liens" && (
+          {/* {activeTab === "liens" && (
             <div className="space-y-6 animate-in fade-in duration-300">
               {showLienForm ? (
                 <div className="space-y-6">
@@ -2377,329 +2457,574 @@ export default function AdminDashboardPage() {
                 </>
               )}
             </div>
-          )}
-
-          {activeTab === "parametres" && (
+          )} */}
+          {activeTab === "liens" && (
             <div className="space-y-6 animate-in fade-in duration-300">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                  <h2 className="text-lg font-bold text-slate-800">Paramètres</h2>
-                  <p className="text-xs text-muted-foreground">Configuration générale du site</p>
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      const key = prompt("Entrez le nom de la nouvelle clé (ex: contact_info) :");
-                      if (key) {
-                        const sanitizedKey = key.trim().toLowerCase().replace(/\s+/g, '_');
-                        setParametres(prev => ({ ...prev, [sanitizedKey]: "" }));
-                      }
-                    }}
-                    className="rounded-xl font-bold"
-                  >
-                    <Plus className="w-4 h-4 mr-2" />
-                    Nouvelle clé
-                  </Button>
-                  <Button
-                    onClick={handleSaveAllParametres}
-                    disabled={isSavingParametres}
-                    className="rounded-xl font-bold px-6"
-                  >
-                    {isSavingParametres ? "Enregistrement..." : "Enregistrer tout"}
-                  </Button>
-                </div>
-              </div>
+              {showLienForm ? (
+                <div className="space-y-6">
+                  {/* Header retour */}
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => { setShowLienForm(false); setEditingLien(null); setLienLogoFile(null); }}
+                      className="flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-primary transition-colors"
+                    >
+                      <div className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-primary/10 flex items-center justify-center transition-colors">
+                        <LogOut className="w-4 h-4 rotate-180" />
+                      </div>
+                      Retour
+                    </button>
+                    <div className="h-4 w-px bg-slate-200" />
+                    <h2 className="text-lg font-bold text-slate-800">
+                      {editingLien ? "Modifier le partenaire" : "Ajouter un partenaire"}
+                    </h2>
+                  </div>
 
-              {/* Sub-tabs for Parameters */}
-              <div className="flex flex-wrap items-center gap-2 bg-slate-100 p-1 rounded-2xl w-fit">
-                {[
-                  { id: "identite", label: "Identité & Images" },
-                  { id: "accueil", label: "Accueil" },
-                  { id: "presentation", label: "Présentation" },
-                  { id: "missions", label: "Missions" },
-                  { id: "heros", label: "Titres des Pages" },
-                  { id: "contact", label: "Contact & Footer" },
-                ].map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveParamTab(tab.id)}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeParamTab === tab.id
-                      ? "bg-white text-primary shadow-sm"
-                      : "text-slate-500 hover:text-slate-700 hover:bg-white/50"
-                      }`}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
-              </div>
+                  <form onSubmit={handleSaveLien} className="bg-white rounded-[28px] border border-slate-100 shadow-sm overflow-hidden">
+                    {/* Aperçu du logo en haut */}
+                    <div className="bg-gradient-to-br from-slate-50 to-slate-100/50 p-8 border-b border-slate-100">
+                      <p className="text-xs font-black uppercase text-slate-400 tracking-widest mb-4">Logo du partenaire</p>
+                      <div className="flex items-center gap-6">
+                        <div className="w-24 h-24 rounded-2xl bg-white border-2 border-dashed border-slate-200 overflow-hidden flex items-center justify-center group relative shadow-sm">
+                          {lienLogoFile ? (
+                            <img src={URL.createObjectURL(lienLogoFile)} className="w-full h-full object-contain p-2" />
+                          ) : editingLien?.logo_path ? (
+                            <img src={`/${editingLien.logo_path}`} className="w-full h-full object-contain p-2" />
+                          ) : (
+                            <div className="flex flex-col items-center gap-1">
+                              <ImageIcon className="w-7 h-7 text-slate-300" />
+                            </div>
+                          )}
+                          <label className="absolute inset-0 bg-black/40 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-opacity rounded-2xl">
+                            <span className="text-[10px] font-black tracking-widest">CHANGER</span>
+                            <input
+                              type="file"
+                              className="hidden"
+                              accept="image/*"
+                              onChange={(e) => setLienLogoFile(e.target.files?.[0] || null)}
+                            />
+                          </label>
+                        </div>
+                        <div>
+                          <label className="cursor-pointer">
+                            <div className="flex items-center gap-2 bg-white border border-slate-200 hover:border-primary/30 hover:bg-primary/5 text-slate-600 hover:text-primary px-4 py-2.5 rounded-xl text-sm font-bold transition-all">
+                              <ImageIcon className="w-4 h-4" />
+                              {lienLogoFile ? "Changer le logo" : "Téléverser un logo"}
+                            </div>
+                            <input
+                              type="file"
+                              className="hidden"
+                              accept="image/*"
+                              onChange={(e) => setLienLogoFile(e.target.files?.[0] || null)}
+                            />
+                          </label>
+                          {lienLogoFile ? (
+                            <p className="text-[11px] text-primary font-medium mt-2 flex items-center gap-1">
+                              <CheckCircle2 className="w-3.5 h-3.5" /> {lienLogoFile.name}
+                            </p>
+                          ) : (
+                            <p className="text-[11px] text-slate-400 mt-2">PNG transparent recommandé · Max 2 Mo</p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
 
-              {isLoadingTab ? (
-                <p className="text-sm text-slate-500">Chargement...</p>
+                    {/* Champs du formulaire */}
+                    <div className="p-8 space-y-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div className="space-y-2">
+                          <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Nom / Intitulé *</p>
+                          <Input
+                            value={lienForm.nom}
+                            onChange={(e) => setLienForm(prev => ({ ...prev, nom: e.target.value }))}
+                            required
+                            className="h-12 rounded-xl border-slate-200 bg-slate-50 focus:bg-white"
+                            placeholder="ex: Ministère du Commerce"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Catégorie</p>
+                          <select
+                            value={lienForm.categorie}
+                            onChange={(e) => setLienForm(prev => ({ ...prev, categorie: e.target.value }))}
+                            className="h-12 w-full rounded-xl border border-slate-200 px-3 bg-slate-50 focus:bg-white text-sm outline-none focus:border-primary/30 transition-colors"
+                          >
+                            <option value="Ministère">Ministère</option>
+                            <option value="Institution">Institution publique</option>
+                            <option value="Organisation régionale">Organisation régionale</option>
+                            <option value="Partenaire">Partenaire technique</option>
+                            <option value="Autre">Autre lien</option>
+                          </select>
+                        </div>
+                        <div className="space-y-2 md:col-span-2">
+                          <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">URL du site *</p>
+                          <Input
+                            value={lienForm.url}
+                            onChange={(e) => setLienForm(prev => ({ ...prev, url: e.target.value }))}
+                            required
+                            className="h-12 rounded-xl border-slate-200 bg-slate-50 focus:bg-white font-mono text-sm"
+                            placeholder="https://www.exemple.gov.td"
+                          />
+                        </div>
+                        <div className="space-y-2 md:col-span-2">
+                          <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Description <span className="text-slate-300 normal-case font-medium">(optionnelle)</span></p>
+                          <Input
+                            value={lienForm.description}
+                            onChange={(e) => setLienForm(prev => ({ ...prev, description: e.target.value }))}
+                            className="h-12 rounded-xl border-slate-200 bg-slate-50 focus:bg-white"
+                            placeholder="Bref descriptif de l'organisme..."
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Ordre d'affichage</p>
+                          <Input
+                            type="number"
+                            value={lienForm.ordre}
+                            onChange={(e) => setLienForm(prev => ({ ...prev, ordre: parseInt(e.target.value) || 0 }))}
+                            className="h-12 rounded-xl border-slate-200 bg-slate-50 focus:bg-white"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="flex gap-3 pt-2 border-t border-slate-50">
+                        <Button
+                          type="submit"
+                          className="h-12 px-8 rounded-xl font-bold shadow-lg shadow-primary/20"
+                          disabled={isLoadingTab}
+                        >
+                          {isLoadingTab ? "Enregistrement..." : (editingLien ? "Mettre à jour" : "Ajouter le partenaire")}
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => { setShowLienForm(false); setLienLogoFile(null); }}
+                          className="h-12 px-8 rounded-xl border-slate-200 font-bold text-slate-600"
+                        >
+                          Annuler
+                        </Button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
               ) : (
-                <div className="space-y-8">
-                  {activeParamTab === "identite" && (
-                    <div className="space-y-6 animate-in slide-in-from-bottom-2 duration-300">
-                      <div className="bg-white rounded-[32px] border border-slate-100 p-8 shadow-sm space-y-6">
-                        <div className="flex items-center gap-4 mb-2">
-                          <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
-                            <Users className="w-6 h-6" />
-                          </div>
-                          <div>
-                            <h3 className="text-lg font-bold text-slate-800">Identité du Président</h3>
-                            <p className="text-xs text-slate-500">Photo et informations du dirigeant</p>
-                          </div>
-                        </div>
+                <>
+                  {/* Header liste */}
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h2 className="text-lg font-bold text-slate-800">Liens institutionnels</h2>
+                      <p className="text-xs text-slate-400 font-medium mt-0.5">Ministères, organismes et partenaires</p>
+                    </div>
+                    <Button
+                      onClick={() => { setShowLienForm(true); setEditingLien(null); setLienLogoFile(null); }}
+                      className="h-11 px-5 rounded-xl font-bold gap-2 shadow-sm"
+                    >
+                      <Plus className="w-4 h-4" />
+                      Ajouter un partenaire
+                    </Button>
+                  </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-50">
-                          <div className="space-y-4">
-                            <p className="text-xs font-black uppercase text-slate-400 tracking-widest">Photo officielle</p>
-                            <div className="flex items-center gap-6">
-                              <div className="w-24 h-24 rounded-2xl bg-slate-100 border-2 border-dashed border-slate-200 overflow-hidden flex items-center justify-center group relative">
-                                {presidentPhotoFile ? (
-                                  <img
-                                    src={URL.createObjectURL(presidentPhotoFile)}
-                                    className="w-full h-full object-cover"
-                                  />
-                                ) : parametres.president_photo_path ? (
-                                  <img
-                                    src={`/${parametres.president_photo_path}`}
-                                    className="w-full h-full object-cover"
-                                    onError={(e) => { e.currentTarget.style.display = 'none'; }}
-                                  />
-                                ) : (
-                                  <Users className="w-8 h-8 text-slate-300" />
-                                )}
-                                <label className="absolute inset-0 bg-black/40 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-opacity text-[10px] font-bold">
-                                  CHANGER
-                                  <input
-                                    type="file"
-                                    className="hidden"
-                                    accept="image/*"
-                                    onChange={(e) => {
-                                      const file = e.target.files?.[0];
-                                      if (file) {
-                                        setPresidentPhotoFile(file);
-                                        // Pour prévisualiser l'image, on pourrait utiliser URL.createObjectURL
-                                      }
-                                    }}
-                                  />
-                                </label>
+                  {isLoadingTab ? (
+                    <div className="py-20 text-center">
+                      <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4" />
+                      <p className="text-sm text-slate-400 font-medium">Chargement...</p>
+                    </div>
+                  ) : liens.length === 0 ? (
+                    <div className="py-24 text-center bg-white rounded-[28px] border border-dashed border-slate-200">
+                      <ExternalLink className="w-10 h-10 text-slate-200 mx-auto mb-3" />
+                      <p className="text-slate-400 font-medium text-sm">Aucun partenaire enregistré.</p>
+                      <p className="text-slate-300 text-xs mt-1">Cliquez sur « Ajouter un partenaire » pour commencer.</p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                      {liens.map((lien) => (
+                        <div
+                          key={lien.id}
+                          className="bg-white rounded-[24px] border border-slate-100 shadow-sm hover:shadow-md hover:border-slate-200 transition-all duration-200 group overflow-hidden"
+                        >
+                          {/* Logo / Header */}
+                          <div className="h-28 bg-gradient-to-br from-slate-50 to-slate-100/80 flex items-center justify-center relative px-6 border-b border-slate-100">
+                            {lien.logo_path ? (
+                              <img
+                                src={`/${lien.logo_path}`}
+                                alt={lien.nom}
+                                className="max-h-16 max-w-full object-contain"
+                              />
+                            ) : (
+                              <div className="w-14 h-14 rounded-2xl bg-white shadow-sm border border-slate-100 flex items-center justify-center">
+                                <span className="text-xl font-black text-primary">
+                                  {lien.nom?.charAt(0).toUpperCase()}
+                                </span>
                               </div>
-                              <div className="flex-1 space-y-1">
-                                <p className="text-sm font-bold text-slate-700">Changer la photo</p>
-                                <p className="text-[10px] text-slate-400">Format JPG, PNG. Max 5Mo.</p>
-                              </div>
+                            )}
+                            {/* Badge catégorie */}
+                            <span className="absolute top-3 right-3 text-[10px] font-bold uppercase bg-white/90 backdrop-blur-sm text-primary px-2.5 py-1 rounded-full border border-white shadow-sm">
+                              {lien.categorie}
+                            </span>
+                          </div>
+
+                          {/* Infos */}
+                          <div className="p-5">
+                            <p className="font-bold text-slate-800 text-sm truncate">{lien.nom}</p>
+                            {lien.description && (
+                              <p className="text-[11px] text-slate-400 mt-0.5 line-clamp-1">{lien.description}</p>
+                            )}
+                            <a
+                              href={lien.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 mt-2 text-[11px] text-primary/70 hover:text-primary font-mono hover:underline transition-colors truncate max-w-full"
+                            >
+                              <ExternalLink className="w-3 h-3 flex-shrink-0" />
+                              <span className="truncate">{lien.url.replace(/^https?:\/\//, '')}</span>
+                            </a>
+
+                            <div className="flex gap-2 mt-4 pt-4 border-t border-slate-50">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="flex-1 h-9 rounded-xl text-slate-500 hover:text-primary hover:bg-primary/5 font-bold text-xs gap-1.5"
+                                onClick={() => openLienForm(lien)}
+                              >
+                                <Edit className="w-3.5 h-3.5" /> Modifier
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="flex-1 h-9 rounded-xl text-slate-400 hover:text-red-600 hover:bg-red-50 font-bold text-xs gap-1.5"
+                                onClick={() => handleDeleteLien(lien.id)}
+                              >
+                                <Trash2 className="w-3.5 h-3.5" /> Supprimer
+                              </Button>
                             </div>
                           </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          )}
+        {activeTab === "parametres" && (
+          <div className="space-y-6 animate-in fade-in duration-300">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-lg font-bold text-slate-800">Paramètres</h2>
+                <p className="text-xs text-muted-foreground">Configuration générale du site</p>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    const key = prompt("Entrez le nom de la nouvelle clé (ex: contact_info) :");
+                    if (key) {
+                      const sanitizedKey = key.trim().toLowerCase().replace(/\s+/g, '_');
+                      setParametres(prev => ({ ...prev, [sanitizedKey]: "" }));
+                    }
+                  }}
+                  className="rounded-xl font-bold"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Nouvelle clé
+                </Button>
+                <Button
+                  onClick={handleSaveAllParametres}
+                  disabled={isSavingParametres}
+                  className="rounded-xl font-bold px-6"
+                >
+                  {isSavingParametres ? "Enregistrement..." : "Enregistrer tout"}
+                </Button>
+              </div>
+            </div>
 
-                          <div className="space-y-4">
-                            <p className="text-xs font-black uppercase text-slate-400 tracking-widest">Nom complet</p>
-                            <Input
-                              value={parametres.president_nom || ""}
-                              className="h-12 rounded-xl bg-slate-50 border-transparent focus:bg-white font-bold"
-                              onChange={(e) => setParametres(prev => ({ ...prev, president_nom: e.target.value }))}
-                            />
-                          </div>
+            {/* Sub-tabs for Parameters */}
+            <div className="flex flex-wrap items-center gap-2 bg-slate-100 p-1 rounded-2xl w-fit">
+              {[
+                { id: "identite", label: "Identité & Images" },
+                { id: "accueil", label: "Accueil" },
+                { id: "presentation", label: "Présentation" },
+                { id: "missions", label: "Missions" },
+                { id: "heros", label: "Titres des Pages" },
+                { id: "contact", label: "Contact & Footer" },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveParamTab(tab.id)}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeParamTab === tab.id
+                    ? "bg-white text-primary shadow-sm"
+                    : "text-slate-500 hover:text-slate-700 hover:bg-white/50"
+                    }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
 
-                          <div className="space-y-4 md:col-span-2">
-                            <p className="text-xs font-black uppercase text-slate-400 tracking-widest">Mot du Président (Message)</p>
-                            <Textarea
-                              value={parametres.president_mot || ""}
-                              rows={4}
-                              className="rounded-xl bg-slate-50 border-transparent focus:bg-white text-sm leading-relaxed"
-                              onChange={(e) => setParametres(prev => ({ ...prev, president_mot: e.target.value }))}
-                            />
-                          </div>
+            {isLoadingTab ? (
+              <p className="text-sm text-slate-500">Chargement...</p>
+            ) : (
+              <div className="space-y-8">
+                {activeParamTab === "identite" && (
+                  <div className="space-y-6 animate-in slide-in-from-bottom-2 duration-300">
+                    <div className="bg-white rounded-[32px] border border-slate-100 p-8 shadow-sm space-y-6">
+                      <div className="flex items-center gap-4 mb-2">
+                        <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
+                          <Users className="w-6 h-6" />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-bold text-slate-800">Identité du Président</h3>
+                          <p className="text-xs text-slate-500">Photo et informations du dirigeant</p>
                         </div>
                       </div>
 
-                      <div className="bg-white rounded-[32px] border border-slate-100 p-8 shadow-sm space-y-6">
-                        <div className="flex items-center gap-4 mb-2">
-                          <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
-                            <FileText className="w-6 h-6" />
-                          </div>
-                          <div>
-                            <h3 className="text-lg font-bold text-slate-800">Identité du Site</h3>
-                            <p className="text-xs text-slate-500">Nom de l'institution affiché en haut à gauche</p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-50">
+                        <div className="space-y-4">
+                          <p className="text-xs font-black uppercase text-slate-400 tracking-widest">Photo officielle</p>
+                          <div className="flex items-center gap-6">
+                            <div className="w-24 h-24 rounded-2xl bg-slate-100 border-2 border-dashed border-slate-200 overflow-hidden flex items-center justify-center group relative">
+                              {presidentPhotoFile ? (
+                                <img
+                                  src={URL.createObjectURL(presidentPhotoFile)}
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : parametres.president_photo_path ? (
+                                <img
+                                  src={`/${parametres.president_photo_path}`}
+                                  className="w-full h-full object-cover"
+                                  onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                                />
+                              ) : (
+                                <Users className="w-8 h-8 text-slate-300" />
+                              )}
+                              <label className="absolute inset-0 bg-black/40 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-opacity text-[10px] font-bold">
+                                CHANGER
+                                <input
+                                  type="file"
+                                  className="hidden"
+                                  accept="image/*"
+                                  onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file) {
+                                      setPresidentPhotoFile(file);
+                                      // Pour prévisualiser l'image, on pourrait utiliser URL.createObjectURL
+                                    }
+                                  }}
+                                />
+                              </label>
+                            </div>
+                            <div className="flex-1 space-y-1">
+                              <p className="text-sm font-bold text-slate-700">Changer la photo</p>
+                              <p className="text-[10px] text-slate-400">Format JPG, PNG. Max 5Mo.</p>
+                            </div>
                           </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-50">
-                          <div className="space-y-4">
-                            <p className="text-xs font-black uppercase text-slate-400 tracking-widest">Nom du site (Ligne 1)</p>
-                            <Input
-                              value={parametres.nom_site_ligne1 || ""}
-                              placeholder="Ex: Conseil National"
-                              className="h-12 rounded-xl bg-slate-50 border-transparent focus:bg-white font-bold"
-                              onChange={(e) => setParametres(prev => ({ ...prev, nom_site_ligne1: e.target.value }))}
-                            />
-                          </div>
-                          <div className="space-y-4">
-                            <p className="text-xs font-black uppercase text-slate-400 tracking-widest">Nom du site (Ligne 2)</p>
-                            <Input
-                              value={parametres.nom_site_ligne2 || ""}
-                              placeholder="Ex: de la Concurrence"
-                              className="h-12 rounded-xl bg-slate-50 border-transparent focus:bg-white font-bold"
-                              onChange={(e) => setParametres(prev => ({ ...prev, nom_site_ligne2: e.target.value }))}
-                            />
-                          </div>
+                        <div className="space-y-4">
+                          <p className="text-xs font-black uppercase text-slate-400 tracking-widest">Nom complet</p>
+                          <Input
+                            value={parametres.president_nom || ""}
+                            className="h-12 rounded-xl bg-slate-50 border-transparent focus:bg-white font-bold"
+                            onChange={(e) => setParametres(prev => ({ ...prev, president_nom: e.target.value }))}
+                          />
+                        </div>
+
+                        <div className="space-y-4 md:col-span-2">
+                          <p className="text-xs font-black uppercase text-slate-400 tracking-widest">Mot du Président (Message)</p>
+                          <Textarea
+                            value={parametres.president_mot || ""}
+                            rows={4}
+                            className="rounded-xl bg-slate-50 border-transparent focus:bg-white text-sm leading-relaxed"
+                            onChange={(e) => setParametres(prev => ({ ...prev, president_mot: e.target.value }))}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-white rounded-[32px] border border-slate-100 p-8 shadow-sm space-y-6">
+                      <div className="flex items-center gap-4 mb-2">
+                        <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
+                          <FileText className="w-6 h-6" />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-bold text-slate-800">Identité du Site</h3>
+                          <p className="text-xs text-slate-500">Nom de l'institution affiché en haut à gauche</p>
                         </div>
                       </div>
 
-                      <div className="bg-white rounded-[32px] border border-slate-100 p-8 shadow-sm space-y-6">
-                        <div className="flex items-center gap-4 mb-2">
-                          <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
-                            <ImageIcon className="w-6 h-6" />
-                          </div>
-                          <div>
-                            <h3 className="text-lg font-bold text-slate-800">Images du site</h3>
-                            <p className="text-xs text-slate-500">Logo, Arrière-plans et Armoiries</p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-50">
+                        <div className="space-y-4">
+                          <p className="text-xs font-black uppercase text-slate-400 tracking-widest">Nom du site (Ligne 1)</p>
+                          <Input
+                            value={parametres.nom_site_ligne1 || ""}
+                            placeholder="Ex: Conseil National"
+                            className="h-12 rounded-xl bg-slate-50 border-transparent focus:bg-white font-bold"
+                            onChange={(e) => setParametres(prev => ({ ...prev, nom_site_ligne1: e.target.value }))}
+                          />
+                        </div>
+                        <div className="space-y-4">
+                          <p className="text-xs font-black uppercase text-slate-400 tracking-widest">Nom du site (Ligne 2)</p>
+                          <Input
+                            value={parametres.nom_site_ligne2 || ""}
+                            placeholder="Ex: de la Concurrence"
+                            className="h-12 rounded-xl bg-slate-50 border-transparent focus:bg-white font-bold"
+                            onChange={(e) => setParametres(prev => ({ ...prev, nom_site_ligne2: e.target.value }))}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-white rounded-[32px] border border-slate-100 p-8 shadow-sm space-y-6">
+                      <div className="flex items-center gap-4 mb-2">
+                        <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
+                          <ImageIcon className="w-6 h-6" />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-bold text-slate-800">Images du site</h3>
+                          <p className="text-xs text-slate-500">Logo, Arrière-plans et Armoiries</p>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pt-4 border-t border-slate-50">
+                        {/* Hero Background */}
+                        <div className="space-y-4">
+                          <p className="text-xs font-black uppercase text-slate-400 tracking-widest">Image de fond (Hero Accueil)</p>
+                          <div className="flex flex-col gap-3">
+                            <div className="aspect-video w-full rounded-2xl bg-slate-100 border-2 border-dashed border-slate-200 overflow-hidden flex items-center justify-center group relative">
+                              {heroBgFile ? (
+                                <img src={URL.createObjectURL(heroBgFile)} className="w-full h-full object-cover" />
+                              ) : parametres.hero_bg_path ? (
+                                <img src={`/${parametres.hero_bg_path}`} className="w-full h-full object-cover" />
+                              ) : (
+                                <ImageIcon className="w-8 h-8 text-slate-300" />
+                              )}
+                              <label className="absolute inset-0 bg-black/40 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-opacity text-[10px] font-bold">
+                                CHANGER
+                                <input type="file" className="hidden" accept="image/*" onChange={(e) => setHeroBgFile(e.target.files?.[0] || null)} />
+                              </label>
+                            </div>
+                            <p className="text-[10px] text-slate-400 text-center">Recommandé: 1920x1080px</p>
                           </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pt-4 border-t border-slate-50">
-                          {/* Hero Background */}
-                          <div className="space-y-4">
-                            <p className="text-xs font-black uppercase text-slate-400 tracking-widest">Image de fond (Hero Accueil)</p>
-                            <div className="flex flex-col gap-3">
-                              <div className="aspect-video w-full rounded-2xl bg-slate-100 border-2 border-dashed border-slate-200 overflow-hidden flex items-center justify-center group relative">
-                                {heroBgFile ? (
-                                  <img src={URL.createObjectURL(heroBgFile)} className="w-full h-full object-cover" />
-                                ) : parametres.hero_bg_path ? (
-                                  <img src={`/${parametres.hero_bg_path}`} className="w-full h-full object-cover" />
-                                ) : (
-                                  <ImageIcon className="w-8 h-8 text-slate-300" />
-                                )}
-                                <label className="absolute inset-0 bg-black/40 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-opacity text-[10px] font-bold">
-                                  CHANGER
-                                  <input type="file" className="hidden" accept="image/*" onChange={(e) => setHeroBgFile(e.target.files?.[0] || null)} />
-                                </label>
-                              </div>
-                              <p className="text-[10px] text-slate-400 text-center">Recommandé: 1920x1080px</p>
+                        {/* Logo */}
+                        <div className="space-y-4">
+                          <p className="text-xs font-black uppercase text-slate-400 tracking-widest">Logo du site</p>
+                          <div className="flex flex-col gap-3">
+                            <div className="h-32 w-full rounded-2xl bg-slate-100 border-2 border-dashed border-slate-200 overflow-hidden flex items-center justify-center group relative">
+                              {logoFile ? (
+                                <img src={URL.createObjectURL(logoFile)} className="h-full object-contain p-4" />
+                              ) : parametres.logo_path ? (
+                                <img src={`/${parametres.logo_path}`} className="h-full object-contain p-4" />
+                              ) : (
+                                <ImageIcon className="w-8 h-8 text-slate-300" />
+                              )}
+                              <label className="absolute inset-0 bg-black/40 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-opacity text-[10px] font-bold">
+                                CHANGER
+                                <input type="file" className="hidden" accept="image/*" onChange={(e) => setLogoFile(e.target.files?.[0] || null)} />
+                              </label>
                             </div>
+                            <p className="text-[10px] text-slate-400 text-center">Format PNG transparent recommandé</p>
                           </div>
+                        </div>
 
-                          {/* Logo */}
-                          <div className="space-y-4">
-                            <p className="text-xs font-black uppercase text-slate-400 tracking-widest">Logo du site</p>
-                            <div className="flex flex-col gap-3">
-                              <div className="h-32 w-full rounded-2xl bg-slate-100 border-2 border-dashed border-slate-200 overflow-hidden flex items-center justify-center group relative">
-                                {logoFile ? (
-                                  <img src={URL.createObjectURL(logoFile)} className="h-full object-contain p-4" />
-                                ) : parametres.logo_path ? (
-                                  <img src={`/${parametres.logo_path}`} className="h-full object-contain p-4" />
-                                ) : (
-                                  <ImageIcon className="w-8 h-8 text-slate-300" />
-                                )}
-                                <label className="absolute inset-0 bg-black/40 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-opacity text-[10px] font-bold">
-                                  CHANGER
-                                  <input type="file" className="hidden" accept="image/*" onChange={(e) => setLogoFile(e.target.files?.[0] || null)} />
-                                </label>
-                              </div>
-                              <p className="text-[10px] text-slate-400 text-center">Format PNG transparent recommandé</p>
+                        {/* Armoiries */}
+                        <div className="space-y-4">
+                          <p className="text-xs font-black uppercase text-slate-400 tracking-widest">Armoiries de la République</p>
+                          <div className="flex flex-col gap-3">
+                            <div className="h-32 w-full rounded-2xl bg-slate-100 border-2 border-dashed border-slate-200 overflow-hidden flex items-center justify-center group relative">
+                              {armoiriesFile ? (
+                                <img src={URL.createObjectURL(armoiriesFile)} className="h-full object-contain p-4" />
+                              ) : parametres.armoiries_path ? (
+                                <img src={`/${parametres.armoiries_path}`} className="h-full object-contain p-4" />
+                              ) : (
+                                <ImageIcon className="w-8 h-8 text-slate-300" />
+                              )}
+                              <label className="absolute inset-0 bg-black/40 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-opacity text-[10px] font-bold">
+                                CHANGER
+                                <input type="file" className="hidden" accept="image/*" onChange={(e) => setArmoiriesFile(e.target.files?.[0] || null)} />
+                              </label>
                             </div>
-                          </div>
-
-                          {/* Armoiries */}
-                          <div className="space-y-4">
-                            <p className="text-xs font-black uppercase text-slate-400 tracking-widest">Armoiries de la République</p>
-                            <div className="flex flex-col gap-3">
-                              <div className="h-32 w-full rounded-2xl bg-slate-100 border-2 border-dashed border-slate-200 overflow-hidden flex items-center justify-center group relative">
-                                {armoiriesFile ? (
-                                  <img src={URL.createObjectURL(armoiriesFile)} className="h-full object-contain p-4" />
-                                ) : parametres.armoiries_path ? (
-                                  <img src={`/${parametres.armoiries_path}`} className="h-full object-contain p-4" />
-                                ) : (
-                                  <ImageIcon className="w-8 h-8 text-slate-300" />
-                                )}
-                                <label className="absolute inset-0 bg-black/40 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-opacity text-[10px] font-bold">
-                                  CHANGER
-                                  <input type="file" className="hidden" accept="image/*" onChange={(e) => setArmoiriesFile(e.target.files?.[0] || null)} />
-                                </label>
-                              </div>
-                              <p className="text-[10px] text-slate-400 text-center">S'affiche sur la page de présentation</p>
-                            </div>
+                            <p className="text-[10px] text-slate-400 text-center">S'affiche sur la page de présentation</p>
                           </div>
                         </div>
                       </div>
                     </div>
-                  )}
+                  </div>
+                )}
 
-                  {/* Other Tabs content logic */}
-                  {(() => {
-                    const groups = [
-                      { id: "accueil", title: "Contenu de l'Accueil", keys: ['home_welcome_badge', 'home_missions_title', 'home_missions_subtitle', 'home_services_title', 'home_services_subtitle', 'home_news_title', 'home_news_subtitle'] },
-                      { id: "presentation", title: "Page Présentation", keys: ['pres_hero_title', 'pres_hero_subtitle', 'pres_section_title', 'pres_timeline_title', 'pres_timeline_subtitle', 'pres_members_title', 'presentation_p1', 'presentation_p2', 'presentation_p3'] },
-                      { id: "missions", title: "Page Missions", keys: ['missions_hero_title', 'missions_hero_subtitle', 'missions_section_subtitle', 'missions_process_title', 'missions_process_subtitle'] },
-                      { id: "heros", title: "En-têtes (Héros) des pages", keys: ['news_hero_title', 'news_hero_subtitle', 'docs_hero_title', 'docs_hero_subtitle', 'faq_hero_title', 'faq_hero_subtitle', 'galerie_hero_title', 'galerie_hero_subtitle', 'services_hero_title', 'services_hero_subtitle', 'sig_hero_title', 'sig_hero_subtitle', 'plainte_hero_title', 'plainte_hero_subtitle'] },
-                      { id: "contact", title: "Contact & Pied de page", keys: ['contact_hero_title', 'contact_hero_subtitle', 'footer_description', 'footer_adresse', 'footer_telephone', 'footer_email', 'contact_adresse', 'contact_telephone', 'contact_email', 'horaires_ouverture', 'lien_facebook', 'lien_linkedin', 'lien_twitter', 'footer_copyright'] },
-                    ];
+                {/* Other Tabs content logic */}
+                {(() => {
+                  const groups = [
+                    { id: "accueil", title: "Contenu de l'Accueil", keys: ['home_welcome_badge', 'home_missions_title', 'home_missions_subtitle', 'home_services_title', 'home_services_subtitle', 'home_news_title', 'home_news_subtitle'] },
+                    { id: "presentation", title: "Page Présentation", keys: ['pres_hero_title', 'pres_hero_subtitle', 'pres_section_title', 'pres_timeline_title', 'pres_timeline_subtitle', 'pres_members_title', 'presentation_p1', 'presentation_p2', 'presentation_p3'] },
+                    { id: "missions", title: "Page Missions", keys: ['missions_hero_title', 'missions_hero_subtitle', 'missions_section_subtitle', 'missions_process_title', 'missions_process_subtitle'] },
+                    { id: "heros", title: "En-têtes (Héros) des pages", keys: ['news_hero_title', 'news_hero_subtitle', 'docs_hero_title', 'docs_hero_subtitle', 'faq_hero_title', 'faq_hero_subtitle', 'galerie_hero_title', 'galerie_hero_subtitle', 'services_hero_title', 'services_hero_subtitle', 'sig_hero_title', 'sig_hero_subtitle', 'plainte_hero_title', 'plainte_hero_subtitle'] },
+                    { id: "contact", title: "Contact & Pied de page", keys: ['contact_hero_title', 'contact_hero_subtitle', 'footer_description', 'footer_adresse', 'footer_telephone', 'footer_email', 'contact_adresse', 'contact_telephone', 'contact_email', 'horaires_ouverture', 'lien_facebook', 'lien_linkedin', 'lien_twitter', 'footer_copyright'] },
+                  ];
 
-                    const assignedKeys = new Set(groups.flatMap(g => g.keys).concat(['president_nom', 'president_mot', 'president_photo_path', 'nom_site_ligne1', 'nom_site_ligne2', 'hero_bg_path', 'logo_path', 'armoiries_path']));
-                    const otherKeys = Object.keys(parametres).filter(k => !assignedKeys.has(k));
+                  const assignedKeys = new Set(groups.flatMap(g => g.keys).concat(['president_nom', 'president_mot', 'president_photo_path', 'nom_site_ligne1', 'nom_site_ligne2', 'hero_bg_path', 'logo_path', 'armoiries_path']));
+                  const otherKeys = Object.keys(parametres).filter(k => !assignedKeys.has(k));
 
-                    const filteredGroups = groups.filter(g => g.id === activeParamTab);
+                  const filteredGroups = groups.filter(g => g.id === activeParamTab);
 
-                    // On peut imaginer un onglet "Avancé" pour les clés orphelines, ou les mettre dans Titres si besoin.
-                    // Pour l'instant on les met dans "heros" ou on crée un onglet "Autres" si elles existent.
-                    if (activeParamTab === "heros" && otherKeys.length > 0) {
-                      filteredGroups.push({ id: "heros", title: "Paramètres personnalisés", keys: otherKeys });
-                    }
+                  // On peut imaginer un onglet "Avancé" pour les clés orphelines, ou les mettre dans Titres si besoin.
+                  // Pour l'instant on les met dans "heros" ou on crée un onglet "Autres" si elles existent.
+                  if (activeParamTab === "heros" && otherKeys.length > 0) {
+                    filteredGroups.push({ id: "heros", title: "Paramètres personnalisés", keys: otherKeys });
+                  }
 
-                    return filteredGroups.map(group => (
-                      <div key={group.title} className="space-y-4 animate-in slide-in-from-bottom-2 duration-300">
-                        <h4 className="text-sm font-black uppercase text-slate-400 tracking-widest pl-2">{group.title}</h4>
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                          {group.keys.map(cle => {
-                            const valeur = parametres[cle];
-                            if (valeur === undefined) return null;
-                            return (
-                              <div key={cle} className="bg-white rounded-[24px] border border-slate-100 p-6 space-y-3 shadow-sm hover:border-primary/20 transition-colors">
-                                <div className="flex justify-between items-center">
-                                  <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">{cle.replace(/_/g, " ")}</p>
-                                  {otherKeys.includes(cle) && (
-                                    <button
-                                      onClick={() => {
-                                        if (confirm(`Supprimer la clé "${cle}" ?`)) {
-                                          const newParams = { ...parametres };
-                                          delete newParams[cle];
-                                          setParametres(newParams);
-                                        }
-                                      }}
-                                      className="text-red-500 hover:text-red-700 transition-colors"
-                                    >
-                                      <Trash2 className="w-3 h-3" />
-                                    </button>
-                                  )}
-                                </div>
-                                {String(valeur).length > 60 ? (
-                                  <Textarea
-                                    value={valeur || ""}
-                                    rows={3}
-                                    className="rounded-xl bg-slate-50 border-transparent focus:bg-white resize-none text-sm leading-relaxed"
-                                    onChange={(e) => setParametres(prev => ({ ...prev, [cle]: e.target.value }))}
-                                  />
-                                ) : (
-                                  <Input
-                                    value={valeur || ""}
-                                    className="h-11 rounded-xl bg-slate-50 border-transparent focus:bg-white text-sm"
-                                    onChange={(e) => setParametres(prev => ({ ...prev, [cle]: e.target.value }))}
-                                  />
+                  return filteredGroups.map(group => (
+                    <div key={group.title} className="space-y-4 animate-in slide-in-from-bottom-2 duration-300">
+                      <h4 className="text-sm font-black uppercase text-slate-400 tracking-widest pl-2">{group.title}</h4>
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        {group.keys.map(cle => {
+                          const valeur = parametres[cle];
+                          if (valeur === undefined) return null;
+                          return (
+                            <div key={cle} className="bg-white rounded-[24px] border border-slate-100 p-6 space-y-3 shadow-sm hover:border-primary/20 transition-colors">
+                              <div className="flex justify-between items-center">
+                                <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">{cle.replace(/_/g, " ")}</p>
+                                {otherKeys.includes(cle) && (
+                                  <button
+                                    onClick={() => {
+                                      if (confirm(`Supprimer la clé "${cle}" ?`)) {
+                                        const newParams = { ...parametres };
+                                        delete newParams[cle];
+                                        setParametres(newParams);
+                                      }
+                                    }}
+                                    className="text-red-500 hover:text-red-700 transition-colors"
+                                  >
+                                    <Trash2 className="w-3 h-3" />
+                                  </button>
                                 )}
                               </div>
-                            );
-                          })}
-                        </div>
+                              {String(valeur).length > 60 ? (
+                                <Textarea
+                                  value={valeur || ""}
+                                  rows={3}
+                                  className="rounded-xl bg-slate-50 border-transparent focus:bg-white resize-none text-sm leading-relaxed"
+                                  onChange={(e) => setParametres(prev => ({ ...prev, [cle]: e.target.value }))}
+                                />
+                              ) : (
+                                <Input
+                                  value={valeur || ""}
+                                  className="h-11 rounded-xl bg-slate-50 border-transparent focus:bg-white text-sm"
+                                  onChange={(e) => setParametres(prev => ({ ...prev, [cle]: e.target.value }))}
+                                />
+                              )}
+                            </div>
+                          );
+                        })}
                       </div>
-                    ));
-                  })()}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </main>
+                    </div>
+                  ));
+                })()}
+              </div>
+            )}
+          </div>
+        )}
     </div>
+      </main >
+    </div >
   );
 }

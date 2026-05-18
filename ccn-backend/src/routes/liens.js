@@ -1,14 +1,16 @@
 import { Router } from 'express';
 import multer from 'multer';
-import { extname } from 'path';
+import { extname, join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 import LienController from '../controllers/lienController.js';
 import { authMiddleware } from '../middleware/auth.js';
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
 const router = Router();
 
-// Configuration multer pour les logos
+// Configuration multer pour les logos partenaires
 const storage = multer.diskStorage({
-  destination: 'uploads/site/',
+  destination: join(__dirname, '../../uploads/site'),
   filename: (req, file, cb) => cb(null, `logo-${Date.now()}${extname(file.originalname)}`)
 });
 const upload = multer({ storage });

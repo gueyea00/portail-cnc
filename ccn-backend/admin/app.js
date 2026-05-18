@@ -300,31 +300,33 @@ function closeModal() {
 // ---- Dedicated Editor View ----
 let lastSection = 'accueil';
 function navigateToEditor(type, data = null) {
-  lastSection = document.querySelector('.content-section.active').id.replace('section-', '');
+  lastSection = document.querySelector('.content-section.active')?.id.replace('section-', '') || 'accueil';
   document.querySelectorAll('.content-section').forEach(el => el.classList.remove('active'));
   const editor = document.getElementById('section-editor');
   editor.classList.add('active');
+  editor.style.display = 'block'; // Force visibility
   document.getElementById('pageTitle').textContent = 'Édition';
   const body = document.getElementById('editorBody');
+  body.style.padding = '20px'; // Ensure padding
 
   if (type === 'lien') {
     document.getElementById('editorTitle').textContent = data ? 'Modifier le bailleur' : 'Nouveau bailleur';
     body.innerHTML = `
-      <form id="editorForm" enctype="multipart/form-data">
+      <form id="editorForm" enctype="multipart/form-data" style="background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #ddd;">
         <input type="hidden" name="id" value="${data?.id || ''}" />
-        <div class="form-group" style="margin-bottom: 2rem;">
+        <div class="form-group" style="margin-bottom: 1.5rem;">
             <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Logo du bailleur *</label>
             ${data?.logo_path ? `
                 <div style="margin-bottom: 10px;">
-                    <img src="/${data.logo_path}" style="max-width: 150px; border-radius: 8px; border: 1px solid var(--border);" />
+                    <img src="/${data.logo_path}" style="max-width: 150px; border-radius: 8px; border: 1px solid #ccc;" />
                 </div>
             ` : ''}
-            <input type="file" name="logo" accept="image/*" ${data ? '' : 'required'} style="padding: 10px; border: 1px solid var(--border); border-radius: 8px; width: 100%;" />
-            <p style="margin-top: 8px; font-size: 0.8rem; color: var(--text-muted);">Format accepté : images (PNG, JPG, SVG)</p>
+            <input type="file" name="logo" accept="image/*" ${data ? '' : 'required'} style="padding: 10px; border: 1px solid #ccc; border-radius: 4px; width: 100%; display: block;" />
+            <p style="margin-top: 5px; font-size: 0.8rem; color: #666;">Format accepté : images (PNG, JPG, SVG)</p>
         </div>
-        <div class="form-group"><label>Nom du bailleur *</label><input name="nom" value="${data?.nom || ''}" required /></div>
-        <div class="form-group"><label>Description</label><textarea name="description" rows="2">${data?.description || ''}</textarea></div>
-        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Enregistrer le bailleur</button>
+        <div class="form-group" style="margin-bottom: 1rem;"><label>Nom du bailleur *</label><input name="nom" value="${data?.nom || ''}" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" /></div>
+        <div class="form-group" style="margin-bottom: 1rem;"><label>Description</label><textarea name="description" rows="2" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">${data?.description || ''}</textarea></div>
+        <button type="submit" class="btn btn-primary" style="padding: 10px 20px; background: #003F87; color: #fff; border: none; border-radius: 4px; cursor: pointer;">Enregistrer le bailleur</button>
       </form>`;
     document.getElementById('editorForm').onsubmit = async (e) => {
       e.preventDefault();
@@ -335,6 +337,7 @@ function navigateToEditor(type, data = null) {
       if (res?.ok) { showToast('Enregistré !'); navigateTo('liens'); }
     };
   }
+
 ...
 
     document.getElementById('editorTitle').textContent = data ? 'Modifier la mission' : 'Nouvelle mission';

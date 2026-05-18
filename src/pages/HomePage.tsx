@@ -495,28 +495,65 @@ export default function HomePage() {
         </div>
       </section> */}
 
-      {/* Partenaires (Bailleurs) */}
-      <section className="py-12 bg-muted border-t border-border">
-        <div className="container-page">
-          <h2 className="text-center text-sm font-bold text-muted-foreground uppercase tracking-widest mb-8">Bailleurs</h2>
-          <div className="flex flex-wrap justify-center items-center gap-10">
-            {liens.length > 0 ? (
-              liens.map((l: any) => (
-                <a key={l.id} href={l.url || "#"} target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity">
-                  {l.logo_path ? (
-                    <img src={`/${l.logo_path}`} alt={l.nom} className="h-16 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300" />
-                  ) : (
-                    <span className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">{l.nom}</span>
-                  )}
-                </a>
-              ))
-            ) : (
-              <>
-                {["Ministère du Commerce", "Gouvernement du Tchad", "CEMAC", "Union Africaine"].map((p) => (
-                  <span key={p} className="text-sm font-medium text-muted-foreground">{p}</span>
-                ))}
-              </>
-            )}
+      {/* Partenaires (Bailleurs) - Défilement Infini Fluide */}
+      <section className="py-10 bg-slate-50 border-t border-b border-slate-100 overflow-hidden relative">
+        <div className="container-page mb-6">
+          <h2 className="text-center text-xs font-black text-slate-400 uppercase tracking-[0.2em]">Partenaires & Institutions</h2>
+        </div>
+
+        <style>{`
+          @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+          }
+          .animate-marquee-infinite {
+            display: flex;
+            width: max-content;
+            animation: marquee 25s linear infinite;
+          }
+          .animate-marquee-infinite:hover {
+            animation-play-state: paused;
+          }
+        `}</style>
+
+        <div className="relative flex items-center overflow-x-hidden">
+          {/* Dégradés translucides sur les côtés pour un effet premium */}
+          <div className="absolute top-0 bottom-0 left-0 w-24 bg-gradient-to-r from-slate-50 via-slate-50/80 to-transparent z-10 pointer-events-none" />
+          <div className="absolute top-0 bottom-0 right-0 w-24 bg-gradient-to-l from-slate-50 via-slate-50/80 to-transparent z-10 pointer-events-none" />
+
+          {/* Container du défilement avec duplication automatique pour effet boucle */}
+          <div className="animate-marquee-infinite flex items-center gap-16 py-2">
+            {(liens.length > 0 ? liens : [
+              { id: 1, nom: "Ministère du Commerce", url: "#" },
+              { id: 2, nom: "Gouvernement du Tchad", url: "#" },
+              { id: 3, nom: "CEMAC", url: "#" },
+              { id: 4, nom: "Union Africaine", url: "#" }
+            ]).concat(liens.length > 0 ? liens : [
+              { id: 1, nom: "Ministère du Commerce", url: "#" },
+              { id: 2, nom: "Gouvernement du Tchad", url: "#" },
+              { id: 3, nom: "CEMAC", url: "#" },
+              { id: 4, nom: "Union Africaine", url: "#" }
+            ]).map((l: any, idx: number) => (
+              <a
+                key={`logo-${l.id || idx}-${idx}`}
+                href={l.url || "#"}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center h-12 min-w-[120px] max-w-[180px] grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300 transform hover:scale-105"
+              >
+                {l.logo_path ? (
+                  <img
+                    src={`/${l.logo_path}`}
+                    alt={l.nom}
+                    className="max-h-12 w-auto object-contain"
+                  />
+                ) : (
+                  <span className="text-xs font-bold text-slate-400 hover:text-primary transition-colors tracking-wider whitespace-nowrap bg-white px-4 py-2 rounded-xl shadow-sm border border-slate-100">
+                    {l.nom}
+                  </span>
+                )}
+              </a>
+            ))}
           </div>
         </div>
       </section>
