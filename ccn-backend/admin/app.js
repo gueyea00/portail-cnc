@@ -312,13 +312,15 @@ function navigateToEditor(type, data = null) {
     body.innerHTML = `
       <form id="editorForm" enctype="multipart/form-data">
         <input type="hidden" name="id" value="${data?.id || ''}" />
-        <div class="form-group" style="text-align: center; margin-bottom: 2rem;">
-            <label style="display: block; margin-bottom: 1rem; font-weight: bold;">Logo du bailleur *</label>
-            <div class="logo-upload-preview" style="width: 200px; height: 150px; margin: 0 auto; border: 2px dashed var(--border); border-radius: 12px; display: flex; align-items: center; justify-center; overflow: hidden; position: relative;">
-                ${data?.logo_path ? `<img src="/${data.logo_path}" style="max-width: 100%; height: auto;" />` : '<i data-lucide="image" style="width: 48px; height: 48px; opacity: 0.3;"></i>'}
-                <input type="file" name="logo" accept="image/*" ${data ? '' : 'required'} style="position: absolute; inset: 0; opacity: 0; cursor: pointer;" />
-            </div>
-            <p style="margin-top: 8px; font-size: 0.8rem; color: var(--text-muted);">Cliquez pour remplacer le logo</p>
+        <div class="form-group" style="margin-bottom: 2rem;">
+            <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Logo du bailleur *</label>
+            ${data?.logo_path ? `
+                <div style="margin-bottom: 10px;">
+                    <img src="/${data.logo_path}" style="max-width: 150px; border-radius: 8px; border: 1px solid var(--border);" />
+                </div>
+            ` : ''}
+            <input type="file" name="logo" accept="image/*" ${data ? '' : 'required'} style="padding: 10px; border: 1px solid var(--border); border-radius: 8px; width: 100%;" />
+            <p style="margin-top: 8px; font-size: 0.8rem; color: var(--text-muted);">Format accepté : images (PNG, JPG, SVG)</p>
         </div>
         <div class="form-group"><label>Nom du bailleur *</label><input name="nom" value="${data?.nom || ''}" required /></div>
         <div class="form-group"><label>Description</label><textarea name="description" rows="2">${data?.description || ''}</textarea></div>
