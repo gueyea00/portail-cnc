@@ -249,6 +249,84 @@
       </div>
     </section>
 
+    <!-- Section Missions -->
+    <section id="section-missions" class="content-section">
+      <div class="section-toolbar">
+        <h3>Missions du CNC</h3>
+        <button class="btn btn-primary" onclick='navigateToEditor("mission")'>
+          <i data-lucide="plus" class="icon-sm"></i> Nouvelle mission
+        </button>
+      </div>
+      <div class="table-container">
+        <table class="data-table">
+          <thead><tr><th>Titre</th><th>Icône</th><th>Ordre</th><th>Actions</th></tr></thead>
+          <tbody id="missionsTableBody"><tr><td colspan="4" class="loading">Chargement...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Section Historique -->
+    <section id="section-historique" class="content-section">
+      <div class="section-toolbar">
+        <h3>Historique (Dates clés)</h3>
+        <button class="btn btn-primary" onclick='navigateToEditor("historique")'>
+          <i data-lucide="plus" class="icon-sm"></i> Nouvelle date
+        </button>
+      </div>
+      <div class="table-container">
+        <table class="data-table">
+          <thead><tr><th>Année</th><th>Description</th><th>Ordre</th><th>Actions</th></tr></thead>
+          <tbody id="historiqueTableBody"><tr><td colspan="4" class="loading">Chargement...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Section Processus -->
+    <section id="section-processus" class="content-section">
+      <div class="section-toolbar">
+        <h3>Étapes d'intervention</h3>
+        <button class="btn btn-primary" onclick='navigateToEditor("processus")'>Ajouter une étape</button>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr><th>Ordre</th><th>Titre</th><th>Description</th><th style="text-align: right;">Actions</th></tr>
+        </thead>
+        <tbody id="processusTableBody"></tbody>
+      </table>
+    </section>
+
+    <!-- Section FAQ -->
+    <section id="section-faq" class="content-section">
+      <div class="section-toolbar">
+        <h3>Foire Aux Questions</h3>
+        <button class="btn btn-primary" onclick='navigateToEditor("faq")'>
+          <i data-lucide="plus" class="icon-sm"></i> Nouvelle question
+        </button>
+      </div>
+      <div class="table-container">
+        <table class="data-table">
+          <thead><tr><th>Question</th><th>Thème</th><th>Ordre</th><th>Actions</th></tr></thead>
+          <tbody id="faqTableBody"><tr><td colspan="4" class="loading">Chargement...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Section Gestion Services -->
+    <section id="section-services_list" class="content-section">
+      <div class="section-toolbar">
+        <h3>Gestion des Services (Frontend)</h3>
+        <button class="btn btn-primary" onclick='navigateToEditor("service")'>
+          <i data-lucide="plus" class="icon-sm"></i> Nouveau service
+        </button>
+      </div>
+      <div class="table-container">
+        <table class="data-table">
+          <thead><tr><th>Titre</th><th>Icône</th><th>Lien</th><th>Ordre</th><th>Actions</th></tr></thead>
+          <tbody id="servicesTableBody"><tr><td colspan="5" class="loading">Chargement...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
     <!-- Section Éditeur (utilisée pour modifier/créer) -->
     <section id="section-editor" class="content-section">
       <div class="section-toolbar">
