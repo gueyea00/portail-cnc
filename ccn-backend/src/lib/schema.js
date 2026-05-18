@@ -197,6 +197,7 @@ CREATE TABLE IF NOT EXISTS liens_institutionnels (
   description     TEXT,
   categorie       TEXT DEFAULT 'Autre',
   ordre           INT DEFAULT 0,
+  logo_path       TEXT,
   created_at      TIMESTAMPTZ DEFAULT NOW()
 );
 -- ============================================================
