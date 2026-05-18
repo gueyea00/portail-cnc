@@ -490,17 +490,28 @@ export default function HomePage() {
         </div>
       </section> */}
 
-      {/* Partenaires */}
+      {/* Partenaires (Bailleurs) */}
       <section className="py-12 bg-muted border-t border-border">
         <div className="container-page">
           <h2 className="text-center text-sm font-bold text-muted-foreground uppercase tracking-widest mb-8">Bailleurs</h2>
-          <div className="flex flex-wrap justify-center gap-10">
-            {["Ministère du Commerce", "Gouvernement du Tchad", "CEMAC", "Union Africaine"].map((p) => (
-              <a key={p} href="#" className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
-                <ExternalLink className="w-4 h-4" />
-                {p}
-              </a>
-            ))}
+          <div className="flex flex-wrap justify-center items-center gap-10">
+            {liens.length > 0 ? (
+              liens.map((l: any) => (
+                <a key={l.id} href={l.url || "#"} target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity">
+                  {l.logo_path ? (
+                    <img src={`/${l.logo_path}`} alt={l.nom} className="h-16 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300" />
+                  ) : (
+                    <span className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">{l.nom}</span>
+                  )}
+                </a>
+              ))
+            ) : (
+              <>
+                {["Ministère du Commerce", "Gouvernement du Tchad", "CEMAC", "Union Africaine"].map((p) => (
+                  <span key={p} className="text-sm font-medium text-muted-foreground">{p}</span>
+                ))}
+              </>
+            )}
           </div>
         </div>
       </section>
