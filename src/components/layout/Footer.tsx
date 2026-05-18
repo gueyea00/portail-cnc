@@ -184,15 +184,14 @@ export default function Footer() {
         {/* Bailleurs & Copyright */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-6 text-xs text-white/50">
           <div className="flex flex-wrap justify-center md:justify-start gap-x-6 gap-y-3">
-            {liens.filter((l: any) => l.categorie === "Organisation régionale" || l.categorie === "Ministère").map((l: any) => (
-              <a key={l.id} href={l.url} target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors">{l.nom}</a>
+            {liens.filter((l: any) => l.logo_path).map((l: any) => (
+              <a key={l.id} href={l.url || "#"} target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity">
+                <img src={`/${l.logo_path}`} alt={l.nom} className="h-10 w-auto object-contain bg-white/10 p-1 rounded" />
+              </a>
             ))}
-            {liens.length === 0 && (
-              <>
-                <a href="#" className="hover:text-gold transition-colors">Ministère du Commerce</a>
-                <a href="#" className="hover:text-gold transition-colors">Gouvernement du Tchad</a>
-              </>
-            )}
+            {liens.filter((l: any) => !l.logo_path).map((l: any) => (
+              <a key={l.id} href={l.url || "#"} target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors">{l.nom}</a>
+            ))}
           </div>
           <div className="text-center md:text-right">
             <p>&copy; {new Date().getFullYear()} {parametres?.footer_copyright || "Ebenyx Technologies"}.</p>
