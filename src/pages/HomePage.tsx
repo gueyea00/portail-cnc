@@ -86,6 +86,11 @@ export default function HomePage() {
     queryFn: () => fetch("/api/services").then(res => res.json())
   });
 
+  const { data: liens = [] } = useQuery({
+    queryKey: ["liens"],
+    queryFn: () => fetch("/api/liens").then(res => res.json())
+  });
+
   const displayedMissions = missionsApi.slice(0, 6);
   const activeServices = (servicesApi || []).filter((s: any) => s.actif !== false).slice(0, 3);
 
