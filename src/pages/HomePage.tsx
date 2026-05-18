@@ -493,7 +493,7 @@ export default function HomePage() {
       {/* Partenaires */}
       <section className="py-12 bg-muted border-t border-border">
         <div className="container-page">
-          <h2 className="text-center text-sm font-bold text-muted-foreground uppercase tracking-widest mb-8">Liens institutionnels</h2>
+          <h2 className="text-center text-sm font-bold text-muted-foreground uppercase tracking-widest mb-8">Bailleurs</h2>
           <div className="flex flex-wrap justify-center gap-10">
             {["Ministère du Commerce", "Gouvernement du Tchad", "CEMAC", "Union Africaine"].map((p) => (
               <a key={p} href="#" className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors">

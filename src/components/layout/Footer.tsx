@@ -181,7 +181,7 @@ export default function Footer() {
         {/* Ligne de séparation visuelle */}
         <div className="w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent mb-8" />
 
-        {/* Liens institutionnels & Copyright */}
+        {/* Bailleurs & Copyright */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-6 text-xs text-white/50">
           <div className="flex flex-wrap justify-center md:justify-start gap-x-6 gap-y-3">
             {liens.filter((l: any) => l.categorie === "Organisation régionale" || l.categorie === "Ministère").map((l: any) => (

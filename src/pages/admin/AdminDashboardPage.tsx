@@ -982,7 +982,7 @@ export default function AdminDashboardPage() {
     { id: "galerie", label: "Galerie", icon: <ImageIcon className="w-5 h-5" /> },
     { id: "documents", label: "Documents", icon: <FileBadge className="w-5 h-5" /> },
     { id: "plaintes", label: "Plaintes", icon: <MessageSquare className="w-5 h-5" /> },
-    { id: "liens", label: "Liens institutionnels", icon: <ExternalLink className="w-5 h-5" /> },
+    { id: "liens", label: "Bailleurs", icon: <ExternalLink className="w-5 h-5" /> },
     { id: "parametres", label: "Paramètres", icon: <Settings className="w-5 h-5" /> },
   ];
 
@@ -1025,7 +1025,7 @@ export default function AdminDashboardPage() {
         <header className="h-20 bg-white border-b border-border sticky top-0 z-40 px-8 flex items-center justify-between">
           <div>
             <h1 className="text-xl font-bold text-slate-800">
-              {menuItems.find(i => i.id === activeTab)?.label}
+              {activeTab === 'liens' ? 'Bailleurs' : menuItems.find(i => i.id === activeTab)?.label}
             </h1>
             <p className="text-xs text-muted-foreground">Gestion du portail CNC Tchad</p>
           </div>
