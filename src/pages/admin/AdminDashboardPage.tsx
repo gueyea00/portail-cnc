@@ -553,7 +553,7 @@ export default function AdminDashboardPage() {
     try {
       const res = await fetch("/api/parametres");
       const data = await res.json();
-      
+
       // On s'assure que toutes les clés importantes sont présentes pour l'admin
       const standardKeys = [
         'home_welcome_badge', 'home_missions_title', 'home_missions_subtitle', 'home_services_title', 'home_services_subtitle', 'home_news_title', 'home_news_subtitle',
@@ -1008,8 +1008,8 @@ export default function AdminDashboardPage() {
               key={item.id}
               onClick={() => setActiveTab(item.id as TabType)}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-medium ${activeTab === item.id
-                  ? "bg-white/15 text-white shadow-inner"
-                  : "text-white/70 hover:bg-white/5 hover:text-white"
+                ? "bg-white/15 text-white shadow-inner"
+                : "text-white/70 hover:bg-white/5 hover:text-white"
                 }`}
             >
               {item.icon}
@@ -1017,27 +1017,6 @@ export default function AdminDashboardPage() {
             </button>
           ))}
         </nav>
-
-        <div className="p-4 border-t border-white/10">
-          <div className="bg-white/5 rounded-2xl p-4 mb-4">
-            <div className="flex items-center gap-3 mb-1">
-              <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-xs font-bold text-primary">
-                {admin.username?.charAt(0).toUpperCase()}
-              </div>
-              <div>
-                <p className="text-xs font-bold truncate">{admin.username}</p>
-                <p className="text-[10px] text-white/50">Administrateur</p>
-              </div>
-            </div>
-          </div>
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-300 hover:bg-red-500/10 hover:text-red-400 transition-all font-medium"
-          >
-            <LogOut className="w-5 h-5" />
-            Déconnexion
-          </button>
-        </div>
       </aside>
 
       {/* Main Content */}
@@ -1052,12 +1031,13 @@ export default function AdminDashboardPage() {
           </div>
 
           <div className="flex items-center gap-4">
-            <a href="/" target="_blank" rel="noopener noreferrer">
-              <Button variant="outline" className="gap-2 text-xs font-bold rounded-xl border-slate-200">
-                <ExternalLink className="w-4 h-4" />
-                Voir le site
-              </Button>
-            </a>
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-300 hover:bg-red-500/10 hover:text-red-400 transition-all font-medium"
+            >
+              <LogOut className="w-5 h-5" />
+              Déconnexion
+            </button>
           </div>
         </header>
 
@@ -2445,8 +2425,8 @@ export default function AdminDashboardPage() {
                     key={tab.id}
                     onClick={() => setActiveParamTab(tab.id)}
                     className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeParamTab === tab.id
-                        ? "bg-white text-primary shadow-sm"
-                        : "text-slate-500 hover:text-slate-700 hover:bg-white/50"
+                      ? "bg-white text-primary shadow-sm"
+                      : "text-slate-500 hover:text-slate-700 hover:bg-white/50"
                       }`}
                   >
                     {tab.label}
@@ -2461,76 +2441,76 @@ export default function AdminDashboardPage() {
                   {activeParamTab === "identite" && (
                     <div className="space-y-6 animate-in slide-in-from-bottom-2 duration-300">
                       <div className="bg-white rounded-[32px] border border-slate-100 p-8 shadow-sm space-y-6">
-                    <div className="flex items-center gap-4 mb-2">
-                      <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
-                        <Users className="w-6 h-6" />
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-bold text-slate-800">Identité du Président</h3>
-                        <p className="text-xs text-slate-500">Photo et informations du dirigeant</p>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-50">
-                      <div className="space-y-4">
-                        <p className="text-xs font-black uppercase text-slate-400 tracking-widest">Photo officielle</p>
-                        <div className="flex items-center gap-6">
-                          <div className="w-24 h-24 rounded-2xl bg-slate-100 border-2 border-dashed border-slate-200 overflow-hidden flex items-center justify-center group relative">
-                            {presidentPhotoFile ? (
-                              <img
-                                src={URL.createObjectURL(presidentPhotoFile)}
-                                className="w-full h-full object-cover"
-                              />
-                            ) : parametres.president_photo_path ? (
-                              <img
-                                src={`/${parametres.president_photo_path}`}
-                                className="w-full h-full object-cover"
-                                onError={(e) => { e.currentTarget.style.display = 'none'; }}
-                              />
-                            ) : (
-                              <Users className="w-8 h-8 text-slate-300" />
-                            )}
-                            <label className="absolute inset-0 bg-black/40 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-opacity text-[10px] font-bold">
-                              CHANGER
-                              <input
-                                type="file"
-                                className="hidden"
-                                accept="image/*"
-                                onChange={(e) => {
-                                  const file = e.target.files?.[0];
-                                  if (file) {
-                                    setPresidentPhotoFile(file);
-                                    // Pour prévisualiser l'image, on pourrait utiliser URL.createObjectURL
-                                  }
-                                }}
-                              />
-                            </label>
+                        <div className="flex items-center gap-4 mb-2">
+                          <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
+                            <Users className="w-6 h-6" />
                           </div>
-                          <div className="flex-1 space-y-1">
-                            <p className="text-sm font-bold text-slate-700">Changer la photo</p>
-                            <p className="text-[10px] text-slate-400">Format JPG, PNG. Max 5Mo.</p>
+                          <div>
+                            <h3 className="text-lg font-bold text-slate-800">Identité du Président</h3>
+                            <p className="text-xs text-slate-500">Photo et informations du dirigeant</p>
                           </div>
                         </div>
-                      </div>
 
-                      <div className="space-y-4">
-                        <p className="text-xs font-black uppercase text-slate-400 tracking-widest">Nom complet</p>
-                        <Input
-                          value={parametres.president_nom || ""}
-                          className="h-12 rounded-xl bg-slate-50 border-transparent focus:bg-white font-bold"
-                          onChange={(e) => setParametres(prev => ({ ...prev, president_nom: e.target.value }))}
-                        />
-                      </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-50">
+                          <div className="space-y-4">
+                            <p className="text-xs font-black uppercase text-slate-400 tracking-widest">Photo officielle</p>
+                            <div className="flex items-center gap-6">
+                              <div className="w-24 h-24 rounded-2xl bg-slate-100 border-2 border-dashed border-slate-200 overflow-hidden flex items-center justify-center group relative">
+                                {presidentPhotoFile ? (
+                                  <img
+                                    src={URL.createObjectURL(presidentPhotoFile)}
+                                    className="w-full h-full object-cover"
+                                  />
+                                ) : parametres.president_photo_path ? (
+                                  <img
+                                    src={`/${parametres.president_photo_path}`}
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                                  />
+                                ) : (
+                                  <Users className="w-8 h-8 text-slate-300" />
+                                )}
+                                <label className="absolute inset-0 bg-black/40 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-opacity text-[10px] font-bold">
+                                  CHANGER
+                                  <input
+                                    type="file"
+                                    className="hidden"
+                                    accept="image/*"
+                                    onChange={(e) => {
+                                      const file = e.target.files?.[0];
+                                      if (file) {
+                                        setPresidentPhotoFile(file);
+                                        // Pour prévisualiser l'image, on pourrait utiliser URL.createObjectURL
+                                      }
+                                    }}
+                                  />
+                                </label>
+                              </div>
+                              <div className="flex-1 space-y-1">
+                                <p className="text-sm font-bold text-slate-700">Changer la photo</p>
+                                <p className="text-[10px] text-slate-400">Format JPG, PNG. Max 5Mo.</p>
+                              </div>
+                            </div>
+                          </div>
 
-                      <div className="space-y-4 md:col-span-2">
-                        <p className="text-xs font-black uppercase text-slate-400 tracking-widest">Mot du Président (Message)</p>
-                        <Textarea
-                          value={parametres.president_mot || ""}
-                          rows={4}
-                          className="rounded-xl bg-slate-50 border-transparent focus:bg-white text-sm leading-relaxed"
-                          onChange={(e) => setParametres(prev => ({ ...prev, president_mot: e.target.value }))}
-                        />
-                      </div>
+                          <div className="space-y-4">
+                            <p className="text-xs font-black uppercase text-slate-400 tracking-widest">Nom complet</p>
+                            <Input
+                              value={parametres.president_nom || ""}
+                              className="h-12 rounded-xl bg-slate-50 border-transparent focus:bg-white font-bold"
+                              onChange={(e) => setParametres(prev => ({ ...prev, president_nom: e.target.value }))}
+                            />
+                          </div>
+
+                          <div className="space-y-4 md:col-span-2">
+                            <p className="text-xs font-black uppercase text-slate-400 tracking-widest">Mot du Président (Message)</p>
+                            <Textarea
+                              value={parametres.president_mot || ""}
+                              rows={4}
+                              className="rounded-xl bg-slate-50 border-transparent focus:bg-white text-sm leading-relaxed"
+                              onChange={(e) => setParametres(prev => ({ ...prev, president_mot: e.target.value }))}
+                            />
+                          </div>
                         </div>
                       </div>
 
@@ -2660,7 +2640,7 @@ export default function AdminDashboardPage() {
                     const otherKeys = Object.keys(parametres).filter(k => !assignedKeys.has(k));
 
                     const filteredGroups = groups.filter(g => g.id === activeParamTab);
-                    
+
                     // On peut imaginer un onglet "Avancé" pour les clés orphelines, ou les mettre dans Titres si besoin.
                     // Pour l'instant on les met dans "heros" ou on crée un onglet "Autres" si elles existent.
                     if (activeParamTab === "heros" && otherKeys.length > 0) {
