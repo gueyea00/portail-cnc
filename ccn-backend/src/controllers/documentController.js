@@ -12,6 +12,15 @@ class DocumentController {
     }
   }
 
+  static async getAllAdmin(req, res) {
+    try {
+      const docs = await DocumentService.getAllDocumentsAdmin();
+      res.json(docs);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  }
+
   static async getById(req, res) {
     try {
       const doc = await DocumentService.getDocumentById(req.params.id);

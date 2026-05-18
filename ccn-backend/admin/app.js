@@ -68,7 +68,7 @@ function openModal(type, data = null) {
   const body = document.getElementById('modalBody');
 
   if (type === 'article') {
-    title.textContent = data ? 'Modifier l\'article' : 'Nouvel article';
+    title.textContent = data ? 'Modifier l'article' : 'Nouvel article';
     body.innerHTML = `
       <form id="articleForm" class="form" enctype="multipart/form-data">
         <div class="form-row">
@@ -114,7 +114,7 @@ function openModal(type, data = null) {
         <div class="modal-actions">
           <button type="button" class="btn btn-ghost" onclick="closeModal()">Annuler</button>
           <button type="submit" class="btn btn-primary" style="padding: 12px 24px;">
-            <i data-lucide="${data ? 'save' : 'plus'}" class="icon-sm" style="margin-right: 8px;"></i> ${data ? 'Enregistrer les modifications' : 'Publier l\'article'}
+            <i data-lucide="${data ? 'save' : 'plus'}" class="icon-sm" style="margin-right: 8px;"></i> ${data ? 'Enregistrer les modifications' : 'Publier l'article'}
           </button>
         </div>
       </form>`;
@@ -125,7 +125,7 @@ function openModal(type, data = null) {
       const method = data ? 'PUT' : 'POST';
       const res = await apiFetch(url, { method, headers: { Authorization: `Bearer ${token}` }, body: fd });
       if (res?.ok) { showToast(data ? 'Article mis à jour !' : 'Article créé !'); closeModal(); loadArticles(); }
-      else showToast('Erreur lors de l\'enregistrement', true);
+      else showToast('Erreur lors de l'enregistrement', true);
     };
   }
 
@@ -195,127 +195,6 @@ function openModal(type, data = null) {
       const res = await apiFetch(url, { method, headers: { Authorization: `Bearer ${token}` }, body: fd });
       if (res?.ok) { showToast('Photo enregistrée !'); closeModal(); loadGalerie(); }
       else showToast('Erreur', true);
-    };
-  }
-
-  if (type === 'mission') {
-    title.textContent = data ? 'Modifier la mission' : 'Nouvelle mission';
-    body.innerHTML = `
-      <form id="missionForm">
-        <div class="form-group"><label>Titre *</label><input name="titre" value="${data?.titre || ''}" required /></div>
-        <div class="form-group"><label>Description</label><textarea name="description" rows="3">${data?.description || ''}</textarea></div>
-        <div class="form-row">
-          <div class="form-group"><label>Icône (Lucide)</label><input name="icone" value="${data?.icone || 'shield'}" placeholder="shield, zap, users..." /></div>
-          <div class="form-group"><label>Ordre</label><input type="number" name="ordre" value="${data?.ordre || 0}" /></div>
-        </div>
-        <div class="modal-actions">
-          <button type="button" class="btn btn-ghost" onclick="closeModal()">Annuler</button>
-          <button type="submit" class="btn btn-primary">Enregistrer</button>
-        </div>
-      </form>`;
-    document.getElementById('missionForm').onsubmit = async (e) => {
-      e.preventDefault();
-      const body = Object.fromEntries(new FormData(e.target));
-      const url = data ? `/api/missions/admin/${data.id}` : '/api/missions/admin';
-      const method = data ? 'PUT' : 'POST';
-      const res = await apiFetch(url, { method, headers: headers(), body: JSON.stringify(body) });
-      if (res?.ok) { showToast('Mission enregistrée !'); closeModal(); loadMissions(); }
-    };
-  }
-
-  if (type === 'historique') {
-    title.textContent = data ? 'Modifier la date' : 'Ajouter une date';
-    body.innerHTML = `
-      <form id="historiqueForm">
-        <div class="form-group"><label>Année *</label><input name="annee" value="${data?.annee || ''}" placeholder="ex: 2024" required /></div>
-        <div class="form-group"><label>Description</label><textarea name="description" rows="3">${data?.description || ''}</textarea></div>
-        <div class="form-group"><label>Ordre</label><input type="number" name="ordre" value="${data?.ordre || 0}" /></div>
-        <div class="modal-actions">
-          <button type="button" class="btn btn-ghost" onclick="closeModal()">Annuler</button>
-          <button type="submit" class="btn btn-primary">Enregistrer</button>
-        </div>
-      </form>`;
-    document.getElementById('historiqueForm').onsubmit = async (e) => {
-      e.preventDefault();
-      const body = Object.fromEntries(new FormData(e.target));
-      // Note: Missions endpoint used for historical timeline in this context
-      const url = data ? `/api/missions/admin/historique/${data.id}` : '/api/missions/admin/historique';
-      const method = data ? 'PUT' : 'POST';
-      const res = await apiFetch(url, { method, headers: headers(), body: JSON.stringify(body) });
-      if (res?.ok) { showToast('Historique mis à jour !'); closeModal(); loadHistorique(); }
-    };
-  }
-
-  if (type === 'faq') {
-    title.textContent = data ? 'Modifier la FAQ' : 'Nouvelle question';
-    body.innerHTML = `
-      <form id="faqForm">
-        <div class="form-group"><label>Question *</label><input name="question" value="${data?.question || ''}" required /></div>
-        <div class="form-group"><label>Réponse</label><textarea name="reponse" rows="4">${data?.reponse || ''}</textarea></div>
-        <div class="form-row">
-          <div class="form-group"><label>Thème</label><input name="theme" value="${data?.theme || ''}" placeholder="Procédure, Droit..." /></div>
-          <div class="form-group"><label>Ordre</label><input type="number" name="ordre" value="${data?.ordre || 0}" /></div>
-        </div>
-        <div class="modal-actions">
-          <button type="button" class="btn btn-ghost" onclick="closeModal()">Annuler</button>
-          <button type="submit" class="btn btn-primary">Enregistrer</button>
-        </div>
-      </form>`;
-    document.getElementById('faqForm').onsubmit = async (e) => {
-      e.preventDefault();
-      const body = Object.fromEntries(new FormData(e.target));
-      const url = data ? `/api/faq/admin/${data.id}` : '/api/faq/admin';
-      const method = data ? 'PUT' : 'POST';
-      const res = await apiFetch(url, { method, headers: headers(), body: JSON.stringify(body) });
-      if (res?.ok) { showToast('FAQ mise à jour !'); closeModal(); loadFAQ(); }
-    };
-  }
-
-  if (type === 'processus') {
-    title.textContent = data ? 'Modifier l\'étape' : 'Ajouter une étape';
-    body.innerHTML = `
-      <form id="processusForm">
-        <div class="form-group"><label>Titre *</label><input name="titre" value="${data?.titre || ''}" required /></div>
-        <div class="form-group"><label>Description</label><textarea name="description" rows="3">${data?.description || ''}</textarea></div>
-        <div class="form-group"><label>Ordre</label><input type="number" name="ordre" value="${data?.ordre || 0}" /></div>
-        <div class="modal-actions">
-          <button type="button" class="btn btn-ghost" onclick="closeModal()">Annuler</button>
-          <button type="submit" class="btn btn-primary">Enregistrer</button>
-        </div>
-      </form>`;
-    document.getElementById('processusForm').onsubmit = async (e) => {
-      e.preventDefault();
-      const body = Object.fromEntries(new FormData(e.target));
-      const url = data ? `/api/missions/admin/etapes/${data.id}` : '/api/missions/admin/etapes';
-      const method = data ? 'PUT' : 'POST';
-      const res = await apiFetch(url, { method, headers: headers(), body: JSON.stringify(body) });
-      if (res?.ok) { showToast('Étape enregistrée !'); closeModal(); loadProcessus(); }
-    };
-  }
-
-  if (type === 'service') {
-    title.textContent = data ? 'Modifier le service' : 'Ajouter un service';
-    body.innerHTML = `
-      <form id="serviceForm">
-        <div class="form-group"><label>Titre *</label><input name="titre" value="${data?.titre || ''}" required /></div>
-        <div class="form-group"><label>Description</label><textarea name="description" rows="2">${data?.description || ''}</textarea></div>
-        <div class="form-row">
-          <div class="form-group"><label>Icône</label><input name="icone" value="${data?.icone || ''}" placeholder="Search, FileText..." /></div>
-          <div class="form-group"><label>Lien</label><input name="lien" value="${data?.lien || ''}" placeholder="/plaintes" /></div>
-        </div>
-        <div class="form-group"><label>Ordre</label><input type="number" name="ordre" value="${data?.ordre || 0}" /></div>
-        <div class="modal-actions">
-          <button type="button" class="btn btn-ghost" onclick="closeModal()">Annuler</button>
-          <button type="submit" class="btn btn-primary">Enregistrer</button>
-        </div>
-      </form>`;
-    document.getElementById('serviceForm').onsubmit = async (e) => {
-      e.preventDefault();
-      const body = Object.fromEntries(new FormData(e.target));
-      const url = data ? `/api/services/admin/${data.id}` : '/api/services/admin';
-      const method = data ? 'PUT' : 'POST';
-      const res = await apiFetch(url, { method, headers: headers(), body: JSON.stringify(body) });
-      if (res?.ok) { showToast('Service mis à jour !'); closeModal(); loadServices(); }
     };
   }
 
@@ -410,9 +289,166 @@ function openModal(type, data = null) {
 function closeModal() {
   document.getElementById('modal').style.display = 'none';
 }
+// ---- Dedicated Editor View ----
+let lastSection = 'accueil';
+function navigateToEditor(type, data = null) {
+  lastSection = document.querySelector('.content-section.active').id.replace('section-', '');
+  document.querySelectorAll('.content-section').forEach(el => el.classList.remove('active'));
+  const editor = document.getElementById('section-editor');
+  editor.classList.add('active');
+  document.getElementById('pageTitle').textContent = 'Édition';
+  const body = document.getElementById('editorBody');
 
-// ---- Data Loaders ----
-async function loadArticles() {
+  if (type === 'lien') {
+    document.getElementById('editorTitle').textContent = data ? 'Modifier le lien' : 'Nouveau lien';
+    body.innerHTML = `
+      <form id="editorForm" enctype="multipart/form-data">
+        <input type="hidden" name="id" value="${data?.id || ''}" />
+        <div class="form-group"><label>Nom *</label><input name="nom" value="${data?.nom || ''}" required /></div>
+        <div class="form-group"><label>URL *</label><input name="url" value="${data?.url || ''}" required /></div>
+        <div class="form-group"><label>Logo</label><input type="file" name="logo" accept="image/*" /></div>
+        <div class="form-group"><label>Description</label><textarea name="description" rows="2">${data?.description || ''}</textarea></div>
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+      </form>`;
+    document.getElementById('editorForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const id = fd.get('id');
+      const url = id ? `/api/liens/admin/${id}` : '/api/liens/admin';
+      const res = await apiFetch(url, { method: id ? 'PUT' : 'POST', headers: { Authorization: `Bearer ${token}` }, body: fd });
+      if (res?.ok) { showToast('Enregistré !'); navigateTo('liens'); }
+    };
+  }
+...
+
+    document.getElementById('editorTitle').textContent = data ? 'Modifier la mission' : 'Nouvelle mission';
+    body.innerHTML = `
+      <form id="editorForm">
+        <input type="hidden" name="id" value="${data?.id || ''}" />
+        <div class="form-group"><label>Titre *</label><input name="titre" value="${data?.titre || ''}" required /></div>
+        <div class="form-group"><label>Description</label><textarea name="description" rows="3">${data?.description || ''}</textarea></div>
+        <div class="form-row">
+          <div class="form-group"><label>Icône (Lucide)</label><input name="icone" value="${data?.icone || 'shield'}" /></div>
+          <div class="form-group"><label>Ordre</label><input type="number" name="ordre" value="${data?.ordre || 0}" /></div>
+        </div>
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+      </form>`;
+    document.getElementById('editorForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const bodyData = Object.fromEntries(new FormData(e.target));
+      const url = bodyData.id ? `/api/missions/admin/${bodyData.id}` : '/api/missions/admin';
+      const res = await apiFetch(url, { method: bodyData.id ? 'PUT' : 'POST', headers: headers(), body: JSON.stringify(bodyData) });
+      if (res?.ok) { showToast('Enregistré !'); navigateTo('missions'); }
+    };
+  }
+  
+  if (type === 'historique') {
+    document.getElementById('editorTitle').textContent = data ? 'Modifier la date' : 'Ajouter une date';
+    body.innerHTML = `
+      <form id="editorForm">
+        <input type="hidden" name="id" value="${data?.id || ''}" />
+        <div class="form-group"><label>Année *</label><input name="annee" value="${data?.annee || ''}" required /></div>
+        <div class="form-group"><label>Description</label><textarea name="description" rows="3">${data?.description || ''}</textarea></div>
+        <div class="form-group"><label>Ordre</label><input type="number" name="ordre" value="${data?.ordre || 0}" /></div>
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+      </form>`;
+    document.getElementById('editorForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const bodyData = Object.fromEntries(new FormData(e.target));
+      const url = bodyData.id ? `/api/missions/admin/historique/${bodyData.id}` : '/api/missions/admin/historique';
+      const res = await apiFetch(url, { method: bodyData.id ? 'PUT' : 'POST', headers: headers(), body: JSON.stringify(bodyData) });
+      if (res?.ok) { showToast('Enregistré !'); navigateTo('historique'); }
+    };
+  }
+
+  if (type === 'processus') {
+    document.getElementById('editorTitle').textContent = data ? 'Modifier l'étape' : 'Ajouter une étape';
+    body.innerHTML = `
+      <form id="editorForm">
+        <input type="hidden" name="id" value="${data?.id || ''}" />
+        <div class="form-group"><label>Titre *</label><input name="titre" value="${data?.titre || ''}" required /></div>
+        <div class="form-group"><label>Description</label><textarea name="description" rows="3">${data?.description || ''}</textarea></div>
+        <div class="form-group"><label>Ordre</label><input type="number" name="ordre" value="${data?.ordre || 0}" /></div>
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+      </form>`;
+    document.getElementById('editorForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const bodyData = Object.fromEntries(new FormData(e.target));
+      const url = bodyData.id ? `/api/missions/admin/etapes/${bodyData.id}` : '/api/missions/admin/etapes';
+      const res = await apiFetch(url, { method: bodyData.id ? 'PUT' : 'POST', headers: headers(), body: JSON.stringify(bodyData) });
+      if (res?.ok) { showToast('Enregistré !'); navigateTo('processus'); }
+    };
+  }
+
+  if (type === 'faq') {
+    document.getElementById('editorTitle').textContent = data ? 'Modifier la FAQ' : 'Nouvelle question';
+    body.innerHTML = `
+      <form id="editorForm">
+        <input type="hidden" name="id" value="${data?.id || ''}" />
+        <div class="form-group"><label>Question *</label><input name="question" value="${data?.question || ''}" required /></div>
+        <div class="form-group"><label>Réponse</label><textarea name="reponse" rows="4">${data?.reponse || ''}</textarea></div>
+        <div class="form-row">
+          <div class="form-group"><label>Thème</label><input name="theme" value="${data?.theme || ''}" /></div>
+          <div class="form-group"><label>Ordre</label><input type="number" name="ordre" value="${data?.ordre || 0}" /></div>
+        </div>
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+      </form>`;
+    document.getElementById('editorForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const bodyData = Object.fromEntries(new FormData(e.target));
+      const url = bodyData.id ? `/api/faq/admin/${bodyData.id}` : '/api/faq/admin';
+      const res = await apiFetch(url, { method: bodyData.id ? 'PUT' : 'POST', headers: headers(), body: JSON.stringify(bodyData) });
+      if (res?.ok) { showToast('Enregistré !'); navigateTo('faq'); }
+    };
+  }
+
+  if (type === 'service') {
+    document.getElementById('editorTitle').textContent = data ? 'Modifier le service' : 'Ajouter un service';
+    body.innerHTML = `
+      <form id="editorForm">
+        <input type="hidden" name="id" value="${data?.id || ''}" />
+        <div class="form-group"><label>Titre *</label><input name="titre" value="${data?.titre || ''}" required /></div>
+        <div class="form-group"><label>Description</label><textarea name="description" rows="2">${data?.description || ''}</textarea></div>
+        <div class="form-row">
+          <div class="form-group"><label>Icône</label><input name="icone" value="${data?.icone || ''}" /></div>
+          <div class="form-group"><label>Lien</label><input name="lien" value="${data?.lien || ''}" /></div>
+        </div>
+        <div class="form-group"><label>Ordre</label><input type="number" name="ordre" value="${data?.ordre || 0}" /></div>
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+      </form>`;
+    document.getElementById('editorForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const bodyData = Object.fromEntries(new FormData(e.target));
+      const url = bodyData.id ? `/api/services/admin/${bodyData.id}` : '/api/services/admin';
+      const res = await apiFetch(url, { method: bodyData.id ? 'PUT' : 'POST', headers: headers(), body: JSON.stringify(bodyData) });
+      if (res?.ok) { showToast('Enregistré !'); navigateTo('services_list'); }
+    };
+  }
+  
+  refreshIcons();
+}
+
+async function loadLiens() {
+  const res = await apiFetch('/api/liens/admin/all', { headers: headers() });
+  const items = await res.json();
+  const grid = document.getElementById('liensGrid');
+  if (!grid) return;
+  grid.innerHTML = items.length === 0 ? '<p class="loading">Aucun lien</p>' :
+    items.map(l => `
+      <div class="galerie-card">
+        <div class="galerie-thumb">
+          ${l.logo_path ? `<img src="/${l.logo_path}" alt="${l.nom}" style="max-width:100%; height:auto;" />` : '<i data-lucide="link" style="width: 48px; height: 48px; opacity: 0.5;"></i>'}
+        </div>
+        <div class="galerie-info">
+          <p><strong>${l.nom}</strong></p>
+          <div style="margin-top:8px; display:flex; gap:6px;">
+            <button class="btn btn-ghost btn-sm" onclick='navigateToEditor("lien", ${JSON.stringify(l).replace(/'/g, "&#39;")})'><i data-lucide="edit-2" class="icon-sm"></i></button>
+            <button class="btn btn-danger btn-sm" onclick="deleteItem('liens', ${l.id})"><i data-lucide="trash-2" class="icon-sm"></i></button>
+          </div>
+        </div>
+      </div>`).join('');
+  refreshIcons();
+}
   const res = await apiFetch('/api/articles/admin/all', { headers: headers() });
   if (!res) return;
   const articles = await res.json();
@@ -433,10 +469,8 @@ async function loadArticles() {
   refreshIcons();
 }
 
-
-
 async function loadDocuments() {
-  const res = await apiFetch('/api/documents', { headers: headers() });
+  const res = await apiFetch('/api/documents/admin/all', { headers: headers() });
   if (!res) return;
   const items = await res.json();
   const tb = document.getElementById('documentsTableBody');
@@ -513,7 +547,7 @@ async function savePlainte(id) {
 }
 
 async function loadMembres() {
-  const res = await apiFetch('/api/membres', {});
+  const res = await apiFetch('/api/membres/admin/all', { headers: headers() });
   if (!res) return;
   const items = await res.json();
   const tb = document.getElementById('membresTableBody');
@@ -555,7 +589,7 @@ async function loadPresident() {
 }
 
 async function loadMissions() {
-  const res = await apiFetch('/api/missions', {});
+  const res = await apiFetch('/api/missions/admin/all', { headers: headers() });
   const items = await res.json();
   const tb = document.getElementById('missionsTableBody');
   if (!tb) return;
@@ -564,7 +598,7 @@ async function loadMissions() {
     <td><i data-lucide="${m.icone}"></i> ${m.icone}</td>
     <td>${m.ordre}</td>
     <td>
-      <button class="btn btn-ghost btn-sm" onclick='openModal("mission", ${JSON.stringify(m).replace(/'/g, "&#39;")})'><i data-lucide="edit-2" class="icon-sm"></i></button>
+      <button class="btn btn-ghost btn-sm" onclick='navigateToEditor("mission", ${JSON.stringify(m).replace(/'/g, "&#39;")})'><i data-lucide="edit-2" class="icon-sm"></i></button>
       <button class="btn btn-danger btn-sm" onclick="deleteItem('missions', ${m.id})"><i data-lucide="trash-2" class="icon-sm"></i></button>
     </td>
   </tr>`).join('');
@@ -581,7 +615,7 @@ async function loadHistorique() {
     <td>${h.description}</td>
     <td>${h.ordre}</td>
     <td>
-      <button class="btn btn-ghost btn-sm" onclick='openModal("historique", ${JSON.stringify(h).replace(/'/g, "&#39;")})'><i data-lucide="edit-2" class="icon-sm"></i></button>
+      <button class="btn btn-ghost btn-sm" onclick='navigateToEditor("historique", ${JSON.stringify(h).replace(/'/g, "&#39;")})'><i data-lucide="edit-2" class="icon-sm"></i></button>
       <button class="btn btn-danger btn-sm" onclick="deleteHistory(${h.id})"><i data-lucide="trash-2" class="icon-sm"></i></button>
     </td>
   </tr>`).join('');
@@ -595,16 +629,17 @@ async function deleteHistory(id) {
 }
 
 async function loadProcessus() {
-  const data = await apiFetch('/api/missions/admin/etapes');
+  const data = await apiFetch('/api/missions/admin/etapes', { headers: headers() });
+  const items = await data.json();
   const tbody = document.getElementById('processusTableBody');
-  tbody.innerHTML = data.map(i => `
+  tbody.innerHTML = items.map(i => `
     <tr>
       <td><span class="badge badge-outline">${i.ordre}</span></td>
       <td><strong>${i.titre}</strong></td>
       <td><p class="text-truncate" style="max-width: 300px;">${i.description}</p></td>
       <td style="text-align: right;">
-        <button class="btn btn-sm btn-ghost" onclick="editItem('processus', ${i.id})"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
-        <button class="btn btn-sm btn-ghost text-destructive" onclick="deleteItem('processus', ${i.id})"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+        <button class="btn btn-sm btn-ghost" onclick='navigateToEditor("processus", ${JSON.stringify(i).replace(/'/g, "&#39;")})'><i data-lucide="edit-2" class="w-4 h-4"></i></button>
+        <button class="btn btn-sm btn-ghost text-destructive" onclick="deleteItem('missions/etapes', ${i.id})"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
       </td>
     </tr>
   `).join('');
@@ -612,7 +647,7 @@ async function loadProcessus() {
 }
 
 async function loadFAQ() {
-  const res = await apiFetch('/api/faq', {});
+  const res = await apiFetch('/api/faq/admin/all', { headers: headers() });
   const items = await res.json();
   const tb = document.getElementById('faqTableBody');
   if (!tb) return;
@@ -621,7 +656,7 @@ async function loadFAQ() {
     <td>${f.theme || '—'}</td>
     <td>${f.ordre}</td>
     <td>
-      <button class="btn btn-ghost btn-sm" onclick='openModal("faq", ${JSON.stringify(f).replace(/'/g, "&#39;")})'><i data-lucide="edit-2" class="icon-sm"></i></button>
+      <button class="btn btn-ghost btn-sm" onclick='navigateToEditor("faq", ${JSON.stringify(f).replace(/'/g, "&#39;")})'><i data-lucide="edit-2" class="icon-sm"></i></button>
       <button class="btn btn-danger btn-sm" onclick="deleteItem('faq', ${f.id})"><i data-lucide="trash-2" class="icon-sm"></i></button>
     </td>
   </tr>`).join('');
@@ -629,7 +664,7 @@ async function loadFAQ() {
 }
 
 async function loadServices() {
-  const res = await apiFetch('/api/services', {});
+  const res = await apiFetch('/api/services/admin/all', { headers: headers() });
   const items = await res.json();
   const tb = document.getElementById('servicesTableBody');
   if (!tb) return;
@@ -639,7 +674,7 @@ async function loadServices() {
     <td>${s.lien}</td>
     <td>${s.ordre}</td>
     <td>
-      <button class="btn btn-ghost btn-sm" onclick='openModal("service", ${JSON.stringify(s).replace(/'/g, "&#39;")})'><i data-lucide="edit-2" class="icon-sm"></i></button>
+      <button class="btn btn-ghost btn-sm" onclick='navigateToEditor("service", ${JSON.stringify(s).replace(/'/g, "&#39;")})'><i data-lucide="edit-2" class="icon-sm"></i></button>
       <button class="btn btn-danger btn-sm" onclick="deleteItem('services', ${s.id})"><i data-lucide="trash-2" class="icon-sm"></i></button>
     </td>
   </tr>`).join('');
@@ -668,9 +703,9 @@ async function loadAdmins() {
 
 async function loadStats() {
   const [arts, gal, docs] = await Promise.all([
-    apiFetch('/api/articles?limit=100').then(r => r?.json()).catch(() => []),
-    apiFetch('/api/galerie').then(r => r?.json()).catch(() => []),
-    apiFetch('/api/documents').then(r => r?.json()).catch(() => []),
+    apiFetch('/api/articles/admin/all', { headers: headers() }).then(r => r?.json()).catch(() => []),
+    apiFetch('/api/galerie/admin/all', { headers: headers() }).then(r => r?.json()).catch(() => []),
+    apiFetch('/api/documents/admin/all', { headers: headers() }).then(r => r?.json()).catch(() => []),
   ]);
   const plaints = await apiFetch('/api/plaintes/admin/all', { headers: headers() }).then(r => r?.json()).catch(() => []);
   const f = id => document.getElementById(id);
@@ -712,6 +747,7 @@ function navigateTo(section) {
     historique: loadHistorique,
     processus: loadProcessus,
     faq: loadFAQ,
+    liens: loadLiens,
     services_list: loadServices,
     plaintes: loadPlaintes,
     admins: loadAdmins,

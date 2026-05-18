@@ -11,6 +11,15 @@ class MissionController {
     }
   }
 
+  async getAllAdmin(req, res) {
+    try {
+      const missions = await MissionService.getAllMissionsAdmin();
+      res.json(missions);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  }
+
   async getById(req, res) {
     try {
       const mission = await MissionService.getMissionById(req.params.id);

@@ -18,6 +18,7 @@ const upload = multer({ storage, limits: { fileSize: 20 * 1024 * 1024 } });
 router.get('/', DocumentController.getAll);
 
 // Admin routes
+router.get('/admin/all', authMiddleware, DocumentController.getAllAdmin);
 router.post('/admin', authMiddleware, upload.single('fichier'), DocumentController.create);
 router.put('/admin/:id', authMiddleware, upload.single('fichier'), DocumentController.update);
 router.delete('/admin/:id', authMiddleware, DocumentController.delete);

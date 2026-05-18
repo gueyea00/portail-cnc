@@ -167,7 +167,7 @@ export default function PlaintePage() {
           </form>
         )}
 
-        {/* Ã‰tape 2 */}
+        {/* Étape 2 */}
         {step === 1 && (
           <form onSubmit={onStep2} className="space-y-4">
             <h2 className="text-xl font-bold text-foreground mb-4">Nature de la plainte</h2>

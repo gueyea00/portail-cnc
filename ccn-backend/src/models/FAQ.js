@@ -10,6 +10,10 @@ class FAQ extends BaseModel {
     return await new FAQ().findAll({ where, orderBy: 'ordre ASC' });
   }
 
+  static async findAllAdmin() {
+    return await new FAQ().findAll({ orderBy: 'theme ASC, ordre ASC' });
+  }
+
   static async findById(id) {
     return await new FAQ().findById(id);
   }

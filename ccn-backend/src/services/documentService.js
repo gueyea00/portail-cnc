@@ -5,6 +5,10 @@ class DocumentService {
     return await Document.findAll(categorie);
   }
 
+  static async getAllDocumentsAdmin() {
+    return await Document.findAllAdmin();
+  }
+
   static async getDocumentById(id) {
     return await Document.findById(id);
   }

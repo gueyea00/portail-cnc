@@ -1123,218 +1123,264 @@ export default function AdminDashboardPage() {
 
           {activeTab === "articles" && (
             <div className="space-y-6 animate-in fade-in duration-300">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="relative flex-1 max-w-md">
-                  <Search className="absolute left-3 top-3 w-4 h-4 text-slate-400" />
-                  <Input
-                    placeholder="Rechercher un article..."
-                    className="pl-10 h-10 rounded-xl border-slate-200"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </div>
-                <Button
-                  className="bg-primary hover:bg-primary/90 h-10 px-6 rounded-xl font-bold gap-2"
-                  onClick={() => setShowArticleForm((prev) => !prev)}
-                >
-                  <Plus className="w-4 h-4" />
-                  Nouvel Article
-                </Button>
-              </div>
+              {showArticleForm ? (
+                <div className="space-y-6">
+                  <div className="flex items-center gap-4">
+                    <Button
+                      variant="ghost"
+                      onClick={() => {
+                        setShowArticleForm(false);
+                        setEditingArticle(null);
+                      }}
+                      className="gap-2 text-slate-500 hover:text-primary rounded-xl"
+                    >
+                      <LogOut className="w-4 h-4 rotate-180" />
+                      Retour à la liste
+                    </Button>
+                    <h2 className="text-xl font-bold text-slate-800">
+                      {editingArticle ? "Modifier l'article" : "Créer un nouvel article"}
+                    </h2>
+                  </div>
 
-              {showArticleForm && (
-                <form onSubmit={handleSaveArticle} className="bg-white rounded-[32px] border border-slate-100 shadow-sm p-6 space-y-4">
-                  <h3 className="text-lg font-bold text-slate-800 mb-4">
-                    {editingArticle ? "Modifier l'article" : "Nouvel Article"}
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Titre</p>
-                      <Input
-                        value={articleForm.titre}
-                        onChange={(e) => setArticleForm((prev) => ({ ...prev, titre: e.target.value }))}
-                        onBlur={() => {
-                          if (!articleForm.slug && articleForm.titre) {
-                            setArticleForm((prev) => ({ ...prev, slug: slugify(prev.titre) }));
-                          }
+                  <form onSubmit={handleSaveArticle} className="bg-white rounded-[32px] border border-slate-100 shadow-sm p-8 space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Titre de l'article</p>
+                        <Input
+                          value={articleForm.titre}
+                          onChange={(e) => setArticleForm((prev) => ({ ...prev, titre: e.target.value }))}
+                          onBlur={() => {
+                            if (!articleForm.slug && articleForm.titre) {
+                              setArticleForm((prev) => ({ ...prev, slug: slugify(prev.titre) }));
+                            }
+                          }}
+                          required
+                          placeholder="Entrez le titre..."
+                          className="h-12 rounded-xl border-slate-200 focus:border-primary/30 focus:ring-primary/5"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Lien (Slug)</p>
+                        <Input
+                          value={articleForm.slug}
+                          onChange={(e) => setArticleForm((prev) => ({ ...prev, slug: e.target.value }))}
+                          className="h-12 rounded-xl border-slate-200"
+                          placeholder="ex: mon-article-actu"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Catégorie</p>
+                        <select
+                          value={articleForm.categorie}
+                          onChange={(e) => setArticleForm((prev) => ({ ...prev, categorie: e.target.value }))}
+                          className="w-full h-12 rounded-xl border border-slate-200 px-3 bg-white text-sm focus:border-primary/30 focus:ring-primary/5 outline-none"
+                        >
+                          <option value="communique">Communiqué</option>
+                          <option value="evenement">Événement</option>
+                          <option value="autre">Autre</option>
+                        </select>
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Statut de publication</p>
+                        <select
+                          value={articleForm.statut}
+                          onChange={(e) => setArticleForm((prev) => ({ ...prev, statut: e.target.value }))}
+                          className="w-full h-12 rounded-xl border border-slate-200 px-3 bg-white text-sm focus:border-primary/30 focus:ring-primary/5 outline-none"
+                        >
+                          <option value="brouillon">Brouillon (Non visible)</option>
+                          <option value="publie">Publié (Visible sur le site)</option>
+                        </select>
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Date de publication</p>
+                        <Input
+                          type="date"
+                          value={articleForm.date_publication}
+                          onChange={(e) => setArticleForm((prev) => ({ ...prev, date_publication: e.target.value }))}
+                          className="h-12 rounded-xl border-slate-200"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Lien de l'image (Optionnel)</p>
+                        <Input
+                          value={articleForm.image_url}
+                          onChange={(e) => setArticleForm((prev) => ({ ...prev, image_url: e.target.value }))}
+                          className="h-12 rounded-xl border-slate-200"
+                          placeholder="https://..."
+                        />
+                      </div>
+                      <div className="space-y-2 md:col-span-2">
+                        <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Télécharger une image</p>
+                        <div className="flex items-center justify-center w-full">
+                          <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-200 border-dashed rounded-[20px] cursor-pointer bg-slate-50/50 hover:bg-slate-50 transition-colors">
+                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                              <ImageIcon className="w-8 h-8 mb-2 text-slate-400" />
+                              <p className="text-xs text-slate-500">
+                                <span className="font-bold">Cliquez pour uploader</span> ou glissez-déposez
+                              </p>
+                              <p className="text-[10px] text-slate-400 mt-1">PNG, JPG ou WEBP (Max. 5MB)</p>
+                            </div>
+                            <input
+                              type="file"
+                              className="hidden"
+                              accept="image/*"
+                              onChange={(e) => setArticleImage(e.target.files?.[0] || null)}
+                            />
+                          </label>
+                        </div>
+                        {articleImage && (
+                          <p className="mt-2 text-xs font-medium text-primary flex items-center gap-2">
+                            <CheckCircle2 className="w-4 h-4" />
+                            Fichier sélectionné : {articleImage.name}
+                          </p>
+                        )}
+                      </div>
+                      <div className="space-y-2 md:col-span-2">
+                        <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Extrait (Résumé court)</p>
+                        <Textarea
+                          value={articleForm.extrait}
+                          onChange={(e) => setArticleForm((prev) => ({ ...prev, extrait: e.target.value }))}
+                          className="min-h-[100px] rounded-2xl border-slate-200 p-4 focus:border-primary/30"
+                          placeholder="Bref résumé de l'article..."
+                        />
+                      </div>
+                      <div className="space-y-2 md:col-span-2">
+                        <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Contenu complet</p>
+                        <Textarea
+                          value={articleForm.contenu}
+                          onChange={(e) => setArticleForm((prev) => ({ ...prev, contenu: e.target.value }))}
+                          className="min-h-[300px] rounded-2xl border-slate-200 p-4 focus:border-primary/30"
+                          placeholder="Écrivez le contenu de l'article ici..."
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-4 pt-4 border-t border-slate-50">
+                      <Button
+                        type="submit"
+                        className="bg-primary hover:bg-primary/90 h-12 px-8 rounded-xl font-bold gap-2 shadow-lg shadow-primary/20"
+                        disabled={isSavingArticle}
+                      >
+                        {isSavingArticle ? "Enregistrement en cours..." : "Enregistrer les modifications"}
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => {
+                          setShowArticleForm(false);
+                          setEditingArticle(null);
                         }}
-                        required
-                        className="h-11 rounded-xl border-slate-200"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Slug</p>
-                      <Input
-                        value={articleForm.slug}
-                        onChange={(e) => setArticleForm((prev) => ({ ...prev, slug: e.target.value }))}
-                        className="h-11 rounded-xl border-slate-200"
-                        placeholder="ex: mon-article"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Catégorie</p>
-                      <select
-                        value={articleForm.categorie}
-                        onChange={(e) => setArticleForm((prev) => ({ ...prev, categorie: e.target.value }))}
-                        className="h-11 rounded-xl border border-slate-200 px-3 bg-white text-sm"
+                        className="h-12 px-8 rounded-xl font-bold border-slate-200 text-slate-600"
                       >
-                        <option value="communique">Communiqué</option>
-                        <option value="evenement">Événement</option>
-                        <option value="autre">Autre</option>
-                      </select>
+                        Annuler
+                      </Button>
                     </div>
-                    <div className="space-y-2">
-                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Statut</p>
-                      <select
-                        value={articleForm.statut}
-                        onChange={(e) => setArticleForm((prev) => ({ ...prev, statut: e.target.value }))}
-                        className="h-11 rounded-xl border border-slate-200 px-3 bg-white text-sm"
-                      >
-                        <option value="brouillon">Brouillon</option>
-                        <option value="publie">Publié</option>
-                      </select>
-                    </div>
-                    <div className="space-y-2">
-                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Date de publication</p>
+                  </form>
+                </div>
+              ) : (
+                <>
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="relative flex-1 max-w-md">
+                      <Search className="absolute left-3 top-3 w-4 h-4 text-slate-400" />
                       <Input
-                        type="date"
-                        value={articleForm.date_publication}
-                        onChange={(e) => setArticleForm((prev) => ({ ...prev, date_publication: e.target.value }))}
-                        className="h-11 rounded-xl border-slate-200"
+                        placeholder="Rechercher un article..."
+                        className="pl-10 h-11 rounded-xl border-slate-200 bg-white"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
                       />
                     </div>
-                    <div className="space-y-2">
-                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Image (URL)</p>
-                      <Input
-                        value={articleForm.image_url}
-                        onChange={(e) => setArticleForm((prev) => ({ ...prev, image_url: e.target.value }))}
-                        className="h-11 rounded-xl border-slate-200"
-                        placeholder="https://..."
-                      />
-                    </div>
-                    <div className="space-y-2 md:col-span-2">
-                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Image (fichier)</p>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => setArticleImage(e.target.files?.[0] || null)}
-                        className="block w-full text-sm text-slate-600"
-                      />
-                    </div>
-                    <div className="space-y-2 md:col-span-2">
-                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Extrait</p>
-                      <Textarea
-                        value={articleForm.extrait}
-                        onChange={(e) => setArticleForm((prev) => ({ ...prev, extrait: e.target.value }))}
-                        className="min-h-[80px] rounded-xl border-slate-200"
-                      />
-                    </div>
-                    <div className="space-y-2 md:col-span-2">
-                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Contenu</p>
-                      <Textarea
-                        value={articleForm.contenu}
-                        onChange={(e) => setArticleForm((prev) => ({ ...prev, contenu: e.target.value }))}
-                        className="min-h-[140px] rounded-xl border-slate-200"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
                     <Button
-                      type="submit"
-                      className="bg-primary hover:bg-primary/90 h-10 px-6 rounded-xl font-bold"
-                      disabled={isSavingArticle}
+                      className="bg-primary hover:bg-primary/90 h-11 px-6 rounded-xl font-bold gap-2 shadow-sm"
+                      onClick={() => setShowArticleForm(true)}
                     >
-                      {isSavingArticle ? "Enregistrement..." : "Enregistrer"}
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="h-10 px-6 rounded-xl"
-                      onClick={() => setShowArticleForm(false)}
-                    >
-                      Annuler
+                      <Plus className="w-4 h-4" />
+                      Nouvel Article
                     </Button>
                   </div>
-                </form>
-              )}
 
-              <div className="bg-white rounded-[32px] border border-slate-100 shadow-sm overflow-hidden">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="bg-slate-50 border-b border-slate-100">
-                      <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest">Aperçu</th>
-                      <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest">Titre</th>
-                      <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest">Catégorie</th>
-                      <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest">Date</th>
-                      <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-50">
-                    {Array.isArray(articles) && articles
-                      .filter((art) =>
-                        String(art.titre || "")
-                          .toLowerCase()
-                          .includes(searchTerm.toLowerCase())
-                      )
-                      .map((art) => (
-                        <tr key={art.id} className="hover:bg-slate-50/50 transition-colors group">
-                          <td className="px-6 py-4">
-                            <div className="w-16 h-10 rounded-lg bg-slate-100 overflow-hidden">
-                              <img
-                                src={art.image_path ? `/uploads/articles/${art.image_path.split('/').pop()}` : art.image_url}
-                                alt=""
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                          </td>
-                          <td className="px-6 py-4">
-                            <p className="text-sm font-bold text-slate-800 line-clamp-1">{art.titre}</p>
-                            <p className="text-[10px] text-slate-400 font-mono">/{art.slug}</p>
-                          </td>
-                          <td className="px-6 py-4">
-                            <span className={`text-[10px] font-black uppercase px-2 py-1 rounded-full ${art.categorie === 'communique' ? 'bg-green-100 text-green-700' :
-                                art.categorie === 'evenement' ? 'bg-blue-100 text-blue-700' :
-                                  'bg-orange-100 text-orange-700'
-                              }`}>
-                              {art.categorie}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 text-sm text-slate-500 font-medium whitespace-nowrap">
-                            {new Date(art.date_publication).toLocaleDateString()}
-                          </td>
-                          <td className="px-6 py-4">
-                            <div className="flex items-center gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 rounded-lg text-blue-600 hover:bg-blue-50"
-                                onClick={() => openArticleForm(art)}
-                              >
-                                <Edit className="w-4 h-4" />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 rounded-lg text-red-600 hover:bg-red-50"
-                                onClick={() => handleDeleteArticle(art.id)}
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
-                            </div>
-                          </td>
+                  <div className="bg-white rounded-[32px] border border-slate-100 shadow-sm overflow-hidden">
+                    <table className="w-full text-left border-collapse">
+                      <thead>
+                        <tr className="bg-slate-50/50 border-b border-slate-100">
+                          <th className="px-6 py-4 text-[10px] font-black uppercase text-slate-400 tracking-widest">Article</th>
+                          <th className="px-6 py-4 text-[10px] font-black uppercase text-slate-400 tracking-widest">Catégorie</th>
+                          <th className="px-6 py-4 text-[10px] font-black uppercase text-slate-400 tracking-widest">Statut</th>
+                          <th className="px-6 py-4 text-[10px] font-black uppercase text-slate-400 tracking-widest">Date</th>
+                          <th className="px-6 py-4 text-[10px] font-black uppercase text-slate-400 tracking-widest text-right">Actions</th>
                         </tr>
-                      ))}
-                    {articles.length === 0 && (
-                      <tr>
-                        <td colSpan={5} className="px-6 py-12 text-center text-slate-400 font-medium">
-                          Aucun article trouvé.
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
+                      </thead>
+                      <tbody className="divide-y divide-slate-50">
+                        {articles
+                          .filter(a => a.titre.toLowerCase().includes(searchTerm.toLowerCase()))
+                          .map((article) => (
+                            <tr key={article.id} className="hover:bg-slate-50/30 transition-colors group">
+                              <td className="px-6 py-4">
+                                <div className="flex items-center gap-3">
+                                  <div className="w-10 h-10 rounded-lg bg-slate-100 overflow-hidden flex-shrink-0">
+                                    {article.image_path ? (
+                                      <img src={`/${article.image_path}`} className="w-full h-full object-cover" />
+                                    ) : (
+                                      <div className="w-full h-full flex items-center justify-center text-slate-300">
+                                        <FileText className="w-5 h-5" />
+                                      </div>
+                                    )}
+                                  </div>
+                                  <div>
+                                    <p className="text-sm font-bold text-slate-700 line-clamp-1">{article.titre}</p>
+                                    <p className="text-[10px] text-slate-400">ID: {article.id}</p>
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="px-6 py-4">
+                                <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase ${article.categorie === 'communique' ? 'bg-blue-50 text-blue-600' : 'bg-amber-50 text-amber-600'}`}>
+                                  {article.categorie}
+                                </span>
+                              </td>
+                              <td className="px-6 py-4">
+                                <span className={`flex items-center gap-1.5 text-xs font-medium ${article.statut === 'publie' ? 'text-green-600' : 'text-slate-400'}`}>
+                                  <div className={`w-1.5 h-1.5 rounded-full ${article.statut === 'publie' ? 'bg-green-600' : 'bg-slate-300'}`} />
+                                  {article.statut === 'publie' ? 'En ligne' : 'Brouillon'}
+                                </span>
+                              </td>
+                              <td className="px-6 py-4">
+                                <p className="text-[11px] text-slate-500 font-medium">
+                                  {new Date(article.date_publication).toLocaleDateString('fr-FR')}
+                                </p>
+                              </td>
+                              <td className="px-6 py-4 text-right">
+                                <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="w-9 h-9 rounded-xl text-slate-400 hover:text-primary hover:bg-primary/5"
+                                    onClick={() => openArticleForm(article)}
+                                  >
+                                    <Edit className="w-4 h-4" />
+                                  </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="w-9 h-9 rounded-xl text-slate-400 hover:text-red-600 hover:bg-red-50"
+                                    onClick={() => handleDeleteArticle(article.id)}
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </Button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        {articles.length === 0 && (
+                          <tr>
+                            <td colSpan={5} className="px-6 py-12 text-center text-slate-400 font-medium">
+                              Aucun article trouvé.
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
+              )}
             </div>
           )}
 
@@ -1618,312 +1664,513 @@ export default function AdminDashboardPage() {
 
           {activeTab === "membres" && (
             <div className="space-y-6 animate-in fade-in duration-300">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-lg font-bold text-slate-800">Membres</h2>
-                  <p className="text-xs text-muted-foreground">Liste des membres actifs</p>
-                </div>
-                <Button onClick={() => openMembreForm()} className="rounded-xl gap-2 font-bold">
-                  <Plus className="w-4 h-4" />
-                  Ajouter un membre
-                </Button>
-              </div>
-
-              {showMembreForm && (
-                <form onSubmit={handleSaveMembre} className="bg-white rounded-[32px] border border-slate-100 shadow-sm p-6 space-y-4">
-                  <h3 className="text-lg font-bold text-slate-800 mb-4">
-                    {editingMembre ? "Modifier le membre" : "Nouveau Membre"}
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Nom Complet</p>
-                      <Input
-                        value={membreForm.nom}
-                        onChange={(e) => setMembreForm(prev => ({ ...prev, nom: e.target.value }))}
-                        required
-                        className="h-11 rounded-xl border-slate-200"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Fonction</p>
-                      <Input
-                        value={membreForm.fonction}
-                        onChange={(e) => setMembreForm(prev => ({ ...prev, fonction: e.target.value }))}
-                        className="h-11 rounded-xl border-slate-200"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Initiales</p>
-                      <Input
-                        value={membreForm.initiales}
-                        onChange={(e) => setMembreForm(prev => ({ ...prev, initiales: e.target.value }))}
-                        className="h-11 rounded-xl border-slate-200"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Photo</p>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => setMembreImage(e.target.files?.[0] || null)}
-                      />
-                    </div>
-                    <div className="space-y-2 md:col-span-2">
-                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Biographie</p>
-                      <Textarea
-                        value={membreForm.bio}
-                        onChange={(e) => setMembreForm(prev => ({ ...prev, bio: e.target.value }))}
-                        className="min-h-[100px] rounded-xl border-slate-200"
-                      />
-                    </div>
+              {showMembreForm ? (
+                <div className="space-y-6">
+                  <div className="flex items-center gap-4">
+                    <Button
+                      variant="ghost"
+                      onClick={() => {
+                        setShowMembreForm(false);
+                        setEditingMembre(null);
+                      }}
+                      className="gap-2 text-slate-500 hover:text-primary rounded-xl"
+                    >
+                      <LogOut className="w-4 h-4 rotate-180" />
+                      Retour à la liste
+                    </Button>
+                    <h2 className="text-xl font-bold text-slate-800">
+                      {editingMembre ? "Modifier le membre" : "Ajouter un nouveau membre"}
+                    </h2>
                   </div>
-                  <div className="flex gap-3">
-                    <Button type="submit" className="font-bold rounded-xl h-11 px-8">Enregistrer</Button>
-                    <Button type="button" variant="outline" onClick={() => setShowMembreForm(false)} className="rounded-xl h-11">Annuler</Button>
-                  </div>
-                </form>
-              )}
 
-              {isLoadingTab ? (
-                <p className="text-sm text-slate-500">Chargement...</p>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                  {membres.map((membre) => (
-                    <div key={membre.id} className="bg-white rounded-2xl border border-slate-100 p-4 shadow-sm group">
-                      <div className="flex items-center justify-between gap-3">
-                        <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-full bg-slate-100 overflow-hidden flex items-center justify-center text-sm font-bold text-slate-500">
-                            {membre.photo_path ? (
-                              <img src={`/${membre.photo_path}`} alt={membre.nom} className="w-full h-full object-cover" />
+                  <form onSubmit={handleSaveMembre} className="bg-white rounded-[32px] border border-slate-100 shadow-sm p-8 space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Nom Complet</p>
+                        <Input
+                          value={membreForm.nom}
+                          onChange={(e) => setMembreForm(prev => ({ ...prev, nom: e.target.value }))}
+                          required
+                          className="h-12 rounded-xl border-slate-200"
+                          placeholder="Ex: Jean Dupont"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Fonction / Titre</p>
+                        <Input
+                          value={membreForm.fonction}
+                          onChange={(e) => setMembreForm(prev => ({ ...prev, fonction: e.target.value }))}
+                          className="h-12 rounded-xl border-slate-200"
+                          placeholder="Ex: Conseiller"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Initiales</p>
+                        <Input
+                          value={membreForm.initiales}
+                          onChange={(e) => setMembreForm(prev => ({ ...prev, initiales: e.target.value }))}
+                          className="h-12 rounded-xl border-slate-200"
+                          placeholder="Ex: JD"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Ordre d'affichage</p>
+                        <Input
+                          type="number"
+                          value={membreForm.ordre}
+                          onChange={(e) => setMembreForm(prev => ({ ...prev, ordre: parseInt(e.target.value) || 0 }))}
+                          className="h-12 rounded-xl border-slate-200"
+                        />
+                      </div>
+                      <div className="space-y-2 md:col-span-2">
+                        <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Photo du membre</p>
+                        <div className="flex items-center gap-6">
+                          <div className="w-24 h-24 rounded-2xl bg-slate-100 border-2 border-dashed border-slate-200 flex items-center justify-center overflow-hidden">
+                            {membreImage ? (
+                              <img src={URL.createObjectURL(membreImage)} className="w-full h-full object-cover" />
+                            ) : editingMembre?.photo_path ? (
+                              <img src={`/${editingMembre.photo_path}`} className="w-full h-full object-cover" />
                             ) : (
-                              (membre.initiales || membre.nom?.charAt(0))
+                              <Users className="w-8 h-8 text-slate-300" />
                             )}
                           </div>
-                          <div>
-                            <p className="text-sm font-bold text-slate-800">{membre.nom}</p>
-                            <p className="text-xs text-slate-500">{membre.fonction}</p>
+                          <div className="flex-1">
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => setMembreImage(e.target.files?.[0] || null)}
+                              className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 transition-all cursor-pointer"
+                            />
+                            <p className="text-[10px] text-slate-400 mt-2 font-medium uppercase tracking-wider">Format Carré recommandé (PNG/JPG)</p>
                           </div>
                         </div>
-                        <div className="flex items-center gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-600" onClick={() => openMembreForm(membre)}>
-                            <Edit className="w-4 h-4" />
-                          </Button>
-                          <Button variant="ghost" size="icon" className="h-8 w-8 text-red-600" onClick={() => handleDeleteMembre(membre.id)}>
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
+                      </div>
+                      <div className="space-y-2 md:col-span-2">
+                        <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Biographie / Description</p>
+                        <Textarea
+                          value={membreForm.bio}
+                          onChange={(e) => setMembreForm(prev => ({ ...prev, bio: e.target.value }))}
+                          className="min-h-[150px] rounded-2xl border-slate-200 p-4"
+                          placeholder="Décrivez le parcours du membre..."
+                        />
                       </div>
                     </div>
-                  ))}
-                  {membres.length === 0 && (
-                    <div className="text-sm text-slate-500">Aucun membre trouvé.</div>
-                  )}
+                    <div className="flex gap-4 pt-6 border-t border-slate-50">
+                      <Button type="submit" className="font-bold rounded-xl h-12 px-8 shadow-lg shadow-primary/20">
+                        {editingMembre ? "Mettre à jour" : "Enregistrer le membre"}
+                      </Button>
+                      <Button type="button" variant="outline" onClick={() => setShowMembreForm(false)} className="rounded-xl h-12 px-8 border-slate-200">
+                        Annuler
+                      </Button>
+                    </div>
+                  </form>
                 </div>
+              ) : (
+                <>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h2 className="text-lg font-bold text-slate-800">Membres</h2>
+                      <p className="text-xs text-muted-foreground">Gérez les membres du Conseil National de la Concurrence</p>
+                    </div>
+                    <Button onClick={() => setShowMembreForm(true)} className="rounded-xl h-11 px-6 gap-2 font-bold shadow-sm">
+                      <Plus className="w-4 h-4" />
+                      Ajouter un membre
+                    </Button>
+                  </div>
+
+                  {isLoadingTab ? (
+                    <div className="py-20 text-center">
+                      <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4" />
+                      <p className="text-sm text-slate-500 font-medium">Chargement des membres...</p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                      {membres.map((membre) => (
+                        <div key={membre.id} className="bg-white rounded-3xl border border-slate-100 p-5 shadow-sm hover:shadow-md transition-all group relative overflow-hidden">
+                          <div className="flex items-center gap-4">
+                            <div className="w-16 h-16 rounded-2xl bg-slate-100 overflow-hidden flex-shrink-0 border border-slate-50">
+                              {membre.photo_path ? (
+                                <img src={`/${membre.photo_path}`} alt={membre.nom} className="w-full h-full object-cover" />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center bg-primary/5 text-primary text-lg font-black">
+                                  {membre.initiales || membre.nom?.charAt(0)}
+                                </div>
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-bold text-slate-800 truncate">{membre.nom}</p>
+                              <p className="text-[11px] text-primary font-bold uppercase tracking-wider line-clamp-1">{membre.fonction}</p>
+                            </div>
+                          </div>
+                          <div className="mt-4 flex items-center justify-between pt-4 border-t border-slate-50">
+                            <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded ${membre.actif ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'}`}>
+                              {membre.actif ? 'Actif' : 'Inactif'}
+                            </span>
+                            <div className="flex items-center gap-1">
+                              <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-blue-600 hover:bg-blue-50" onClick={() => openMembreForm(membre)}>
+                                <Edit className="w-4 h-4" />
+                              </Button>
+                              <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-red-600 hover:bg-red-50" onClick={() => handleDeleteMembre(membre.id)}>
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                      {membres.length === 0 && (
+                        <div className="col-span-full py-20 text-center bg-white rounded-[32px] border border-slate-100 border-dashed">
+                          <Users className="w-12 h-12 text-slate-200 mx-auto mb-4" />
+                          <p className="text-slate-400 font-medium">Aucun membre enregistré.</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </>
               )}
             </div>
           )}
 
           {activeTab === "galerie" && (
             <div className="space-y-6 animate-in fade-in duration-300">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-lg font-bold text-slate-800">Galerie</h2>
-                  <p className="text-xs text-muted-foreground">Images publiées</p>
-                </div>
-                <Button onClick={() => openGalerieForm()} className="rounded-xl gap-2 font-bold">
-                  <Plus className="w-4 h-4" />
-                  Ajouter une image
-                </Button>
-              </div>
-
-              {showGalerieForm && (
-                <form onSubmit={handleSaveGalerie} className="bg-white rounded-[32px] border border-slate-100 shadow-sm p-6 space-y-4">
-                  <h3 className="text-lg font-bold text-slate-800 mb-4">
-                    {editingGalerie ? "Modifier l'image" : "Nouvelle Image"}
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Titre</p>
-                      <Input
-                        value={galerieForm.titre}
-                        onChange={(e) => setGalerieForm(prev => ({ ...prev, titre: e.target.value }))}
-                        required
-                        className="h-11 rounded-xl border-slate-200"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Catégorie</p>
-                      <Input
-                        value={galerieForm.categorie}
-                        onChange={(e) => setGalerieForm(prev => ({ ...prev, categorie: e.target.value }))}
-                        className="h-11 rounded-xl border-slate-200"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Image</p>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => setGalerieImage(e.target.files?.[0] || null)}
-                      />
-                    </div>
-                    <div className="space-y-2 md:col-span-2">
-                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Description</p>
-                      <Textarea
-                        value={galerieForm.description}
-                        onChange={(e) => setGalerieForm(prev => ({ ...prev, description: e.target.value }))}
-                        className="min-h-[100px] rounded-xl border-slate-200"
-                      />
-                    </div>
+              {showGalerieForm ? (
+                <div className="space-y-6">
+                  <div className="flex items-center gap-4">
+                    <Button
+                      variant="ghost"
+                      onClick={() => {
+                        setShowGalerieForm(false);
+                        setEditingGalerie(null);
+                      }}
+                      className="gap-2 text-slate-500 hover:text-primary rounded-xl"
+                    >
+                      <LogOut className="w-4 h-4 rotate-180" />
+                      Retour à la liste
+                    </Button>
+                    <h2 className="text-xl font-bold text-slate-800">
+                      {editingGalerie ? "Modifier l'image" : "Ajouter une nouvelle image"}
+                    </h2>
                   </div>
-                  <div className="flex gap-3">
-                    <Button type="submit" className="font-bold rounded-xl h-11 px-8">Enregistrer</Button>
-                    <Button type="button" variant="outline" onClick={() => setShowGalerieForm(false)} className="rounded-xl h-11">Annuler</Button>
-                  </div>
-                </form>
-              )}
 
-              {isLoadingTab ? (
-                <p className="text-sm text-slate-500">Chargement...</p>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                  {galerie.map((item) => (
-                    <div key={item.id} className="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm group">
-                      <div className="h-48 bg-slate-100 relative">
-                        {item.image_path ? (
-                          <img src={`/${item.image_path}`} alt={item.titre} className="w-full h-full object-cover" />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-slate-400 text-sm">
-                            Pas d'image
+                  <form onSubmit={handleSaveGalerie} className="bg-white rounded-[32px] border border-slate-100 shadow-sm p-8 space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Titre de l'image</p>
+                        <Input
+                          value={galerieForm.titre}
+                          onChange={(e) => setGalerieForm(prev => ({ ...prev, titre: e.target.value }))}
+                          required
+                          className="h-12 rounded-xl border-slate-200"
+                          placeholder="Ex: Inauguration des nouveaux locaux"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Catégorie / Tag</p>
+                        <Input
+                          value={galerieForm.categorie}
+                          onChange={(e) => setGalerieForm(prev => ({ ...prev, categorie: e.target.value }))}
+                          className="h-12 rounded-xl border-slate-200"
+                          placeholder="Ex: Événement, Réunion..."
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Date de l'événement</p>
+                        <Input
+                          type="date"
+                          value={galerieForm.date_evenement}
+                          onChange={(e) => setGalerieForm(prev => ({ ...prev, date_evenement: e.target.value }))}
+                          className="h-12 rounded-xl border-slate-200"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Ordre d'affichage</p>
+                        <Input
+                          type="number"
+                          value={galerieForm.ordre}
+                          onChange={(e) => setGalerieForm(prev => ({ ...prev, ordre: parseInt(e.target.value) || 0 }))}
+                          className="h-12 rounded-xl border-slate-200"
+                        />
+                      </div>
+                      <div className="space-y-2 md:col-span-2">
+                        <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Fichier Image</p>
+                        <div className="flex items-center gap-6">
+                          <div className="w-40 aspect-video rounded-2xl bg-slate-100 border-2 border-dashed border-slate-200 flex items-center justify-center overflow-hidden">
+                            {galerieImage ? (
+                              <img src={URL.createObjectURL(galerieImage)} className="w-full h-full object-cover" />
+                            ) : editingGalerie?.image_path ? (
+                              <img src={`/${editingGalerie.image_path}`} className="w-full h-full object-cover" />
+                            ) : (
+                              <ImageIcon className="w-8 h-8 text-slate-300" />
+                            )}
                           </div>
-                        )}
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                          <Button size="icon" className="bg-white text-primary hover:bg-white/90" onClick={() => openGalerieForm(item)}>
-                            <Edit className="w-4 h-4" />
-                          </Button>
-                          <Button size="icon" variant="destructive" onClick={() => handleDeleteGalerie(item.id)}>
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
+                          <div className="flex-1">
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => setGalerieImage(e.target.files?.[0] || null)}
+                              className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 transition-all cursor-pointer"
+                            />
+                            <p className="text-[10px] text-slate-400 mt-2">Haute résolution recommandée (PNG, JPG)</p>
+                          </div>
                         </div>
                       </div>
-                      <div className="p-4">
-                        <p className="text-sm font-bold text-slate-800 line-clamp-1">{item.titre}</p>
-                        <p className="text-xs text-slate-500">{item.categorie || "Événement"}</p>
+                      <div className="space-y-2 md:col-span-2">
+                        <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Description</p>
+                        <Textarea
+                          value={galerieForm.description}
+                          onChange={(e) => setGalerieForm(prev => ({ ...prev, description: e.target.value }))}
+                          className="min-h-[100px] rounded-2xl border-slate-200 p-4"
+                          placeholder="Courte description de la photo..."
+                        />
                       </div>
                     </div>
-                  ))}
-                  {galerie.length === 0 && (
-                    <div className="col-span-full py-12 text-center text-slate-400">Aucun élément dans la galerie.</div>
-                  )}
+                    <div className="flex gap-4 pt-6 border-t border-slate-50">
+                      <Button type="submit" className="font-bold rounded-xl h-12 px-8 shadow-lg shadow-primary/20">
+                        {editingGalerie ? "Mettre à jour" : "Ajouter à la galerie"}
+                      </Button>
+                      <Button type="button" variant="outline" onClick={() => setShowGalerieForm(false)} className="rounded-xl h-12 px-8 border-slate-200">
+                        Annuler
+                      </Button>
+                    </div>
+                  </form>
                 </div>
+              ) : (
+                <>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h2 className="text-lg font-bold text-slate-800">Galerie</h2>
+                      <p className="text-xs text-muted-foreground">Photos et illustrations du portail</p>
+                    </div>
+                    <Button onClick={() => setShowGalerieForm(true)} className="rounded-xl h-11 px-6 gap-2 font-bold shadow-sm">
+                      <Plus className="w-4 h-4" />
+                      Ajouter une image
+                    </Button>
+                  </div>
+
+                  {isLoadingTab ? (
+                    <div className="py-20 text-center">
+                      <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4" />
+                      <p className="text-sm text-slate-500 font-medium">Chargement de la galerie...</p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                      {galerie.map((item) => (
+                        <div key={item.id} className="bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm group hover:shadow-xl transition-all duration-300">
+                          <div className="aspect-[4/3] bg-slate-100 relative overflow-hidden">
+                            {item.image_path ? (
+                              <img src={`/${item.image_path}`} alt={item.titre} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-slate-300">
+                                <ImageIcon className="w-12 h-12" />
+                              </div>
+                            )}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
+                              <div className="flex gap-2 w-full">
+                                <Button size="sm" className="flex-1 bg-white text-slate-900 hover:bg-white/90 rounded-xl font-bold" onClick={() => openGalerieForm(item)}>
+                                  <Edit className="w-3.5 h-3.5 mr-2" /> Modifier
+                                </Button>
+                                <Button size="icon" variant="destructive" className="h-9 w-9 rounded-xl" onClick={() => handleDeleteGalerie(item.id)}>
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </div>
+                            </div>
+                            <div className="absolute top-4 left-4">
+                              <span className="px-3 py-1 rounded-full bg-white/90 backdrop-blur-md text-[10px] font-black uppercase text-primary shadow-sm">
+                                {item.categorie || "Événement"}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="p-5">
+                            <p className="text-sm font-bold text-slate-800 line-clamp-1 mb-1">{item.titre}</p>
+                            <p className="text-xs text-slate-400 font-medium">
+                              {item.date_evenement ? new Date(item.date_evenement).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Date non définie'}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                      {galerie.length === 0 && (
+                        <div className="col-span-full py-20 text-center bg-white rounded-[32px] border border-slate-100 border-dashed">
+                          <ImageIcon className="w-12 h-12 text-slate-200 mx-auto mb-4" />
+                          <p className="text-slate-400 font-medium">La galerie est vide.</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </>
               )}
             </div>
           )}
 
           {activeTab === "documents" && (
             <div className="space-y-6 animate-in fade-in duration-300">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-lg font-bold text-slate-800">Documents</h2>
-                  <p className="text-xs text-muted-foreground">Documents publiés</p>
-                </div>
-                <Button onClick={() => openDocumentForm()} className="rounded-xl gap-2 font-bold">
-                  <Plus className="w-4 h-4" />
-                  Ajouter un document
-                </Button>
-              </div>
-
-              {showDocumentForm && (
-                <form onSubmit={handleSaveDocument} className="bg-white rounded-[32px] border border-slate-100 shadow-sm p-6 space-y-4">
-                  <h3 className="text-lg font-bold text-slate-800 mb-4">
-                    {editingDocument ? "Modifier le document" : "Nouveau Document"}
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2 md:col-span-2">
-                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Titre du document</p>
-                      <Input
-                        value={documentForm.titre}
-                        onChange={(e) => setDocumentForm(prev => ({ ...prev, titre: e.target.value }))}
-                        required
-                        className="h-11 rounded-xl border-slate-200"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Catégorie</p>
-                      <select
-                        value={documentForm.categorie}
-                        onChange={(e) => setDocumentForm(prev => ({ ...prev, categorie: e.target.value }))}
-                        className="h-11 w-full rounded-xl border border-slate-200 px-3 bg-white text-sm"
-                      >
-                        <option value="Loi">Loi</option>
-                        <option value="Décret">Décret</option>
-                        <option value="Arrêté">Arrêté</option>
-                        <option value="Note">Note circulaire</option>
-                        <option value="Rapport">Rapport</option>
-                      </select>
-                    </div>
-                    <div className="space-y-2">
-                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Fichier (PDF)</p>
-                      <input
-                        type="file"
-                        accept="application/pdf"
-                        onChange={(e) => setDocumentFile(e.target.files?.[0] || null)}
-                      />
-                    </div>
+              {showDocumentForm ? (
+                <div className="space-y-6">
+                  <div className="flex items-center gap-4">
+                    <Button
+                      variant="ghost"
+                      onClick={() => {
+                        setShowDocumentForm(false);
+                        setEditingDocument(null);
+                      }}
+                      className="gap-2 text-slate-500 hover:text-primary rounded-xl"
+                    >
+                      <LogOut className="w-4 h-4 rotate-180" />
+                      Retour à la liste
+                    </Button>
+                    <h2 className="text-xl font-bold text-slate-800">
+                      {editingDocument ? "Modifier le document" : "Publier un nouveau document"}
+                    </h2>
                   </div>
-                  <div className="flex gap-3">
-                    <Button type="submit" className="font-bold rounded-xl h-11 px-8">Enregistrer</Button>
-                    <Button type="button" variant="outline" onClick={() => setShowDocumentForm(false)} className="rounded-xl h-11">Annuler</Button>
-                  </div>
-                </form>
-              )}
 
-              {isLoadingTab ? (
-                <p className="text-sm text-slate-500">Chargement...</p>
-              ) : (
-                <div className="bg-white rounded-[32px] border border-slate-100 shadow-sm overflow-hidden">
-                  <table className="w-full text-left border-collapse">
-                    <thead>
-                      <tr className="bg-slate-50 border-b border-slate-100">
-                        <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest">Titre</th>
-                        <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest">Catégorie</th>
-                        <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest">Type</th>
-                        <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-50">
-                      {documents.map((doc) => (
-                        <tr key={doc.id} className="hover:bg-slate-50/50 transition-colors group">
-                          <td className="px-6 py-4">
-                            <p className="text-sm font-bold text-slate-800">{doc.titre}</p>
-                            {doc.fichier_path && (
-                              <p className="text-[10px] text-slate-400 font-mono">/{doc.fichier_path.split('/').pop()}</p>
-                            )}
-                          </td>
-                          <td className="px-6 py-4 text-sm text-slate-500">{doc.categorie || "—"}</td>
-                          <td className="px-6 py-4 text-sm text-slate-500 font-mono">{doc.type_fichier || "PDF"}</td>
-                          <td className="px-6 py-4">
-                            <div className="flex items-center gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
-                              <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-600" onClick={() => openDocumentForm(doc)}>
-                                <Edit className="w-4 h-4" />
-                              </Button>
-                              <Button variant="ghost" size="icon" className="h-8 w-8 text-red-600" onClick={() => handleDeleteDocument(doc.id)}>
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
+                  <form onSubmit={handleSaveDocument} className="bg-white rounded-[32px] border border-slate-100 shadow-sm p-8 space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2 md:col-span-2">
+                        <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Titre du document</p>
+                        <Input
+                          value={documentForm.titre}
+                          onChange={(e) => setDocumentForm(prev => ({ ...prev, titre: e.target.value }))}
+                          required
+                          className="h-12 rounded-xl border-slate-200"
+                          placeholder="Ex: Loi n°001 portant sur la concurrence"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Catégorie</p>
+                        <select
+                          value={documentForm.categorie}
+                          onChange={(e) => setDocumentForm(prev => ({ ...prev, categorie: e.target.value }))}
+                          className="h-12 w-full rounded-xl border border-slate-200 px-3 bg-white text-sm focus:border-primary/30 outline-none"
+                        >
+                          <option value="Loi">Loi</option>
+                          <option value="Décret">Décret</option>
+                          <option value="Arrêté">Arrêté</option>
+                          <option value="Note">Note circulaire</option>
+                          <option value="Rapport">Rapport d'activité</option>
+                          <option value="Autre">Autre document</option>
+                        </select>
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Date de publication</p>
+                        <Input
+                          type="date"
+                          value={documentForm.date_publication}
+                          onChange={(e) => setDocumentForm(prev => ({ ...prev, date_publication: e.target.value }))}
+                          className="h-12 rounded-xl border-slate-200"
+                        />
+                      </div>
+                      <div className="space-y-2 md:col-span-2">
+                        <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Fichier source (PDF)</p>
+                        <div className="flex items-center justify-center w-full">
+                          <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-200 border-dashed rounded-[20px] cursor-pointer bg-slate-50/50 hover:bg-slate-50 transition-colors">
+                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                              <FileBadge className="w-8 h-8 mb-2 text-slate-400" />
+                              <p className="text-xs text-slate-500">
+                                <span className="font-bold">Cliquez pour sélectionner le PDF</span>
+                              </p>
+                              <p className="text-[10px] text-slate-400 mt-1">Format PDF uniquement (Max. 10MB)</p>
                             </div>
-                          </td>
-                        </tr>
-                      ))}
-                      {documents.length === 0 && (
-                        <tr>
-                          <td colSpan={4} className="px-6 py-12 text-center text-slate-400 font-medium">
-                            Aucun document trouvé.
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
+                            <input
+                              type="file"
+                              className="hidden"
+                              accept="application/pdf"
+                              onChange={(e) => setDocumentFile(e.target.files?.[0] || null)}
+                            />
+                          </label>
+                        </div>
+                        {(documentFile || editingDocument?.fichier_path) && (
+                          <p className="mt-2 text-xs font-medium text-primary flex items-center gap-2">
+                            <CheckCircle2 className="w-4 h-4" />
+                            Fichier : {documentFile ? documentFile.name : editingDocument.fichier_path.split('/').pop()}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex gap-4 pt-6 border-t border-slate-50">
+                      <Button type="submit" className="font-bold rounded-xl h-12 px-8 shadow-lg shadow-primary/20">
+                        {editingDocument ? "Mettre à jour" : "Publier le document"}
+                      </Button>
+                      <Button type="button" variant="outline" onClick={() => setShowDocumentForm(false)} className="rounded-xl h-12 px-8 border-slate-200">
+                        Annuler
+                      </Button>
+                    </div>
+                  </form>
                 </div>
+              ) : (
+                <>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h2 className="text-lg font-bold text-slate-800">Documents</h2>
+                      <p className="text-xs text-muted-foreground">Textes de loi et rapports officiels</p>
+                    </div>
+                    <Button onClick={() => setShowDocumentForm(true)} className="rounded-xl h-11 px-6 gap-2 font-bold shadow-sm">
+                      <Plus className="w-4 h-4" />
+                      Ajouter un document
+                    </Button>
+                  </div>
+
+                  {isLoadingTab ? (
+                    <div className="py-20 text-center">
+                      <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4" />
+                      <p className="text-sm text-slate-500 font-medium">Chargement des documents...</p>
+                    </div>
+                  ) : (
+                    <div className="bg-white rounded-[32px] border border-slate-100 shadow-sm overflow-hidden">
+                      <table className="w-full text-left border-collapse">
+                        <thead>
+                          <tr className="bg-slate-50/50 border-b border-slate-100">
+                            <th className="px-6 py-4 text-[10px] font-black uppercase text-slate-400 tracking-widest">Document</th>
+                            <th className="px-6 py-4 text-[10px] font-black uppercase text-slate-400 tracking-widest">Catégorie</th>
+                            <th className="px-6 py-4 text-[10px] font-black uppercase text-slate-400 tracking-widest">Date</th>
+                            <th className="px-6 py-4 text-[10px] font-black uppercase text-slate-400 tracking-widest text-right">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-50">
+                          {documents.map((doc) => (
+                            <tr key={doc.id} className="hover:bg-slate-50/30 transition-colors group">
+                              <td className="px-6 py-4">
+                                <div className="flex items-center gap-3">
+                                  <div className="w-10 h-10 rounded-lg bg-red-50 text-red-600 flex items-center justify-center flex-shrink-0">
+                                    <FileBadge className="w-5 h-5" />
+                                  </div>
+                                  <div>
+                                    <p className="text-sm font-bold text-slate-700 line-clamp-1">{doc.titre}</p>
+                                    <p className="text-[10px] text-slate-400 font-mono">PDF • {doc.taille || '—'}</p>
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="px-6 py-4">
+                                <span className="px-2 py-1 rounded-md text-[10px] font-bold uppercase bg-slate-100 text-slate-600">
+                                  {doc.categorie || "Document"}
+                                </span>
+                              </td>
+                              <td className="px-6 py-4">
+                                <p className="text-[11px] text-slate-500 font-medium">
+                                  {doc.date_publication ? new Date(doc.date_publication).toLocaleDateString('fr-FR') : '—'}
+                                </p>
+                              </td>
+                              <td className="px-6 py-4 text-right">
+                                <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                  <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-blue-600 hover:bg-blue-50" onClick={() => openDocumentForm(doc)}>
+                                    <Edit className="w-4 h-4" />
+                                  </Button>
+                                  <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-red-600 hover:bg-red-50" onClick={() => handleDeleteDocument(doc.id)}>
+                                    <Trash2 className="w-4 h-4" />
+                                  </Button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                          {documents.length === 0 && (
+                            <tr>
+                              <td colSpan={4} className="px-6 py-12 text-center text-slate-400 font-medium">
+                                Aucun document trouvé.
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           )}
@@ -1994,139 +2241,160 @@ export default function AdminDashboardPage() {
 
           {activeTab === "liens" && (
             <div className="space-y-6 animate-in fade-in duration-300">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-lg font-bold text-slate-800">Liens institutionnels</h2>
-                  <p className="text-xs text-muted-foreground">Ministères, organismes et partenaires</p>
-                </div>
-                <Button onClick={() => openLienForm()} className="rounded-xl gap-2 font-bold">
-                  <Plus className="w-4 h-4" />
-                  Ajouter un lien
-                </Button>
-              </div>
-
-              {showLienForm && (
-                <form onSubmit={handleSaveLien} className="bg-white rounded-[32px] border border-slate-100 shadow-sm p-6 space-y-4">
-                  <h3 className="text-lg font-bold text-slate-800 mb-4">
-                    {editingLien ? "Modifier le lien" : "Nouveau Lien"}
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Nom / Intitulé *</p>
-                      <Input
-                        value={lienForm.nom}
-                        onChange={(e) => setLienForm(prev => ({ ...prev, nom: e.target.value }))}
-                        required
-                        className="h-11 rounded-xl border-slate-200"
-                        placeholder="ex: Ministère du Commerce"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">URL *</p>
-                      <Input
-                        value={lienForm.url}
-                        onChange={(e) => setLienForm(prev => ({ ...prev, url: e.target.value }))}
-                        required
-                        className="h-11 rounded-xl border-slate-200"
-                        placeholder="https://..."
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Catégorie</p>
-                      <select
-                        value={lienForm.categorie}
-                        onChange={(e) => setLienForm(prev => ({ ...prev, categorie: e.target.value }))}
-                        className="h-11 w-full rounded-xl border border-slate-200 px-3 bg-white text-sm"
-                      >
-                        <option value="Ministère">Ministère</option>
-                        <option value="Institution">Institution</option>
-                        <option value="Organisation régionale">Organisation régionale</option>
-                        <option value="Partenaire">Partenaire</option>
-                        <option value="Autre">Autre</option>
-                      </select>
-                    </div>
-                    <div className="space-y-2">
-                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Ordre d'affichage</p>
-                      <Input
-                        type="number"
-                        value={lienForm.ordre}
-                        onChange={(e) => setLienForm(prev => ({ ...prev, ordre: parseInt(e.target.value) || 0 }))}
-                        className="h-11 rounded-xl border-slate-200"
-                      />
-                    </div>
-                    <div className="space-y-2 md:col-span-2">
-                      <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Description (optionnelle)</p>
-                      <Input
-                        value={lienForm.description}
-                        onChange={(e) => setLienForm(prev => ({ ...prev, description: e.target.value }))}
-                        className="h-11 rounded-xl border-slate-200"
-                        placeholder="Courte description..."
-                      />
-                    </div>
-                  </div>
-                  <div className="flex gap-3">
-                    <Button type="submit" className="font-bold rounded-xl h-11 px-8" disabled={isLoadingTab}>
-                      {isLoadingTab ? "Enregistrement..." : "Enregistrer"}
+              {showLienForm ? (
+                <div className="space-y-6">
+                  <div className="flex items-center gap-4">
+                    <Button
+                      variant="ghost"
+                      onClick={() => {
+                        setShowLienForm(false);
+                        setEditingLien(null);
+                      }}
+                      className="gap-2 text-slate-500 hover:text-primary rounded-xl"
+                    >
+                      <LogOut className="w-4 h-4 rotate-180" />
+                      Retour à la liste
                     </Button>
-                    <Button type="button" variant="outline" onClick={() => setShowLienForm(false)} className="rounded-xl h-11">Annuler</Button>
+                    <h2 className="text-xl font-bold text-slate-800">
+                      {editingLien ? "Modifier le lien" : "Ajouter un lien institutionnel"}
+                    </h2>
                   </div>
-                </form>
-              )}
 
-              {isLoadingTab ? (
-                <p className="text-sm text-slate-500">Chargement...</p>
-              ) : (
-                <div className="bg-white rounded-[32px] border border-slate-100 shadow-sm overflow-hidden">
-                  <table className="w-full text-left border-collapse">
-                    <thead>
-                      <tr className="bg-slate-50 border-b border-slate-100">
-                        <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest">Nom</th>
-                        <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest">Catégorie</th>
-                        <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest">URL</th>
-                        <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest">Ordre</th>
-                        <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-50">
-                      {liens.map((lien) => (
-                        <tr key={lien.id} className="hover:bg-slate-50/50 transition-colors group">
-                          <td className="px-6 py-4">
-                            <p className="text-sm font-bold text-slate-800">{lien.nom}</p>
-                            {lien.description && <p className="text-xs text-slate-400 mt-0.5">{lien.description}</p>}
-                          </td>
-                          <td className="px-6 py-4">
-                            <span className="text-[10px] font-black uppercase px-2 py-1 rounded-full bg-blue-100 text-blue-700">
-                              {lien.categorie}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4">
-                            <a href={lien.url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline font-mono truncate max-w-[200px] block">
-                              {lien.url}
-                            </a>
-                          </td>
-                          <td className="px-6 py-4 text-sm text-slate-500 font-medium">{lien.ordre}</td>
-                          <td className="px-6 py-4">
-                            <div className="flex items-center gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
-                              <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-600" onClick={() => openLienForm(lien)}>
-                                <Edit className="w-4 h-4" />
-                              </Button>
-                              <Button variant="ghost" size="icon" className="h-8 w-8 text-red-600" onClick={() => handleDeleteLien(lien.id)}>
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                      {liens.length === 0 && (
-                        <tr>
-                          <td colSpan={5} className="px-6 py-12 text-center text-slate-400 font-medium">
-                            Aucun lien institutionnel trouvé.
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
+                  <form onSubmit={handleSaveLien} className="bg-white rounded-[32px] border border-slate-100 shadow-sm p-8 space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Nom / Intitulé *</p>
+                        <Input
+                          value={lienForm.nom}
+                          onChange={(e) => setLienForm(prev => ({ ...prev, nom: e.target.value }))}
+                          required
+                          className="h-12 rounded-xl border-slate-200"
+                          placeholder="ex: Ministère du Commerce"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">URL du site *</p>
+                        <Input
+                          value={lienForm.url}
+                          onChange={(e) => setLienForm(prev => ({ ...prev, url: e.target.value }))}
+                          required
+                          className="h-12 rounded-xl border-slate-200 font-mono text-sm"
+                          placeholder="https://www.exemple.gov.td"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Catégorie</p>
+                        <select
+                          value={lienForm.categorie}
+                          onChange={(e) => setLienForm(prev => ({ ...prev, categorie: e.target.value }))}
+                          className="h-12 w-full rounded-xl border border-slate-200 px-3 bg-white text-sm outline-none focus:border-primary/30"
+                        >
+                          <option value="Ministère">Ministère</option>
+                          <option value="Institution">Institution publique</option>
+                          <option value="Organisation régionale">Organisation régionale</option>
+                          <option value="Partenaire">Partenaire technique</option>
+                          <option value="Autre">Autre lien</option>
+                        </select>
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Ordre d'affichage</p>
+                        <Input
+                          type="number"
+                          value={lienForm.ordre}
+                          onChange={(e) => setLienForm(prev => ({ ...prev, ordre: parseInt(e.target.value) || 0 }))}
+                          className="h-12 rounded-xl border-slate-200"
+                        />
+                      </div>
+                      <div className="space-y-2 md:col-span-2">
+                        <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Description (optionnelle)</p>
+                        <Input
+                          value={lienForm.description}
+                          onChange={(e) => setLienForm(prev => ({ ...prev, description: e.target.value }))}
+                          className="h-12 rounded-xl border-slate-200"
+                          placeholder="Bref descriptif de l'organisme..."
+                        />
+                      </div>
+                    </div>
+                    <div className="flex gap-4 pt-6 border-t border-slate-50">
+                      <Button type="submit" className="font-bold rounded-xl h-12 px-8 shadow-lg shadow-primary/20" disabled={isLoadingTab}>
+                        {isLoadingTab ? "Enregistrement..." : (editingLien ? "Mettre à jour" : "Ajouter le lien")}
+                      </Button>
+                      <Button type="button" variant="outline" onClick={() => setShowLienForm(false)} className="rounded-xl h-12 px-8 border-slate-200">
+                        Annuler
+                      </Button>
+                    </div>
+                  </form>
                 </div>
+              ) : (
+                <>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h2 className="text-lg font-bold text-slate-800">Liens institutionnels</h2>
+                      <p className="text-xs text-muted-foreground">Ministères et partenaires externes</p>
+                    </div>
+                    <Button onClick={() => setShowLienForm(true)} className="rounded-xl h-11 px-6 gap-2 font-bold shadow-sm">
+                      <Plus className="w-4 h-4" />
+                      Ajouter un lien
+                    </Button>
+                  </div>
+
+                  {isLoadingTab ? (
+                    <div className="py-20 text-center">
+                      <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4" />
+                      <p className="text-sm text-slate-500 font-medium">Chargement des liens...</p>
+                    </div>
+                  ) : (
+                    <div className="bg-white rounded-[32px] border border-slate-100 shadow-sm overflow-hidden">
+                      <table className="w-full text-left border-collapse">
+                        <thead>
+                          <tr className="bg-slate-50/50 border-b border-slate-100">
+                            <th className="px-6 py-4 text-[10px] font-black uppercase text-slate-400 tracking-widest">Nom</th>
+                            <th className="px-6 py-4 text-[10px] font-black uppercase text-slate-400 tracking-widest">Catégorie</th>
+                            <th className="px-6 py-4 text-[10px] font-black uppercase text-slate-400 tracking-widest">Lien</th>
+                            <th className="px-6 py-4 text-[10px] font-black uppercase text-slate-400 tracking-widest text-right">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-50">
+                          {liens.map((lien) => (
+                            <tr key={lien.id} className="hover:bg-slate-50/30 transition-colors group">
+                              <td className="px-6 py-4">
+                                <p className="text-sm font-bold text-slate-700">{lien.nom}</p>
+                                {lien.description && <p className="text-[10px] text-slate-400 line-clamp-1">{lien.description}</p>}
+                              </td>
+                              <td className="px-6 py-4">
+                                <span className="px-2 py-1 rounded-md text-[10px] font-bold uppercase bg-blue-50 text-blue-600">
+                                  {lien.categorie}
+                                </span>
+                              </td>
+                              <td className="px-6 py-4">
+                                <a href={lien.url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline font-mono truncate max-w-[200px] flex items-center gap-1">
+                                  {lien.url} <ExternalLink className="w-3 h-3" />
+                                </a>
+                              </td>
+                              <td className="px-6 py-4 text-right">
+                                <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                  <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-blue-600 hover:bg-blue-50" onClick={() => openLienForm(lien)}>
+                                    <Edit className="w-4 h-4" />
+                                  </Button>
+                                  <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-red-600 hover:bg-red-50" onClick={() => handleDeleteLien(lien.id)}>
+                                    <Trash2 className="w-4 h-4" />
+                                  </Button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                          {liens.length === 0 && (
+                            <tr>
+                              <td colSpan={4} className="px-6 py-12 text-center text-slate-400 font-medium">
+                                Aucun lien institutionnel enregistré.
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           )}

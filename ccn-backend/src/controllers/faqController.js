@@ -11,6 +11,15 @@ class FAQController {
     }
   }
 
+  static async getAllAdmin(req, res) {
+    try {
+      const faqs = await FAQService.getAllFaqsAdmin();
+      res.json(faqs);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  }
+
   static async getById(req, res) {
     try {
       const faq = await FAQService.getFaqById(req.params.id);

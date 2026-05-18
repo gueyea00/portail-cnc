@@ -5,6 +5,10 @@ class MembreService {
     return await Membre.findAllActive();
   }
 
+  static async getAllMembresAdmin() {
+    return await Membre.findAllAdmin();
+  }
+
   static async getMembreById(id) {
     return await Membre.findById(id);
   }

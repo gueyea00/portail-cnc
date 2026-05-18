@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import Breadcrumb from "@/components/layout/Breadcrumb";
 import { Shield, GitMerge, Scale, FileText, BarChart3, Users, Globe, Heart, Search, Target, CheckCircle, Zap } from "lucide-react";
-
 const iconMap: Record<string, React.ReactNode> = {
   Shield: <Shield className="w-8 h-8" />,
   GitMerge: <GitMerge className="w-8 h-8" />,
@@ -15,25 +14,20 @@ const iconMap: Record<string, React.ReactNode> = {
   CheckCircle: <CheckCircle className="w-8 h-8" />,
   Zap: <Zap className="w-8 h-8" />,
 };
-
 export default function MissionsPage() {
   const { data: missionsApi = [] } = useQuery({
     queryKey: ["missions"],
     queryFn: () => fetch("/api/missions").then(res => res.json())
   });
-
   const { data: etapesApi = [] } = useQuery({
     queryKey: ["etapes-intervention"],
     queryFn: () => fetch("/api/missions/etapes").then(res => res.json())
   });
-
   const sortedEtapes = Array.isArray(etapesApi) ? [...etapesApi].sort((a: any, b: any) => (a.ordre || 0) - (b.ordre || 0)) : [];
-
   const { data: pageConfig } = useQuery({
     queryKey: ["parametres"],
     queryFn: () => fetch("/api/parametres").then(res => res.json())
   });
-
   return (
     <div>
       <section className="page-hero">
@@ -46,11 +40,9 @@ export default function MissionsPage() {
         </div>
       </section>
       <Breadcrumb />
-
       <div className="bg-muted/50 py-16">
         <div className="container-page">
           <p className="section-subtitle mb-12">{pageConfig?.missions_section_subtitle || "Le CNC assure la régulation et le bon fonctionnement des marchés au Tchad."}</p>
-
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {(missionsApi.length > 0 ? missionsApi : []).map((m: any, i: number) => (
               <div key={m.titre} className="bg-surface p-6 rounded-[2rem] shadow-soft flex flex-col items-center text-center border-2 border-transparent hover:border-primary/20 hover:shadow-xl transition-all duration-300 group">
@@ -69,16 +61,13 @@ export default function MissionsPage() {
           </div>
         </div>
       </div>
-
       <section className="bg-surface py-20 border-t border-border">
         <div className="container-page">
           <h2 className="section-title text-center">{pageConfig?.missions_process_title || "Types d'interventions"}</h2>
           <p className="section-subtitle text-center mb-16">{pageConfig?.missions_process_subtitle || "Le parcours d'une affaire devant le Conseil National de la Concurrence"}</p>
-
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4 relative">
             {/* Ligne de connexion sur desktop - Placée derrière (z-0) */}
             <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-border hidden md:block -translate-y-8 z-0" />
-
             {sortedEtapes.length === 0 ? (
               <div className="col-span-5 text-center text-muted-foreground italic">Aucun processus défini.</div>
             ) : sortedEtapes.map((e: any, idx: number) => (

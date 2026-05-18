@@ -18,6 +18,7 @@ const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } });
 router.get('/', MembreController.getActive);
 
 // Admin routes
+router.get('/admin/all', authMiddleware, MembreController.getAllAdmin);
 router.post('/admin', authMiddleware, upload.single('photo'), MembreController.create);
 router.put('/admin/:id', authMiddleware, upload.single('photo'), MembreController.update);
 router.delete('/admin/:id', authMiddleware, MembreController.delete);

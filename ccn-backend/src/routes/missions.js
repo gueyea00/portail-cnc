@@ -12,9 +12,10 @@ router.get('/:id', MissionController.getById);
 
 // --- Routes PRIVÉES (Admin) ---
 // Missions
-router.post('/', authMiddleware, MissionController.create);
-router.put('/:id', authMiddleware, MissionController.update);
-router.delete('/:id', authMiddleware, MissionController.delete);
+router.get('/admin/all', authMiddleware, MissionController.getAllAdmin);
+router.post('/admin', authMiddleware, MissionController.create);
+router.put('/admin/:id', authMiddleware, MissionController.update);
+router.delete('/admin/:id', authMiddleware, MissionController.delete);
 
 // Évènements Historiques
 router.get('/admin/historique', authMiddleware, MissionController.getAllHistorique);

@@ -10,9 +10,19 @@ class LienController {
     }
   }
 
+  static async getAllAdmin(req, res) {
+    try {
+      const liens = await LienService.getAll();
+      res.json(liens);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  }
+
   static async create(req, res) {
     try {
       const { nom, url, description, categorie, ordre } = req.body;
+      const logo_path = req.file ? `uploads/site/${req.file.filename}` : null;
       if (!nom || !url) return res.status(400).json({ error: 'nom et url requis.' });
       const lien = await LienService.create({
         nom,
@@ -20,6 +30,7 @@ class LienController {
         description: description || null,
         categorie: categorie || 'Autre',
         ordre: ordre || 0,
+        logo_path,
       });
       res.status(201).json(lien);
     } catch (err) {
@@ -30,6 +41,7 @@ class LienController {
   static async update(req, res) {
     try {
       const data = { ...req.body };
+      if (req.file) data.logo_path = `uploads/site/${req.file.filename}`;
       if (data.ordre) data.ordre = parseInt(data.ordre);
       const lien = await LienService.update(req.params.id, data);
       res.json(lien);

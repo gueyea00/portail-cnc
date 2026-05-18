@@ -8,6 +8,7 @@ const router = Router();
 router.get('/', ServiceController.getActive);
 
 // Admin routes
+router.get('/admin/all', authMiddleware, ServiceController.getAllAdmin);
 router.post('/admin', authMiddleware, ServiceController.create);
 router.put('/admin/:id', authMiddleware, ServiceController.update);
 router.delete('/admin/:id', authMiddleware, ServiceController.delete);

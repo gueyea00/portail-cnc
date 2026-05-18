@@ -9,6 +9,10 @@ class Membre extends BaseModel {
     return await new Membre().findAll({ where: 'actif = true', orderBy: 'ordre ASC' });
   }
 
+  static async findAllAdmin() {
+    return await new Membre().findAll({ orderBy: 'ordre ASC' });
+  }
+
   static async findById(id) {
     return await new Membre().findById(id);
   }

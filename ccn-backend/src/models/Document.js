@@ -18,6 +18,10 @@ class Document extends BaseModel {
     return result.rows;
   }
 
+  static async findAllAdmin() {
+    return await new Document().findAll({ orderBy: 'date_publication DESC' });
+  }
+
   static async findById(id) {
     return await new Document().findById(id);
   }

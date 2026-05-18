@@ -9,6 +9,10 @@ class Service extends BaseModel {
     return await new Service().findAll({ where: 'actif = true', orderBy: 'ordre ASC' });
   }
 
+  static async findAllAdmin() {
+    return await new Service().findAll({ orderBy: 'ordre ASC' });
+  }
+
   static async findById(id) {
     return await new Service().findById(id);
   }

@@ -5,6 +5,10 @@ class FAQService {
     return await FAQ.findAll(filtre);
   }
 
+  static async getAllFaqsAdmin() {
+    return await FAQ.findAllAdmin();
+  }
+
   static async getFaqById(id) {
     return await FAQ.findById(id);
   }

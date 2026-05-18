@@ -5,6 +5,10 @@ class MissionService {
     return await Mission.findAll();
   }
 
+  static async getAllMissionsAdmin() {
+    return await Mission.findAllAdmin();
+  }
+
   static async getMissionById(id) {
     return await Mission.findById(id);
   }

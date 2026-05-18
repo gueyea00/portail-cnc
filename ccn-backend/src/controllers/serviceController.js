@@ -10,6 +10,15 @@ class ServiceController {
     }
   }
 
+  static async getAllAdmin(req, res) {
+    try {
+      const services = await AppService.getAllServicesAdmin();
+      res.json(services);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  }
+
   static async getById(req, res) {
     try {
       const service = await AppService.getServiceById(req.params.id);

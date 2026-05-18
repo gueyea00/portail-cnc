@@ -5,6 +5,10 @@ class AppService {
     return await Service.findAllActive();
   }
 
+  static async getAllServicesAdmin() {
+    return await Service.findAllAdmin();
+  }
+
   static async getServiceById(id) {
     return await Service.findById(id);
   }

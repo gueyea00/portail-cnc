@@ -9,6 +9,10 @@ class Mission extends BaseModel {
     return await new Mission().findAll({ orderBy: 'ordre ASC' });
   }
 
+  static async findAllAdmin() {
+    return await new Mission().findAll({ orderBy: 'ordre ASC' });
+  }
+
   static async findById(id) {
     return await new Mission().findById(id);
   }

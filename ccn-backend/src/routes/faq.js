@@ -4,11 +4,13 @@ import { authMiddleware } from '../middleware/auth.js';
 
 const router = Router();
 
+// Public routes
 router.get('/', FAQController.getAll);
-router.get('/:id', FAQController.getById);
 
-router.post('/', authMiddleware, FAQController.create);
-router.put('/:id', authMiddleware, FAQController.update);
-router.delete('/:id', authMiddleware, FAQController.delete);
+// Admin routes
+router.get('/admin/all', authMiddleware, FAQController.getAllAdmin);
+router.post('/admin', authMiddleware, FAQController.create);
+router.put('/admin/:id', authMiddleware, FAQController.update);
+router.delete('/admin/:id', authMiddleware, FAQController.delete);
 
 export default router;

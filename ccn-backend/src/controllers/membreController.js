@@ -10,6 +10,15 @@ class MembreController {
     }
   }
 
+  static async getAllAdmin(req, res) {
+    try {
+      const membres = await MembreService.getAllMembresAdmin();
+      res.json(membres);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  }
+
   static async getById(req, res) {
     try {
       const membre = await MembreService.getMembreById(req.params.id);
