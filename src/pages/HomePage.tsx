@@ -600,7 +600,7 @@ export default function HomePage() {
                       </span>
                     )}
                   </div>
-                  <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.15em] text-center truncate max-w-[130px] group-hover/logo:text-primary transition-colors">
+                  <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.15em] text-center max-w-[160px] group-hover/logo:text-primary transition-colors whitespace-normal leading-normal">
                     {l.nom}
                   </span>
                 </a>
@@ -635,7 +635,7 @@ export default function HomePage() {
                       </span>
                     )}
                   </div>
-                  <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.15em] text-center truncate max-w-[130px] group-hover/logo:text-primary transition-colors">
+                  <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.15em] text-center max-w-[160px] group-hover/logo:text-primary transition-colors whitespace-normal leading-normal">
                     {l.nom}
                   </span>
                 </a>
