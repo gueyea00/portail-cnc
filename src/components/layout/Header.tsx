@@ -97,18 +97,18 @@ export default function Header() {
             {/* Logo section — Armoiries | Titre | Logo CNC */}
             <Link to="/" className="flex items-center gap-3 shrink-0">
               {/* Armoiries du Tchad */}
-              <img
+              {/* <img
                 src={getImgUrl(parametres?.armoiries_path, "/armoiries-tchad.png")}
                 alt="Armoiries de la République du Tchad"
                 className="w-10 h-12 md:w-12 md:h-14 object-contain"
-              />
+              /> */}
               {/* Logo personnalisé si présent */}
               {parametres?.logo_path && (
-                 <img
-                 src={getImgUrl(parametres.logo_path, "")}
-                 alt="Logo CNC"
-                 className="w-10 h-10 md:w-12 md:h-12 object-contain"
-               />
+                <img
+                  src={getImgUrl(parametres.logo_path, "")}
+                  alt="Logo CNC"
+                  className="w-10 h-10 md:w-12 md:h-12 object-contain"
+                />
               )}
               {/* Texte institutionnel */}
               <div className="hidden sm:block">
