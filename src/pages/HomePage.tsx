@@ -1,3 +1,4 @@
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Shield, GitMerge, Scale, FileText, BarChart3, Users, ArrowRight, Quote, Camera, ExternalLink, PenSquare, Gavel, FileSignature, ShieldAlert, Clock, MapPin } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -90,6 +91,27 @@ export default function HomePage() {
     queryKey: ["liens"],
     queryFn: () => fetch("/api/liens").then(res => res.json())
   });
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [shouldScroll, setShouldScroll] = useState(false);
+
+  useEffect(() => {
+    const checkOverflow = () => {
+      if (containerRef.current) {
+        const { scrollWidth, clientWidth } = containerRef.current;
+        // Défile uniquement si les logos débordent de la largeur de l'écran
+        setShouldScroll(scrollWidth > clientWidth + 10);
+      }
+    };
+
+    const timer = setTimeout(checkOverflow, 150);
+    window.addEventListener("resize", checkOverflow);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("resize", checkOverflow);
+    };
+  }, [liens]);
 
   const displayedMissions = missionsApi.slice(0, 6);
   const activeServices = (servicesApi || []).filter((s: any) => s.actif !== false).slice(0, 3);
@@ -516,45 +538,81 @@ export default function HomePage() {
           }
         `}</style>
 
-        <div className="relative flex items-center overflow-x-hidden">
-          {/* Dégradés translucides sur les côtés pour un effet premium */}
-          <div className="absolute top-0 bottom-0 left-0 w-24 bg-gradient-to-r from-slate-50 via-slate-50/80 to-transparent z-10 pointer-events-none" />
-          <div className="absolute top-0 bottom-0 right-0 w-24 bg-gradient-to-l from-slate-50 via-slate-50/80 to-transparent z-10 pointer-events-none" />
+        <div className="relative flex items-center overflow-x-hidden w-full" ref={containerRef}>
+          {/* Dégradés translucides sur les côtés uniquement si défilement actif */}
+          {shouldScroll && (
+            <>
+              <div className="absolute top-0 bottom-0 left-0 w-24 bg-gradient-to-r from-slate-50 via-slate-50/80 to-transparent z-10 pointer-events-none" />
+              <div className="absolute top-0 bottom-0 right-0 w-24 bg-gradient-to-l from-slate-50 via-slate-50/80 to-transparent z-10 pointer-events-none" />
+            </>
+          )}
 
-          {/* Container du défilement avec duplication automatique pour effet boucle */}
-          <div className="animate-marquee-infinite flex items-center gap-16 py-2">
-            {(liens.length > 0 ? liens : [
-              { id: 1, nom: "Ministère du Commerce", url: "#" },
-              { id: 2, nom: "Gouvernement du Tchad", url: "#" },
-              { id: 3, nom: "CEMAC", url: "#" },
-              { id: 4, nom: "Union Africaine", url: "#" }
-            ]).concat(liens.length > 0 ? liens : [
-              { id: 1, nom: "Ministère du Commerce", url: "#" },
-              { id: 2, nom: "Gouvernement du Tchad", url: "#" },
-              { id: 3, nom: "CEMAC", url: "#" },
-              { id: 4, nom: "Union Africaine", url: "#" }
-            ]).map((l: any, idx: number) => (
-              <a
-                key={`logo-${l.id || idx}-${idx}`}
-                href={l.url || "#"}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center h-12 min-w-[120px] max-w-[180px] grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300 transform hover:scale-105"
-              >
-                {l.logo_path ? (
-                  <img
-                    src={`/${l.logo_path}`}
-                    alt={l.nom}
-                    className="max-h-12 w-auto object-contain"
-                  />
-                ) : (
-                  <span className="text-xs font-bold text-slate-400 hover:text-primary transition-colors tracking-wider whitespace-nowrap bg-white px-4 py-2 rounded-xl shadow-sm border border-slate-100">
-                    {l.nom}
-                  </span>
-                )}
-              </a>
-            ))}
-          </div>
+          {shouldScroll ? (
+            /* Mode Défilement Marquee (Débordement important) */
+            <div className="animate-marquee-infinite flex items-center gap-16 py-2">
+              {(liens.length > 0 ? liens : [
+                { id: 1, nom: "Ministère du Commerce", url: "#" },
+                { id: 2, nom: "Gouvernement du Tchad", url: "#" },
+                { id: 3, nom: "CEMAC", url: "#" },
+                { id: 4, nom: "Union Africaine", url: "#" }
+              ]).concat(liens.length > 0 ? liens : [
+                { id: 1, nom: "Ministère du Commerce", url: "#" },
+                { id: 2, nom: "Gouvernement du Tchad", url: "#" },
+                { id: 3, nom: "CEMAC", url: "#" },
+                { id: 4, nom: "Union Africaine", url: "#" }
+              ]).map((l: any, idx: number) => (
+                <a
+                  key={`logo-scroll-${l.id || idx}-${idx}`}
+                  href={l.url || "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center h-12 min-w-[120px] max-w-[180px] grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300 transform hover:scale-105"
+                >
+                  {l.logo_path ? (
+                    <img
+                      src={`/${l.logo_path}`}
+                      alt={l.nom}
+                      className="max-h-12 w-auto object-contain"
+                    />
+                  ) : (
+                    <span className="text-xs font-bold text-slate-400 hover:text-primary transition-colors tracking-wider whitespace-nowrap bg-white px-4 py-2 rounded-xl shadow-sm border border-slate-100">
+                      {l.nom}
+                    </span>
+                  )}
+                </a>
+              ))}
+            </div>
+          ) : (
+            /* Mode Statique Centré (Pas de débordement) */
+            <div className="flex flex-wrap justify-center items-center gap-12 py-2 w-full px-6">
+              {(liens.length > 0 ? liens : [
+                { id: 1, nom: "Ministère du Commerce", url: "#" },
+                { id: 2, nom: "Gouvernement du Tchad", url: "#" },
+                { id: 3, nom: "CEMAC", url: "#" },
+                { id: 4, nom: "Union Africaine", url: "#" }
+              ]).map((l: any, idx: number) => (
+                <a
+                  key={`logo-static-${l.id || idx}-${idx}`}
+                  href={l.url || "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center h-12 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300 transform hover:scale-105"
+                >
+                  {l.logo_path ? (
+                    <img
+                      src={`/${l.logo_path}`}
+                      alt={l.nom}
+                      className="max-h-12 w-auto object-contain"
+                    />
+                  ) : (
+                    <span className="text-xs font-bold text-slate-400 hover:text-primary transition-colors tracking-wider whitespace-nowrap bg-white px-4 py-2 rounded-xl shadow-sm border border-slate-100">
+                      {l.nom}
+                    </span>
+                  )}
+                </a>
+              ))}
+            </div>
+          )}
         </div>
       </section>
     </div>
