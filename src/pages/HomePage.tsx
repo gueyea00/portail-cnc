@@ -121,10 +121,10 @@ export default function HomePage() {
       {/* Hero */}
       <section
         className="text-primary-foreground min-h-[90vh] flex items-center py-16 md:py-24 relative overflow-hidden"
-        style={{ 
-          backgroundImage: `url('${getImgUrl(presidentData?.hero_bg_path, "/hero-bg.jpg")}')`, 
-          backgroundSize: 'cover', 
-          backgroundPosition: 'center' 
+        style={{
+          backgroundImage: `url('${getImgUrl(presidentData?.hero_bg_path, "/hero-bg.jpg")}')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
         }}
       >
         <div className="absolute inset-0 bg-black/40 z-0" />
@@ -566,7 +566,7 @@ export default function HomePage() {
                   href={l.url || "#"}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex flex-col items-center justify-center gap-2.5 min-w-[120px] max-w-[180px] grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300 transform hover:scale-105 group/logo"
+                  className="flex flex-col items-center justify-center gap-2.5 min-w-[120px] max-w-[180px] grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300 transform hover:scale-105 group/logo"
                 >
                   <div className="h-12 flex items-center justify-center">
                     {l.logo_path ? (
