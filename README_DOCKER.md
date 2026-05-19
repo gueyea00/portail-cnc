@@ -8,7 +8,7 @@ Cette configuration permet de lancer l'application complète (Base de données, 
 
 ## Structure
 - **db** : Conteneur PostgreSQL v15 (initialisé avec `schema.sql` et `seed.sql`)
-- **backend** : Serveur Node.js (Express) écoutant sur le port 8080
+- **backend** : Serveur Node.js (Express) écoutant sur le port 5010
 - **frontend** : Serveur Nginx (Production) servant le build React/Vite sur le port 80
 
 ## Lancement

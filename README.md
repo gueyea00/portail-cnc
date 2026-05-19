@@ -4,7 +4,7 @@ Ce projet est composé d'un frontend React (Vite) et d'un backend Node.js (Expre
 
 ## Architecture
 - **Frontend :** React + TypeScript + Tailwind CSS (Port 8081)
-- **Backend :** Node.js + Express (Port 8080)
+- **Backend :** Node.js + Express (Port 5010)
 - **Base de données :** PostgreSQL (Port 5432 / 5436 sur l'hôte)
 
 ## Installation Locale
@@ -47,7 +47,7 @@ docker-compose up --build
 
 ## Résolution des Conflits
 Les conflits suivants ont été résolus :
-- **Port 8080 :** Le frontend a été déplacé sur le port 8081 pour éviter le conflit avec le backend.
+- **Port 5010 :** Le frontend a été déplacé sur le port 8081 pour éviter le conflit avec le backend.
 - **Proxy :** Vite est configuré pour rediriger `/api`, `/admin` et `/uploads` vers le backend.
 - **Encodage :** Correction des caractères UTF-8 corrompus (`Ã©` -> `é`).
 - **Synchronisation :** Les formulaires (Plaintes) sont connectés à l'API réelle.
