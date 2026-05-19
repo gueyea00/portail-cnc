@@ -71,31 +71,45 @@ export default function PresentationPage() {
           </div>
         </section>
 
-
-
       </div>
 
-      <section className="bg-muted py-20 border-y border-border">
+      <section className="bg-muted py-20 border-y border-border overflow-hidden">
         <div className="container-page">
           <h2 className="section-title">{presidentData?.pres_timeline_title || "Dates clés"}</h2>
           <p className="section-subtitle mb-12">
             {presidentData?.pres_timeline_subtitle || "Les jalons essentiels de la régulation de la concurrence au Tchad."}
           </p>
 
-          <div className="relative">
-            {/* Ligne de timeline horizontale (visible sur desktop) */}
-            <div className="absolute top-[40px] left-0 right-0 h-1 bg-primary/10 hidden lg:block z-0" />
+          <style>{`
+            .scrollbar-timeline::-webkit-scrollbar {
+              height: 6px;
+            }
+            .scrollbar-timeline::-webkit-scrollbar-track {
+              background: transparent;
+            }
+            .scrollbar-timeline::-webkit-scrollbar-thumb {
+              background: rgba(148, 163, 184, 0.3);
+              border-radius: 9999px;
+            }
+            .scrollbar-timeline::-webkit-scrollbar-thumb:hover {
+              background: rgba(148, 163, 184, 0.5);
+            }
+          `}</style>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8 relative z-10">
+          <div className="relative overflow-x-auto pb-6 pt-4 scrollbar-timeline">
+            {/* Ligne de timeline horizontale connectant tous les jalons */}
+            <div className="absolute top-[56px] left-[60px] right-[60px] h-[3px] bg-gradient-to-r from-primary/10 via-primary/30 to-primary/10 z-0 pointer-events-none" />
+
+            <div className="flex items-start gap-12 px-6 relative z-10 min-w-max">
               {sortedHistory.length === 0 ? (
-                <div className="col-span-6 text-center text-muted-foreground italic">Aucune date clé disponible.</div>
+                <div className="w-full text-center text-muted-foreground italic py-8">Aucune date clé disponible.</div>
               ) : sortedHistory.map((h: any, idx: number) => (
-                <div key={idx} className="flex flex-col items-center group">
-                  <div className="w-20 h-20 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold text-lg shadow-lg shadow-primary/10 group-hover:scale-110 transition-transform mb-6 ring-4 ring-background z-20">
+                <div key={idx} className="flex flex-col items-center group w-64 shrink-0">
+                  <div className="w-20 h-20 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-extrabold text-xl shadow-xl shadow-primary/20 group-hover:scale-110 group-hover:bg-secondary group-hover:text-secondary-foreground transition-all duration-300 mb-6 ring-8 ring-muted z-20">
                     {h.annee}
                   </div>
-                  <div className="text-center">
-                    <p className="text-sm font-medium text-foreground leading-tight px-2">{h.description}</p>
+                  <div className="text-center px-4">
+                    <p className="text-sm font-semibold text-foreground leading-relaxed group-hover:text-primary transition-colors duration-300">{h.description}</p>
                   </div>
                 </div>
               ))}
