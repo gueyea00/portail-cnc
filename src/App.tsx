@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -29,6 +29,44 @@ import { useGoogleTranslate } from "@/hooks/useGoogleTranslate";
 
 const queryClient = new QueryClient();
 
+const router = createBrowserRouter(
+  [
+    {
+      element: <Layout />,
+      children: [
+        { path: "/", element: <HomePage /> },
+        { path: "/presentation", element: <PresentationPage /> },
+        { path: "/missions", element: <MissionsPage /> },
+        { path: "/actualites", element: <ActualitesPage /> },
+        { path: "/actualites/:slug", element: <ArticleDetailPage /> },
+        { path: "/documents", element: <DocumentsPage /> },
+        { path: "/services", element: <ServicesPage /> },
+        { path: "/suivi-projet", element: <SuiviProjet /> },
+        { path: "/plainte", element: <PlaintePage /> },
+        { path: "/signalement", element: <SignalementPage /> },
+        { path: "/contact", element: <ContactPage /> },
+        { path: "/faq", element: <FaqPage /> },
+        { path: "/galerie", element: <GaleriePage /> },
+        { path: "/admin/login", element: <AdminLoginPage /> },
+        {
+          path: "/admin/*",
+          element: (
+            <ProtectedRoute>
+              <AdminDashboardPage />
+            </ProtectedRoute>
+          ),
+        },
+        { path: "*", element: <NotFound /> },
+      ],
+    },
+  ],
+  {
+    future: {
+      v7_relativeSplatPath: true,
+    },
+  }
+);
+
 const App = () => {
   const { i18n } = useTranslation();
   // Google Translate gère la langue de toute la page (statique + dynamique)
@@ -43,44 +81,13 @@ const App = () => {
   }, [currentLang, i18n.language]);
 
   return (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/presentation" element={<PresentationPage />} />
-            <Route path="/missions" element={<MissionsPage />} />
-            <Route path="/actualites" element={<ActualitesPage />} />
-            <Route path="/actualites/:slug" element={<ArticleDetailPage />} />
-            <Route path="/documents" element={<DocumentsPage />} />
-            <Route path="/services" element={<ServicesPage />} />
-            <Route path="/suivi-projet" element={<SuiviProjet />} />
-            <Route path="/plainte" element={<PlaintePage />} />
-            <Route path="/signalement" element={<SignalementPage />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="/faq" element={<FaqPage />} />
-            <Route path="/galerie" element={<GaleriePage />} />
-            
-            {/* Interface d'administration intégrée en React */}
-            <Route path="/admin/login" element={<AdminLoginPage />} />
-            <Route 
-              path="/admin/*" 
-              element={
-                <ProtectedRoute>
-                  <AdminDashboardPage />
-                </ProtectedRoute>
-              } 
-            />
-
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Layout>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <RouterProvider router={router} />
+      </TooltipProvider>
+    </QueryClientProvider>
   );
 };
 

@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { ArrowUp } from "lucide-react";
 import Header from "./Header";
 import Footer from "./Footer";
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default function Layout() {
   const [showScrollTop, setShowScrollTop] = useState(false);
   const { pathname } = useLocation();
   const isAdmin = pathname.startsWith("/admin");
@@ -22,7 +22,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col">
       {!isAdmin && <Header />}
-      <main className="flex-1">{children}</main>
+      <main className="flex-1">
+        <Outlet />
+      </main>
       {!isAdmin && <Footer />}
       {!isAdmin && showScrollTop && (
         <button
