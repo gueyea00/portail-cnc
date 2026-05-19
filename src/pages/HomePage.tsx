@@ -549,7 +549,7 @@ export default function HomePage() {
 
           {shouldScroll ? (
             /* Mode Défilement Marquee (Débordement important) */
-            <div className="animate-marquee-infinite flex items-center gap-16 py-2">
+            <div className="animate-marquee-infinite flex items-center gap-16 py-4">
               {(liens.length > 0 ? liens : [
                 { id: 1, nom: "Ministère du Commerce", url: "#" },
                 { id: 2, nom: "Gouvernement du Tchad", url: "#" },
@@ -566,25 +566,30 @@ export default function HomePage() {
                   href={l.url || "#"}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center h-12 min-w-[120px] max-w-[180px] grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300 transform hover:scale-105"
+                  className="flex flex-col items-center justify-center gap-2.5 min-w-[120px] max-w-[180px] grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300 transform hover:scale-105 group/logo"
                 >
-                  {l.logo_path ? (
-                    <img
-                      src={`/${l.logo_path}`}
-                      alt={l.nom}
-                      className="max-h-12 w-auto object-contain"
-                    />
-                  ) : (
-                    <span className="text-xs font-bold text-slate-400 hover:text-primary transition-colors tracking-wider whitespace-nowrap bg-white px-4 py-2 rounded-xl shadow-sm border border-slate-100">
-                      {l.nom}
-                    </span>
-                  )}
+                  <div className="h-12 flex items-center justify-center">
+                    {l.logo_path ? (
+                      <img
+                        src={`/${l.logo_path}`}
+                        alt={l.nom}
+                        className="max-h-12 w-auto object-contain"
+                      />
+                    ) : (
+                      <span className="text-[10px] font-black text-slate-400 bg-white px-3 py-1.5 rounded-lg shadow-sm border border-slate-100 uppercase tracking-widest">
+                        {l.nom?.slice(0, 3)}
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.15em] text-center truncate max-w-[130px] group-hover/logo:text-primary transition-colors">
+                    {l.nom}
+                  </span>
                 </a>
               ))}
             </div>
           ) : (
             /* Mode Statique Centré (Pas de débordement) */
-            <div className="flex flex-wrap justify-center items-center gap-12 py-2 w-full px-6">
+            <div className="flex flex-wrap justify-center items-center gap-12 py-4 w-full px-6">
               {(liens.length > 0 ? liens : [
                 { id: 1, nom: "Ministère du Commerce", url: "#" },
                 { id: 2, nom: "Gouvernement du Tchad", url: "#" },
@@ -596,19 +601,24 @@ export default function HomePage() {
                   href={l.url || "#"}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center h-12 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300 transform hover:scale-105"
+                  className="flex flex-col items-center justify-center gap-2.5 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300 transform hover:scale-105 group/logo"
                 >
-                  {l.logo_path ? (
-                    <img
-                      src={`/${l.logo_path}`}
-                      alt={l.nom}
-                      className="max-h-12 w-auto object-contain"
-                    />
-                  ) : (
-                    <span className="text-xs font-bold text-slate-400 hover:text-primary transition-colors tracking-wider whitespace-nowrap bg-white px-4 py-2 rounded-xl shadow-sm border border-slate-100">
-                      {l.nom}
-                    </span>
-                  )}
+                  <div className="h-12 flex items-center justify-center">
+                    {l.logo_path ? (
+                      <img
+                        src={`/${l.logo_path}`}
+                        alt={l.nom}
+                        className="max-h-12 w-auto object-contain"
+                      />
+                    ) : (
+                      <span className="text-[10px] font-black text-slate-400 bg-white px-3 py-1.5 rounded-lg shadow-sm border border-slate-100 uppercase tracking-widest">
+                        {l.nom?.slice(0, 3)}
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.15em] text-center truncate max-w-[130px] group-hover/logo:text-primary transition-colors">
+                    {l.nom}
+                  </span>
                 </a>
               ))}
             </div>
