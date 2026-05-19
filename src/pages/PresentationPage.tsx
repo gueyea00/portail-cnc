@@ -1,6 +1,7 @@
+import { useRef } from "react";
 import Breadcrumb from "@/components/layout/Breadcrumb";
 import { useQuery } from "@tanstack/react-query";
-import { Info } from "lucide-react";
+import { Info, ChevronLeft, ChevronRight } from "lucide-react";
 
 const getImgUrl = (path: string | null | undefined, fallback: string) => {
   if (!path) return fallback;
@@ -9,6 +10,17 @@ const getImgUrl = (path: string | null | undefined, fallback: string) => {
 };
 
 export default function PresentationPage() {
+  const timelineRef = useRef<HTMLDivElement>(null);
+
+  const scrollTimeline = (direction: "left" | "right") => {
+    if (timelineRef.current) {
+      const scrollAmount = 350;
+      timelineRef.current.scrollBy({
+        left: direction === "left" ? -scrollAmount : scrollAmount,
+        behavior: "smooth"
+      });
+    }
+  };
   const { data: membres = [], isLoading: isLoadingMembres } = useQuery({
     queryKey: ["membres"],
     queryFn: () => fetch("/api/membres").then(res => res.json())
@@ -96,23 +108,42 @@ export default function PresentationPage() {
             }
           `}</style>
 
-          <div className="relative overflow-x-auto pb-6 pt-4 scrollbar-timeline">
-            {/* Ligne de timeline horizontale connectant tous les jalons */}
-            <div className="absolute top-[56px] left-[60px] right-[60px] h-[3px] bg-gradient-to-r from-primary/10 via-primary/30 to-primary/10 z-0 pointer-events-none" />
+          <div className="relative group/timeline">
+            {/* Boutons de défilement gauche et droit (uniquement visibles si survol sur desktop, toujours sur mobile) */}
+            <button
+              onClick={() => scrollTimeline("left")}
+              className="absolute left-[-20px] top-[56px] -translate-y-1/2 w-12 h-12 rounded-full bg-white shadow-xl border border-slate-100 text-slate-700 hover:text-primary flex items-center justify-center z-30 transition-all hover:scale-105 active:scale-95 group/btn"
+              aria-label="Défiler vers la gauche"
+            >
+              <ChevronLeft className="w-6 h-6 transition-transform group-hover/btn:-translate-x-0.5" />
+            </button>
 
-            <div className="flex items-start gap-12 px-6 relative z-10 min-w-max">
-              {sortedHistory.length === 0 ? (
-                <div className="w-full text-center text-muted-foreground italic py-8">Aucune date clé disponible.</div>
-              ) : sortedHistory.map((h: any, idx: number) => (
-                <div key={idx} className="flex flex-col items-center group w-64 shrink-0">
-                  <div className="w-20 h-20 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-extrabold text-xl shadow-xl shadow-primary/20 group-hover:scale-110 group-hover:bg-secondary group-hover:text-secondary-foreground transition-all duration-300 mb-6 ring-8 ring-muted z-20">
-                    {h.annee}
+            <button
+              onClick={() => scrollTimeline("right")}
+              className="absolute right-[-20px] top-[56px] -translate-y-1/2 w-12 h-12 rounded-full bg-white shadow-xl border border-slate-100 text-slate-700 hover:text-primary flex items-center justify-center z-30 transition-all hover:scale-105 active:scale-95 group/btn"
+              aria-label="Défiler vers la droite"
+            >
+              <ChevronRight className="w-6 h-6 transition-transform group-hover/btn:translate-x-0.5" />
+            </button>
+
+            <div className="relative overflow-x-auto pb-6 pt-4 scrollbar-timeline scroll-smooth" ref={timelineRef}>
+              {/* Ligne de timeline horizontale connectant tous les jalons */}
+              <div className="absolute top-[56px] left-[60px] right-[60px] h-[3px] bg-gradient-to-r from-primary/10 via-primary/30 to-primary/10 z-0 pointer-events-none" />
+
+              <div className="flex items-start gap-12 px-6 relative z-10 min-w-max">
+                {sortedHistory.length === 0 ? (
+                  <div className="w-full text-center text-muted-foreground italic py-8">Aucune date clé disponible.</div>
+                ) : sortedHistory.map((h: any, idx: number) => (
+                  <div key={idx} className="flex flex-col items-center group w-64 shrink-0">
+                    <div className="w-20 h-20 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-extrabold text-xl shadow-xl shadow-primary/20 group-hover:scale-110 group-hover:bg-secondary group-hover:text-secondary-foreground transition-all duration-300 mb-6 ring-8 ring-muted z-20">
+                      {h.annee}
+                    </div>
+                    <div className="text-center px-4">
+                      <p className="text-sm font-semibold text-foreground leading-relaxed group-hover:text-primary transition-colors duration-300">{h.description}</p>
+                    </div>
                   </div>
-                  <div className="text-center px-4">
-                    <p className="text-sm font-semibold text-foreground leading-relaxed group-hover:text-primary transition-colors duration-300">{h.description}</p>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </div>
