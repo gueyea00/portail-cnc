@@ -1168,13 +1168,12 @@ export default function AdminDashboardPage() {
                       <Plus className="w-4 h-4" />
                       Nouvel Article
                     </Button>
-                    <Button
-                      variant="outline"
-                      className="border-white/20 text-white hover:bg-white/10 rounded-xl h-11 px-6 font-bold text-sm"
+                    <button
+                      className="border border-white/30 text-white hover:bg-white/10 rounded-xl h-11 px-6 font-bold text-sm transition-all active:scale-95 flex items-center justify-center"
                       onClick={() => setActiveTab("parametres")}
                     >
                       Paramètres
-                    </Button>
+                    </button>
                   </div>
                 </div>
                 <div className="absolute top-0 right-0 w-72 h-72 bg-white/[0.04] rounded-full -mr-16 -mt-16 pointer-events-none" />
