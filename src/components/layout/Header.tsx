@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, ChevronDown, Facebook, Linkedin, Mail, Clock, Phone } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "./LanguageSwitcher";
@@ -11,6 +11,7 @@ export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const { data: parametres } = useQuery({
     queryKey: ["parametres_header"],
@@ -129,6 +130,7 @@ export default function Header() {
                     onMouseLeave={() => setOpenDropdown(null)}
                   >
                     <button
+                      onClick={() => navigate(item.path)}
                       className={`px-4 py-2 text-base font-medium rounded-md transition-colors flex items-center gap-1.5 ${isActive(item.path)
                         ? "text-primary bg-muted"
                         : "text-foreground hover:text-primary hover:bg-muted"

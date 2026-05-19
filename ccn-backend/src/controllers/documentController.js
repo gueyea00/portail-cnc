@@ -33,7 +33,7 @@ class DocumentController {
 
   static async create(req, res) {
     try {
-      const { titre, categorie, date_publication } = req.body;
+      const { titre, categorie, date_publication, lang } = req.body;
       if (!titre || !req.file) return res.status(400).json({ error: 'titre et fichier requis.' });
       
       const data = {
@@ -42,7 +42,8 @@ class DocumentController {
         fichier_path: `uploads/documents/${req.file.filename}`,
         taille: `${(req.file.size / 1024).toFixed(0)} Ko`,
         type_fichier: extname(req.file.originalname).replace('.', '').toUpperCase(),
-        date_publication: date_publication || new Date()
+        date_publication: date_publication || new Date(),
+        lang: lang || 'fr'
       };
       
       const doc = await DocumentService.createDocument(data);

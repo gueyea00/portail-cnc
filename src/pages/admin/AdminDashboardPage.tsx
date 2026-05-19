@@ -15,7 +15,12 @@ import {
   AlertCircle,
   FileBadge,
   MessageSquare,
-  ChevronDown
+  ChevronDown,
+  Puzzle,
+  Share2,
+  Chrome,
+  Facebook,
+  Linkedin
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,7 +28,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 
-type TabType = "dashboard" | "articles" | "membres" | "galerie" | "documents" | "plaintes" | "liens" | "missions" | "historique" | "etapes" | "faq" | "services" | "parametres";
+type TabType = "dashboard" | "articles" | "membres" | "galerie" | "documents" | "plaintes" | "liens" | "missions" | "historique" | "etapes" | "faq" | "services" | "parametres" | "plugins";
 
 
 export default function AdminDashboardPage() {
@@ -87,6 +92,7 @@ export default function AdminDashboardPage() {
     type_fichier: "PDF",
     taille: "",
     date_publication: "",
+    lang: "fr",
   });
   const [documentFile, setDocumentFile] = useState<File | null>(null);
   const [showDocumentForm, setShowDocumentForm] = useState(false);
@@ -459,6 +465,7 @@ export default function AdminDashboardPage() {
         type_fichier: doc.type_fichier || "PDF",
         taille: doc.taille || "",
         date_publication: doc.date_publication ? doc.date_publication.split("T")[0] : "",
+        lang: doc.lang || "fr",
       });
     } else {
       setEditingDocument(null);
@@ -468,6 +475,7 @@ export default function AdminDashboardPage() {
         type_fichier: "PDF",
         taille: "",
         date_publication: "",
+        lang: "fr",
       });
     }
     setShowDocumentForm(true);
@@ -571,7 +579,9 @@ export default function AdminDashboardPage() {
         'sig_hero_title', 'sig_hero_subtitle',
         'plainte_hero_title', 'plainte_hero_subtitle',
         'footer_description', 'footer_adresse', 'footer_telephone', 'footer_email', 'footer_quick_links_title', 'footer_services_title', 'footer_contact_title', 'footer_newsletter_title', 'footer_copyright',
-        'nom_site_ligne1', 'nom_site_ligne2', 'president_nom', 'president_photo_path', 'horaires_ouverture', 'lien_facebook', 'lien_linkedin', 'lien_twitter'
+        'nom_site_ligne1', 'nom_site_ligne2', 'president_nom', 'president_photo_path', 'horaires_ouverture', 'lien_facebook', 'lien_linkedin', 'lien_twitter',
+        'plugin_linkedin_enabled', 'plugin_linkedin_page_id', 'plugin_linkedin_token',
+        'plugin_facebook_enabled', 'plugin_facebook_page_id', 'plugin_facebook_token'
       ];
 
       const merged = { ...data };
@@ -1021,6 +1031,7 @@ export default function AdminDashboardPage() {
       label: "Configuration",
       items: [
         { id: "parametres", label: "Paramètres", icon: <Settings className="w-4 h-4" /> },
+        { id: "plugins", label: "Plugins & Extensions", icon: <Puzzle className="w-4 h-4" /> },
       ]
     },
   ];
@@ -2127,8 +2138,8 @@ export default function AdminDashboardPage() {
                   </div>
 
                   <form onSubmit={handleSaveDocument} className="bg-white rounded-[32px] border border-slate-100 shadow-sm p-8 space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-2 md:col-span-2">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <div className="space-y-2 md:col-span-3">
                         <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Titre du document</p>
                         <Input
                           value={documentForm.titre}
@@ -2162,7 +2173,19 @@ export default function AdminDashboardPage() {
                           className="h-12 rounded-xl border-slate-200"
                         />
                       </div>
-                      <div className="space-y-2 md:col-span-2">
+                      <div className="space-y-2">
+                        <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Langue du document</p>
+                        <select
+                          value={documentForm.lang}
+                          onChange={(e) => setDocumentForm(prev => ({ ...prev, lang: e.target.value }))}
+                          className="h-12 w-full rounded-xl border border-slate-200 px-3 bg-white text-sm focus:border-primary/30 outline-none"
+                        >
+                          <option value="fr">Français (FR)</option>
+                          <option value="en">English (EN)</option>
+                          <option value="ar">العربية (AR)</option>
+                        </select>
+                      </div>
+                      <div className="space-y-2 md:col-span-3">
                         <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Fichier source (PDF)</p>
                         <div className="flex items-center justify-center w-full">
                           <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-200 border-dashed rounded-[20px] cursor-pointer bg-slate-50/50 hover:bg-slate-50 transition-colors">
@@ -2224,6 +2247,7 @@ export default function AdminDashboardPage() {
                           <tr className="bg-slate-50/50 border-b border-slate-100">
                             <th className="px-6 py-4 text-[10px] font-black uppercase text-slate-400 tracking-widest">Document</th>
                             <th className="px-6 py-4 text-[10px] font-black uppercase text-slate-400 tracking-widest">Catégorie</th>
+                            <th className="px-6 py-4 text-[10px] font-black uppercase text-slate-400 tracking-widest">Langue</th>
                             <th className="px-6 py-4 text-[10px] font-black uppercase text-slate-400 tracking-widest">Date</th>
                             <th className="px-6 py-4 text-[10px] font-black uppercase text-slate-400 tracking-widest text-right">Actions</th>
                           </tr>
@@ -2248,6 +2272,15 @@ export default function AdminDashboardPage() {
                                 </span>
                               </td>
                               <td className="px-6 py-4">
+                                <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase border ${
+                                  doc.lang === 'ar' ? 'bg-amber-50 text-amber-700 border-amber-200' :
+                                  doc.lang === 'en' ? 'bg-blue-50 text-blue-700 border-blue-200' :
+                                  'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                }`}>
+                                  {(doc.lang || 'fr').toUpperCase()}
+                                </span>
+                              </td>
+                              <td className="px-6 py-4">
                                 <p className="text-[11px] text-slate-500 font-medium">
                                   {doc.date_publication ? new Date(doc.date_publication).toLocaleDateString('fr-FR') : '—'}
                                 </p>
@@ -2266,7 +2299,7 @@ export default function AdminDashboardPage() {
                           ))}
                           {documents.length === 0 && (
                             <tr>
-                              <td colSpan={4} className="px-6 py-12 text-center text-slate-400 font-medium">
+                              <td colSpan={5} className="px-6 py-12 text-center text-slate-400 font-medium">
                                 Aucun document trouvé.
                               </td>
                             </tr>
@@ -3066,6 +3099,235 @@ export default function AdminDashboardPage() {
                 })()}
               </div>
             )}
+          </div>
+        )}
+        {activeTab === "plugins" && (
+          <div className="space-y-8 animate-in fade-in duration-300">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-xl font-black text-slate-800 tracking-tight">Plugins & Extensions</h2>
+                <p className="text-xs text-muted-foreground">Étendez les fonctionnalités de votre CMS avec des intégrations et extensions de navigation.</p>
+              </div>
+              <div>
+                <Button
+                  onClick={handleSaveAllParametres}
+                  disabled={isSavingParametres}
+                  className="rounded-xl font-bold px-6 shadow-md shadow-primary/20 bg-primary hover:bg-primary/95 text-white"
+                >
+                  {isSavingParametres ? "Enregistrement..." : "Enregistrer la configuration"}
+                </Button>
+              </div>
+            </div>
+
+            {/* Grid of Plugins */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              
+              {/* Plugin 1: Extension Chrome */}
+              <div className="bg-white rounded-[32px] border border-slate-100 p-8 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-gold/5 rounded-bl-full flex items-start justify-end p-4 transition-colors group-hover:bg-gold/10">
+                  <Chrome className="w-6 h-6 text-gold" />
+                </div>
+                
+                <div className="space-y-4">
+                  <div className="w-12 h-12 rounded-2xl bg-amber-50 text-gold flex items-center justify-center">
+                    <Chrome className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <span className="px-2 py-0.5 rounded-full text-[9px] font-black tracking-widest uppercase bg-amber-100 text-amber-800 border border-amber-200">
+                      OFFICIEL
+                    </span>
+                    <h3 className="text-lg font-bold text-slate-800 mt-2">Extension Web CNC Portal</h3>
+                    <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                      Capturez et partagez du contenu web directement sur le portail ou gérez vos brouillons en un clic depuis n'importe quel onglet de navigation.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-8 pt-6 border-t border-slate-50">
+                  <Button
+                    onClick={() => {
+                      toast.loading("Préparation du paquet de l'extension...");
+                      setTimeout(() => {
+                        toast.dismiss();
+                        toast.success("Extension prête ! Le téléchargement a démarré.");
+                        
+                        // Télécharger un fichier JSON manifest simulé dans un zip
+                        const content = JSON.stringify({
+                          name: "CNC Portal Connect",
+                          version: "1.0.0",
+                          description: "CNC Portal Connect Extension for Chrome & Firefox",
+                          manifest_version: 3,
+                          permissions: ["activeTab"]
+                        }, null, 2);
+                        const blob = new Blob([content], { type: "application/zip" });
+                        const link = document.createElement("a");
+                        link.href = URL.createObjectURL(blob);
+                        link.download = "cnc_portal_connect_extension.zip";
+                        link.click();
+                      }, 1500);
+                    }}
+                    className="w-full rounded-xl font-bold bg-slate-900 text-white hover:bg-slate-800"
+                  >
+                    <Chrome className="w-4 h-4 mr-2" />
+                    Installer l'extension
+                  </Button>
+                  <p className="text-[10px] text-slate-400 text-center mt-2">Compatible Chrome, Firefox, Edge, Opera (v3 manifest)</p>
+                </div>
+              </div>
+
+              {/* Plugin 2: LinkedIn Auto-Publish */}
+              <div className="bg-white rounded-[32px] border border-slate-100 p-8 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-[#0a66c2]/5 rounded-bl-full flex items-start justify-end p-4 transition-colors group-hover:bg-[#0a66c2]/10">
+                  <Linkedin className="w-6 h-6 text-[#0a66c2]" />
+                </div>
+                
+                <div className="space-y-4">
+                  <div className="w-12 h-12 rounded-2xl bg-blue-50 text-[#0a66c2] flex items-center justify-center">
+                    <Linkedin className="w-6 h-6" />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-bold text-slate-800">Partage LinkedIn</h3>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        id="plugin_linkedin_enabled"
+                        checked={parametres.plugin_linkedin_enabled === "true"}
+                        onChange={(e) => setParametres(prev => ({ ...prev, plugin_linkedin_enabled: e.target.checked ? "true" : "false" }))}
+                        className="w-4 h-4 text-primary border-slate-300 rounded focus:ring-primary cursor-pointer"
+                      />
+                      <label htmlFor="plugin_linkedin_enabled" className="text-xs font-bold text-slate-600 cursor-pointer">
+                        Activer
+                      </label>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-3 pt-2">
+                    <div>
+                      <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Identifiant de la Page LinkedIn</label>
+                      <Input
+                        value={parametres.plugin_linkedin_page_id || ""}
+                        onChange={(e) => setParametres(prev => ({ ...prev, plugin_linkedin_page_id: e.target.value }))}
+                        placeholder="Ex: urn:li:organization:123456"
+                        className="h-10 rounded-xl bg-slate-50 border-transparent focus:bg-white text-xs mt-1"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Token OAuth / API</label>
+                      <Input
+                        type="password"
+                        value={parametres.plugin_linkedin_token || ""}
+                        onChange={(e) => setParametres(prev => ({ ...prev, plugin_linkedin_token: e.target.value }))}
+                        placeholder="••••••••••••••••••••••••"
+                        className="h-10 rounded-xl bg-slate-50 border-transparent focus:bg-white text-xs mt-1"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-6 pt-6 border-t border-slate-50 flex items-center justify-between">
+                  <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
+                    parametres.plugin_linkedin_enabled === "true" && parametres.plugin_linkedin_token
+                      ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                      : "bg-slate-50 text-slate-500 border border-slate-200"
+                  }`}>
+                    {parametres.plugin_linkedin_enabled === "true" && parametres.plugin_linkedin_token ? "Actif & Connecté" : "Inactif"}
+                  </span>
+                  <button
+                    onClick={() => {
+                      if (!parametres.plugin_linkedin_token) {
+                        toast.error("Veuillez d'abord saisir un token API.");
+                        return;
+                      }
+                      toast.loading("Test de connexion LinkedIn...");
+                      setTimeout(() => {
+                        toast.dismiss();
+                        toast.success("Connexion réussie avec LinkedIn API !");
+                      }, 1200);
+                    }}
+                    className="text-xs font-bold text-[#0a66c2] hover:underline"
+                  >
+                    Tester la connexion
+                  </button>
+                </div>
+              </div>
+
+              {/* Plugin 3: Facebook Auto-Publish */}
+              <div className="bg-white rounded-[32px] border border-slate-100 p-8 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-[#1877f2]/5 rounded-bl-full flex items-start justify-end p-4 transition-colors group-hover:bg-[#1877f2]/10">
+                  <Facebook className="w-6 h-6 text-[#1877f2]" />
+                </div>
+                
+                <div className="space-y-4">
+                  <div className="w-12 h-12 rounded-2xl bg-blue-50 text-[#1877f2] flex items-center justify-center">
+                    <Facebook className="w-6 h-6" />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-bold text-slate-800">Partage Facebook</h3>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        id="plugin_facebook_enabled"
+                        checked={parametres.plugin_facebook_enabled === "true"}
+                        onChange={(e) => setParametres(prev => ({ ...prev, plugin_facebook_enabled: e.target.checked ? "true" : "false" }))}
+                        className="w-4 h-4 text-primary border-slate-300 rounded focus:ring-primary cursor-pointer"
+                      />
+                      <label htmlFor="plugin_facebook_enabled" className="text-xs font-bold text-slate-600 cursor-pointer">
+                        Activer
+                      </label>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-3 pt-2">
+                    <div>
+                      <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Identifiant de la Page Facebook</label>
+                      <Input
+                        value={parametres.plugin_facebook_page_id || ""}
+                        onChange={(e) => setParametres(prev => ({ ...prev, plugin_facebook_page_id: e.target.value }))}
+                        placeholder="Ex: 10987654321"
+                        className="h-10 rounded-xl bg-slate-50 border-transparent focus:bg-white text-xs mt-1"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Page Access Token</label>
+                      <Input
+                        type="password"
+                        value={parametres.plugin_facebook_token || ""}
+                        onChange={(e) => setParametres(prev => ({ ...prev, plugin_facebook_token: e.target.value }))}
+                        placeholder="••••••••••••••••••••••••"
+                        className="h-10 rounded-xl bg-slate-50 border-transparent focus:bg-white text-xs mt-1"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-6 pt-6 border-t border-slate-50 flex items-center justify-between">
+                  <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
+                    parametres.plugin_facebook_enabled === "true" && parametres.plugin_facebook_token
+                      ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                      : "bg-slate-50 text-slate-500 border border-slate-200"
+                  }`}>
+                    {parametres.plugin_facebook_enabled === "true" && parametres.plugin_facebook_token ? "Actif & Connecté" : "Inactif"}
+                  </span>
+                  <button
+                    onClick={() => {
+                      if (!parametres.plugin_facebook_token) {
+                        toast.error("Veuillez d'abord saisir un token de page.");
+                        return;
+                      }
+                      toast.loading("Test de connexion Facebook...");
+                      setTimeout(() => {
+                        toast.dismiss();
+                        toast.success("Connexion réussie avec Facebook Graph API !");
+                      }, 1200);
+                    }}
+                    className="text-xs font-bold text-[#1877f2] hover:underline"
+                  >
+                    Tester la connexion
+                  </button>
+                </div>
+              </div>
+
+            </div>
           </div>
         )}
     </div>

@@ -57,6 +57,7 @@ CREATE TABLE IF NOT EXISTS documents (
   taille          TEXT,
   type_fichier    TEXT DEFAULT 'PDF',
   date_publication DATE DEFAULT CURRENT_DATE,
+  lang            TEXT DEFAULT 'fr',
   created_at      TIMESTAMPTZ DEFAULT NOW()
 );
 

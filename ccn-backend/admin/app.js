@@ -145,6 +145,13 @@ function openModal(type, data = null) {
         </div>
         <div class="form-group"><label>Fichier (PDF, Word, Excel)</label><input type="file" name="fichier" accept=".pdf,.doc,.docx,.xls,.xlsx" /></div>
         <div class="form-group"><label>Date</label><input type="date" name="date_publication" value="${data?.date_publication?.slice(0,10) || ''}" /></div>
+        <div class="form-group"><label>Langue</label>
+          <select name="lang">
+            <option value="fr" ${(!data?.lang || data?.lang === 'fr') ? 'selected' : ''}>Français (FR)</option>
+            <option value="en" ${data?.lang === 'en' ? 'selected' : ''}>English (EN)</option>
+            <option value="ar" ${data?.lang === 'ar' ? 'selected' : ''}>العربية (AR)</option>
+          </select>
+        </div>
         <div class="modal-actions">
           <button type="button" class="btn btn-ghost" onclick="closeModal()">Annuler</button>
           <button type="submit" class="btn btn-primary">

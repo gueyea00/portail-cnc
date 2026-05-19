@@ -2,6 +2,7 @@ import Breadcrumb from "@/components/layout/Breadcrumb";
 import { Download, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
+import { useGoogleTranslate } from "@/hooks/useGoogleTranslate";
 
 const categoriesDocuments = [
   "Lois & Règlements",
@@ -28,6 +29,7 @@ function formatBytes(bytes: number, decimals = 2) {
 }
 
 export default function DocumentsPage() {
+  const { currentLang } = useGoogleTranslate();
   const { data: pageConfig } = useQuery({
     queryKey: ["parametres"],
     queryFn: () => fetch("/api/parametres").then(res => res.json())
@@ -38,8 +40,14 @@ export default function DocumentsPage() {
     queryFn: () => fetch("/api/documents").then(res => res.json())
   });
 
+  // Filtrer les documents selon la langue choisie
+  const filteredDocuments = documents.filter((d: any) => {
+    const docLang = (d.lang || 'fr').toLowerCase();
+    return docLang === currentLang;
+  });
+
   // Calculate unique actually used categories, but prioritize predefined order
-  const existingCategories = Array.from(new Set(documents.map((d: any) => d.categorie || 'Autre')));
+  const existingCategories = Array.from(new Set(filteredDocuments.map((d: any) => d.categorie || 'Autre')));
   const orderedCategories = categoriesDocuments.filter(c => existingCategories.includes(c as string));
   // Add custom categories if any exist that are not in predefined list
   existingCategories.forEach(c => {
@@ -62,11 +70,11 @@ export default function DocumentsPage() {
       <div className="container-page py-12 space-y-12">
         {isLoading ? (
           <div className="text-center py-20 text-muted-foreground">Chargement des documents...</div>
-        ) : documents.length === 0 ? (
+        ) : filteredDocuments.length === 0 ? (
           <div className="text-center py-20 text-muted-foreground">Aucun document n'est disponible pour le moment.</div>
         ) : (
           orderedCategories.map((cat) => {
-            const docs = documents.filter((d: any) => (d.categorie || 'Autre') === cat);
+            const docs = filteredDocuments.filter((d: any) => (d.categorie || 'Autre') === cat);
             if (docs.length === 0) return null;
             return (
               <section key={cat}>

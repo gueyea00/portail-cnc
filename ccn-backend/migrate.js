@@ -10,8 +10,14 @@ async function runMigration() {
       ALTER TABLE liens_institutionnels 
       ADD COLUMN IF NOT EXISTS logo_path TEXT;
     `);
+
+    // Ajout de la colonne lang à la table documents si elle n'existe pas
+    await client.query(`
+      ALTER TABLE documents 
+      ADD COLUMN IF NOT EXISTS lang TEXT DEFAULT 'fr';
+    `);
     
-    console.log("✅ Base de données mise à jour avec succès (colonne logo_path ajoutée) !");
+    console.log("✅ Base de données mise à jour avec succès (colonnes logo_path et lang ajoutées) !");
   } catch (err) {
     console.error("❌ Erreur lors de la migration :", err.message);
   } finally {

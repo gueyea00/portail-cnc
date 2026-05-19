@@ -1,4 +1,5 @@
 import ArticleService from '../services/articleService.js';
+import SocialMediaService from '../services/socialMediaService.js';
 
 class ArticleController {
   static async getPublished(req, res) {
@@ -38,6 +39,9 @@ class ArticleController {
         date_publication: req.body.date_publication || new Date()
       };
       const article = await ArticleService.createArticle(data);
+      if (article.statut === 'publie') {
+        SocialMediaService.shareArticle(article).catch(err => console.error("Social media publish error:", err));
+      }
       res.status(201).json(article);
     } catch (err) {
       res.status(500).json({ error: err.message });
@@ -51,6 +55,9 @@ class ArticleController {
       data.updated_at = new Date();
       
       const article = await ArticleService.updateArticle(req.params.id, data);
+      if (article.statut === 'publie') {
+        SocialMediaService.shareArticle(article).catch(err => console.error("Social media publish error:", err));
+      }
       res.json(article);
     } catch (err) {
       res.status(500).json({ error: err.message });

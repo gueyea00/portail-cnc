@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
 import { Shield, GitMerge, Scale, FileText, BarChart3, Users, ArrowRight, Quote, Camera, ExternalLink, PenSquare, Gavel, FileSignature, ShieldAlert, Clock, MapPin } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
@@ -340,37 +341,55 @@ export default function HomePage() {
               const desc = isDynamic ? s.description : s.desc;
               const link = s.lien;
               const icon = isDynamic ? (iconMap[s.icone] || <Shield className="w-8 h-8" />) : s.icone;
+              const isPlaceholder = !link || link === "#";
+              const isExternal = link?.startsWith("http");
+
+              const CardContent = () => (
+                <div className="h-full bg-background rounded-[2rem] p-8 border border-border shadow-soft hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2 transition-all duration-500 overflow-hidden relative">
+                  {/* Motif de fond stylisé sur la carte */}
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-[5rem] -mr-10 -mt-10 group-hover:scale-150 transition-transform duration-700" />
+
+                  <div className="relative z-10 space-y-6">
+                    <div className="w-16 h-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all duration-300 shadow-inner group-hover:rotate-6">
+                      {icon}
+                    </div>
+
+                    <div className="space-y-3">
+                      <h3 className="font-extrabold text-2xl text-foreground group-hover:text-primary transition-colors">{title}</h3>
+                      <p className="text-base text-muted-foreground leading-relaxed">
+                        {desc}
+                      </p>
+                    </div>
+
+                    <div className="pt-4 flex items-center gap-3 text-sm font-bold text-primary opacity-0 group-hover:opacity-100 translate-x-[-10px] group-hover:translate-x-0 transition-all duration-300">
+                      Accéder au service
+                      <ArrowRight className="w-4 h-4" />
+                    </div>
+                  </div>
+
+                  {/* Ligne d'accent en bas */}
+                  <div className="absolute bottom-0 left-0 w-0 h-1.5 bg-primary group-hover:w-full transition-all duration-700" />
+                </div>
+              );
 
               return (
                 <FadeIn key={title + i} delay={i * 100}>
-                  <Link to={link} className="group relative block h-full">
-                    <div className="h-full bg-background rounded-[2rem] p-8 border border-border shadow-soft hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2 transition-all duration-500 overflow-hidden relative">
-
-                      {/* Motif de fond stylisé sur la carte */}
-                      <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-[5rem] -mr-10 -mt-10 group-hover:scale-150 transition-transform duration-700" />
-
-                      <div className="relative z-10 space-y-6">
-                        <div className="w-16 h-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all duration-300 shadow-inner group-hover:rotate-6">
-                          {icon}
-                        </div>
-
-                        <div className="space-y-3">
-                          <h3 className="font-extrabold text-2xl text-foreground group-hover:text-primary transition-colors">{title}</h3>
-                          <p className="text-base text-muted-foreground leading-relaxed">
-                            {desc}
-                          </p>
-                        </div>
-
-                        <div className="pt-4 flex items-center gap-3 text-sm font-bold text-primary opacity-0 group-hover:opacity-100 translate-x-[-10px] group-hover:translate-x-0 transition-all duration-300">
-                          Accéder au service
-                          <ArrowRight className="w-4 h-4" />
-                        </div>
-                      </div>
-
-                      {/* Ligne d'accent en bas */}
-                      <div className="absolute bottom-0 left-0 w-0 h-1.5 bg-primary group-hover:w-full transition-all duration-700" />
+                  {isPlaceholder ? (
+                    <div
+                      onClick={() => toast.info("Ce service en ligne sera très bientôt disponible.")}
+                      className="group relative block h-full cursor-pointer"
+                    >
+                      <CardContent />
                     </div>
-                  </Link>
+                  ) : isExternal ? (
+                    <a href={link} target="_blank" rel="noopener noreferrer" className="group relative block h-full">
+                      <CardContent />
+                    </a>
+                  ) : (
+                    <Link to={link} className="group relative block h-full">
+                      <CardContent />
+                    </Link>
+                  )}
                 </FadeIn>
               );
             })}
