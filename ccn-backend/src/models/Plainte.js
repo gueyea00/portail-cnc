@@ -27,6 +27,11 @@ class Plainte extends BaseModel {
     return await new Plainte().findById(id);
   }
 
+  static async findByReference(reference) {
+    const result = await query(`SELECT * FROM plaintes WHERE reference = $1`, [reference]);
+    return result.rows[0];
+  }
+
   static async create(data) {
     return await new Plainte().create(data);
   }

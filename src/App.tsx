@@ -16,6 +16,7 @@ import SignalementPage from "./pages/SignalementPage";
 import ContactPage from "./pages/ContactPage";
 import FaqPage from "./pages/FaqPage";
 import GaleriePage from "./pages/GaleriePage";
+import SuiviProjet from "./pages/suiviProjet";
 import NotFound from "./pages/NotFound";
 import AdminLoginPage from "./pages/admin/AdminLoginPage";
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
@@ -56,6 +57,7 @@ const App = () => {
             <Route path="/actualites/:slug" element={<ArticleDetailPage />} />
             <Route path="/documents" element={<DocumentsPage />} />
             <Route path="/services" element={<ServicesPage />} />
+            <Route path="/suivi-projet" element={<SuiviProjet />} />
             <Route path="/plainte" element={<PlaintePage />} />
             <Route path="/signalement" element={<SignalementPage />} />
             <Route path="/contact" element={<ContactPage />} />

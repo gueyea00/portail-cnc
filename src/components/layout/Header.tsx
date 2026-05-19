@@ -31,7 +31,16 @@ export default function Header() {
     { label: t("nav.actualites"), path: "/actualites" },
     { label: t("nav.documents"), path: "/documents" },
     { label: t("nav.galerie"), path: "/galerie" },
-    { label: t("nav.services"), path: "/services" },
+    {
+      label: t("nav.services"),
+      path: "/services",
+      children: [
+        { label: "Tous les services", path: "/services" },
+        { label: "Déposer une plainte", path: "/plainte" },
+        { label: "Signalement anonyme", path: "/signalement" },
+        { label: "Suivi de dossier", path: "/suivi-projet" },
+      ],
+    },
     { label: t("nav.contact"), path: "/contact" },
   ];
 

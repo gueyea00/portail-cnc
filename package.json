@@ -7,7 +7,7 @@
     "dev:initdb": "npm run db:init --prefix ccn-backend",
     "dev:frontend": "vite",
     "dev:backend": "npm run dev --prefix ccn-backend",
-    "dev": "npm run dev:initdb && concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",

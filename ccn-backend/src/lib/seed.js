@@ -40,12 +40,12 @@ export async function seedDatabase(client) {
   const services = [
     ['Dépôt de plainte', 'Soumettez une plainte formelle concernant des pratiques anticoncurrentielles.', 'FileWarning', '/plainte', 1],
     ['Signalement anonyme', 'Signalez une pratique suspecte de manière anonyme.', 'ShieldAlert', '/signalement', 2],
-    ['Suivi de dossier', 'Consultez l\'état d\'avancement de votre dossier.', 'ClipboardList', '#', 3],
+    ['Suivi de dossier', 'Consultez l\'état d\'avancement de votre dossier.', 'ClipboardList', '/suivi-projet', 3],
     ['Demande d\'avis', 'Sollicitez l\'avis du CNC sur une question de concurrence.', 'MessageSquare', '#', 4],
     ['Prise de rendez-vous', 'Planifiez un rendez-vous avec les services du CNC.', 'Calendar', '#', 5]
   ];
   for (const s of services) {
-    await db.query(`INSERT INTO services (titre, description, icone, lien, ordre) VALUES ($1, $2, $3, $4, $5) ON CONFLICT (titre) DO NOTHING;`, s);
+    await db.query(`INSERT INTO services (titre, description, icone, lien, ordre) VALUES ($1, $2, $3, $4, $5) ON CONFLICT (titre) DO UPDATE SET lien = EXCLUDED.lien, description = EXCLUDED.description, icone = EXCLUDED.icone, ordre = EXCLUDED.ordre;`, s);
   }
 
   // 4. Membres

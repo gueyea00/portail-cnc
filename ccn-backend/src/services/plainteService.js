@@ -13,6 +13,10 @@ class PlainteService {
     return await Plainte.findById(id);
   }
 
+  static async getPlainteByReference(reference) {
+    return await Plainte.findByReference(reference);
+  }
+
   static async createPlainte(data) {
     return await Plainte.create(data);
   }

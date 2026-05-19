@@ -57,6 +57,34 @@ class PlainteController {
     }
   }
 
+  static async getByReference(req, res) {
+    try {
+      const { reference } = req.params;
+      if (!reference) return res.status(400).json({ error: 'Référence requise.' });
+      
+      const plainte = await PlainteService.getPlainteByReference(reference.trim().toUpperCase());
+      if (!plainte) return res.status(404).json({ error: 'Dossier/Plainte non trouvé avec cette référence.' });
+      
+      // Filtrer les informations sensibles pour préserver la vie privée des citoyens
+      const publicPlainte = {
+        reference: plainte.reference,
+        nom: plainte.nom ? `${plainte.nom.substring(0, 1)}***` : '',
+        prenom: plainte.prenom ? `${plainte.prenom.substring(0, 1)}***` : '',
+        type_pratique: plainte.type_pratique,
+        entreprise_concernee: plainte.entreprise_concernee,
+        secteur: plainte.secteur,
+        statut: plainte.statut,
+        created_at: plainte.created_at,
+        updated_at: plainte.updated_at
+      };
+      
+      res.json(publicPlainte);
+    } catch (err) {
+      console.error('Erreur getByReference:', err);
+      res.status(500).json({ error: err.message });
+    }
+  }
+
   static async updateStatut(req, res) {
     try {
       const { statut } = req.body;

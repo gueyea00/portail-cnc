@@ -16,6 +16,7 @@ const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } });
 
 // Public routes
 router.post('/', upload.array('fichiers', 5), PlainteController.create);
+router.get('/suivi/:reference', PlainteController.getByReference);
 
 // Admin routes
 router.get('/admin/all', authMiddleware, PlainteController.getAllAdmin);

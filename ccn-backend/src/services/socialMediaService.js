@@ -42,7 +42,7 @@ class SocialMediaService {
 
   static async shareToLinkedIn(article, pageId, token) {
     try {
-      const shareUrl = `http://188.165.77.237/actualites/${article.slug}`;
+      const shareUrl = `http://localhost/actualites/${article.slug}`;
       const payload = {
         author: pageId || "urn:li:organization:123456",
         lifecycleState: "PUBLISHED",
@@ -72,7 +72,7 @@ class SocialMediaService {
       };
 
       console.log("🔗 Envoi du post vers LinkedIn API (Page ID:", payload.author, ")");
-      
+
       // Fallback de simulation sécurisée pour les tokens de démonstration
       if (token.startsWith("mock") || token === "••••••••••••••••••••••••" || token.length < 20) {
         console.log("✅ [SIMULATION] Partage LinkedIn effectué avec succès !");
@@ -103,9 +103,9 @@ class SocialMediaService {
 
   static async shareToFacebook(article, pageId, token) {
     try {
-      const shareUrl = `http://188.165.77.237/actualites/${article.slug}`;
+      const shareUrl = `http://localhost/actualites/${article.slug}`;
       const message = `📢 NOUVEL ARTICLE : ${article.titre}\n\n${article.extrait || ""}\n\nRetrouvez tous les détails sur notre portail : ${shareUrl}`;
-      
+
       const realPageId = pageId || "me";
       const url = `https://graph.facebook.com/${realPageId}/feed`;
 
