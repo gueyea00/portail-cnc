@@ -14,7 +14,8 @@ import {
   CheckCircle2,
   AlertCircle,
   FileBadge,
-  MessageSquare
+  MessageSquare,
+  ChevronDown
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,6 +29,7 @@ type TabType = "dashboard" | "articles" | "membres" | "galerie" | "documents" | 
 export default function AdminDashboardPage() {
   const [activeTab, setActiveTab] = useState<TabType>("dashboard");
   const [activeParamTab, setActiveParamTab] = useState<string>("identite");
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [articles, setArticles] = useState<any[]>([]);
   const [membres, setMembres] = useState<any[]>([]);
   const [galerie, setGalerie] = useState<any[]>([]);
@@ -1075,17 +1077,6 @@ export default function AdminDashboardPage() {
             </div>
           ))}
         </nav>
-
-        {/* User footer */}
-        <div className="px-2.5 py-3 border-t border-white/[0.07]">
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-white/40 hover:bg-red-500/10 hover:text-red-300 transition-all text-[12.5px] font-semibold"
-          >
-            <LogOut className="w-4 h-4" />
-            Déconnexion
-          </button>
-        </div>
       </aside>
 
       {/* Main Content */}
@@ -1101,14 +1092,60 @@ export default function AdminDashboardPage() {
               <p className="text-[11px] text-slate-400 font-medium">Portail CNC Tchad</p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-[#001a4d] flex items-center justify-center text-white text-xs font-black">
-              {admin.username?.charAt(0).toUpperCase()}
-            </div>
-            <div className="hidden sm:block">
-              <p className="text-xs font-bold text-slate-700">{admin.username}</p>
-              <p className="text-[10px] text-slate-400">Administrateur</p>
-            </div>
+          <div className="relative">
+            <button
+              onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+              className="flex items-center gap-3 hover:bg-slate-50 p-1.5 px-2.5 rounded-xl transition-all duration-150 active:scale-95 border border-transparent hover:border-slate-100"
+            >
+              <div className="w-8 h-8 rounded-lg bg-[#001a4d] flex items-center justify-center text-white text-xs font-black shadow-inner">
+                {admin.username?.charAt(0).toUpperCase()}
+              </div>
+              <div className="hidden sm:block text-left">
+                <p className="text-xs font-bold text-slate-700 leading-tight">{admin.username}</p>
+                <p className="text-[10px] text-slate-400 font-medium">Administrateur</p>
+              </div>
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400 transition-transform duration-200" style={{ transform: profileDropdownOpen ? 'rotate(180deg)' : 'none' }} />
+            </button>
+
+            {profileDropdownOpen && (
+              <>
+                {/* Overlay pour fermer le menu lors du clic extérieur */}
+                <div 
+                  className="fixed inset-0 z-40 cursor-default" 
+                  onClick={() => setProfileDropdownOpen(false)}
+                />
+                
+                {/* Dropdown Menu de profil avec animations et style premium */}
+                <div className="absolute right-0 mt-2.5 w-52 bg-white rounded-2xl border border-slate-100 shadow-2xl py-1.5 z-50 animate-in fade-in slide-in-from-top-3 duration-200">
+                  <div className="px-4 py-2 border-b border-slate-50">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Mon Compte</p>
+                    <p className="text-sm font-black text-slate-800 truncate mt-0.5">{admin.username}</p>
+                  </div>
+                  
+                  <button
+                    onClick={() => {
+                      setProfileDropdownOpen(false);
+                      setActiveTab("parametres");
+                    }}
+                    className="w-full flex items-center gap-2.5 px-4 py-2 text-[13px] font-semibold text-slate-600 hover:bg-slate-50 hover:text-primary transition-all text-left"
+                  >
+                    <Settings className="w-4 h-4 text-slate-400" />
+                    Paramètres
+                  </button>
+                  
+                  <button
+                    onClick={() => {
+                      setProfileDropdownOpen(false);
+                      handleLogout();
+                    }}
+                    className="w-full flex items-center gap-2.5 px-4 py-2 text-[13px] font-bold text-red-600 hover:bg-red-50 transition-all text-left border-t border-slate-100 mt-1"
+                  >
+                    <LogOut className="w-4 h-4 text-red-500" />
+                    Déconnexion
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </header>
 
