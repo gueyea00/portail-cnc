@@ -46,3 +46,5 @@ services:
 
 volumes:
   pgdata:
+    external: true
+    name: cnc-connect-hub_pgdata
