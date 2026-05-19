@@ -94,17 +94,11 @@ export default function PresentationPage() {
 
           <style>{`
             .scrollbar-timeline::-webkit-scrollbar {
-              height: 6px;
+              display: none;
             }
-            .scrollbar-timeline::-webkit-scrollbar-track {
-              background: transparent;
-            }
-            .scrollbar-timeline::-webkit-scrollbar-thumb {
-              background: rgba(148, 163, 184, 0.3);
-              border-radius: 9999px;
-            }
-            .scrollbar-timeline::-webkit-scrollbar-thumb:hover {
-              background: rgba(148, 163, 184, 0.5);
+            .scrollbar-timeline {
+              -ms-overflow-style: none;
+              scrollbar-width: none;
             }
           `}</style>
 
