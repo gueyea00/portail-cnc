@@ -189,7 +189,6 @@ export default function GaleriePage() {
                 className={`relative h-56 rounded-xl bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center group overflow-hidden cursor-pointer shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-muted`}
               >
                 <img src={getImgUrl(item.image_path, `https://images.unsplash.com/photo-${1550000000000 + i * 1000000}?auto=format&fit=crop&q=80&w=600`)} alt={item.titre} className="absolute inset-0 w-full h-full object-cover opacity-100 group-hover:scale-105 transition-all duration-700" />
-                <Camera className="w-10 h-10 text-white/30 group-hover:scale-110 transition-transform duration-300 z-10" />
 
                 <div className="absolute top-3 left-3 z-10">
                   <span className="text-xs bg-black/50 text-white px-2.5 py-1 rounded-full backdrop-blur-sm font-medium inline-flex items-center gap-1">
