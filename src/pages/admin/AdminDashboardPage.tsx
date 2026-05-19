@@ -1029,35 +1029,44 @@ export default function AdminDashboardPage() {
       {/* Sidebar */}
       <aside className="w-60 bg-[#001a4d] text-white flex flex-col fixed inset-y-0 z-50 shadow-2xl">
         {/* Logo */}
-        <div className="px-5 py-5 border-b border-white/[0.07]">
+        <div className="px-4 py-3.5 border-b border-white/[0.07]">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-white rounded-xl flex items-center justify-center p-1.5 shadow-lg flex-shrink-0">
+            <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center p-1.5 shadow-lg flex-shrink-0">
               <img src="/armoiries-tchad.png" alt="Logo" className="w-full h-full object-contain" />
             </div>
             <div className="min-w-0">
-              <h2 className="font-black text-[13px] leading-tight tracking-tight">CNC Tchad</h2>
-              <p className="text-[9px] text-white/40 uppercase tracking-[0.15em] font-semibold mt-0.5">Administration</p>
+              <h2 className="font-black text-[12px] leading-tight tracking-tight">CNC Tchad</h2>
+              <p className="text-[8px] text-white/40 uppercase tracking-[0.15em] font-semibold mt-0.5">Administration</p>
             </div>
           </div>
         </div>
 
-        <nav className="flex-1 px-3 py-4 overflow-y-auto space-y-5">
+        <nav className="flex-1 px-2.5 py-3.5 overflow-y-auto space-y-3 scrollbar-none">
+          <style>{`
+            .scrollbar-none::-webkit-scrollbar {
+              display: none;
+            }
+            .scrollbar-none {
+              -ms-overflow-style: none;
+              scrollbar-width: none;
+            }
+          `}</style>
           {menuGroups.map((group) => (
             <div key={group.label}>
-              <p className="text-[9px] font-black uppercase tracking-[0.15em] text-white/30 px-3 mb-1.5">{group.label}</p>
+              <p className="text-[8px] font-black uppercase tracking-[0.15em] text-white/25 px-2 mb-1">{group.label}</p>
               <div className="space-y-0.5">
                 {group.items.map((item) => (
                   <button
                     key={item.id}
                     onClick={() => setActiveTab(item.id as TabType)}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-150 text-sm font-medium ${
+                    className={`w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg transition-all duration-150 text-[12.5px] font-semibold ${
                       activeTab === item.id
                         ? "bg-white/[0.12] text-white"
-                        : "text-white/55 hover:bg-white/[0.06] hover:text-white/90"
+                        : "text-white/50 hover:bg-white/[0.06] hover:text-white/80"
                     }`}
                   >
                     <span className={`flex-shrink-0 transition-colors ${
-                      activeTab === item.id ? "text-blue-300" : "text-white/40"
+                      activeTab === item.id ? "text-blue-300" : "text-white/30"
                     }`}>{item.icon}</span>
                     {item.label}
                   </button>
@@ -1068,10 +1077,10 @@ export default function AdminDashboardPage() {
         </nav>
 
         {/* User footer */}
-        <div className="px-3 py-4 border-t border-white/[0.07]">
+        <div className="px-2.5 py-3 border-t border-white/[0.07]">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/40 hover:bg-red-500/10 hover:text-red-300 transition-all text-sm font-medium"
+            className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-white/40 hover:bg-red-500/10 hover:text-red-300 transition-all text-[12.5px] font-semibold"
           >
             <LogOut className="w-4 h-4" />
             Déconnexion
