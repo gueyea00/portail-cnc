@@ -15,7 +15,7 @@ class PlainteService {
 
   static async getPlainteByReference(reference) {
     // L'URL de l'API Externe du nouveau microservice tchad-service
-    const externalApiUrl = process.env.EXTERNAL_SUIVI_API_URL || "http://localhost:5010/v1/dossiers";
+    const externalApiUrl = process.env.EXTERNAL_SUIVI_API_URL || "http://188.165.77.237:5010/v1/dossiers";
     
     try {
       // 1. Appel HTTP GET vers l'API externe
