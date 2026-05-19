@@ -121,10 +121,9 @@ export default function PresentationPage() {
             </button>
 
             <div className="relative overflow-x-auto pb-6 pt-4 scrollbar-timeline scroll-smooth" ref={timelineRef}>
-              {/* Ligne de timeline horizontale connectant tous les jalons */}
-              <div className="absolute top-[56px] left-[60px] right-[60px] h-[3px] bg-gradient-to-r from-primary/10 via-primary/30 to-primary/10 z-0 pointer-events-none" />
-
               <div className="flex items-start gap-12 px-6 relative z-10 min-w-max">
+                {/* Ligne de timeline horizontale connectant tous les jalons sur toute la longueur */}
+                <div className="absolute top-[40px] left-[152px] right-[152px] h-[3px] bg-gradient-to-r from-primary/10 via-primary/30 to-primary/10 z-0 pointer-events-none" />
                 {sortedHistory.length === 0 ? (
                   <div className="w-full text-center text-muted-foreground italic py-8">Aucune date clé disponible.</div>
                 ) : sortedHistory.map((h: any, idx: number) => (
