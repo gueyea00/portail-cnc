@@ -518,7 +518,7 @@ export default function HomePage() {
       </section> */}
 
       {/* Partenaires (Bailleurs) - Défilement Infini Fluide */}
-      <section className="py-10 bg-slate-50 border-t border-b border-slate-100 overflow-hidden relative">
+      <section className="py-10 bg-white border-t border-b border-slate-100 overflow-hidden relative">
         <div className="container-page mb-6">
           <h2 className="text-center text-xs font-black text-slate-400 uppercase tracking-[0.2em]">Partenaires & Institutions</h2>
         </div>
@@ -542,8 +542,8 @@ export default function HomePage() {
           {/* Dégradés translucides sur les côtés uniquement si défilement actif */}
           {shouldScroll && (
             <>
-              <div className="absolute top-0 bottom-0 left-0 w-24 bg-gradient-to-r from-slate-50 via-slate-50/80 to-transparent z-10 pointer-events-none" />
-              <div className="absolute top-0 bottom-0 right-0 w-24 bg-gradient-to-l from-slate-50 via-slate-50/80 to-transparent z-10 pointer-events-none" />
+              <div className="absolute top-0 bottom-0 left-0 w-24 bg-gradient-to-r from-white via-white/80 to-transparent z-10 pointer-events-none" />
+              <div className="absolute top-0 bottom-0 right-0 w-24 bg-gradient-to-l from-white via-white/80 to-transparent z-10 pointer-events-none" />
             </>
           )}
 
@@ -566,7 +566,7 @@ export default function HomePage() {
                   href={l.url || "#"}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex flex-col items-center justify-center gap-2.5 min-w-[120px] max-w-[180px] grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300 transform hover:scale-105 group/logo"
+                  className="flex flex-col items-center justify-center gap-2.5 min-w-[120px] max-w-[180px] transition-all duration-300 transform hover:scale-105 group/logo"
                 >
                   <div className="h-12 flex items-center justify-center">
                     {l.logo_path ? (
@@ -601,7 +601,7 @@ export default function HomePage() {
                   href={l.url || "#"}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex flex-col items-center justify-center gap-2.5 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300 transform hover:scale-105 group/logo"
+                  className="flex flex-col items-center justify-center gap-2.5 transition-all duration-300 transform hover:scale-105 group/logo"
                 >
                   <div className="h-12 flex items-center justify-center">
                     {l.logo_path ? (
