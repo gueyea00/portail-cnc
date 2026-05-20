@@ -31,7 +31,6 @@ export default function Header() {
     { label: t("nav.actualites"), path: "/actualites" },
     { label: t("nav.documents"), path: "/documents" },
     { label: t("nav.galerie"), path: "/galerie" },
-    { label: t("Suivi de dossier"), path: "/suivi-projet" },
     { label: t("nav.contact"), path: "/contact" },
   ];
 
