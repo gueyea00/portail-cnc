@@ -178,7 +178,7 @@ export default function Header() {
             {/* CTA + burger */}
             <div className="flex items-center gap-3 sm:gap-4">
             <Link
-  to="/suivi-projet"
+  to="/suivi-dossier"
   className="hidden sm:inline-flex items-center px-4 py-2 rounded-md bg-primary text-white text-sm font-medium hover:opacity-90 transition"
 >
   Suivi de dossier
