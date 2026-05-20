@@ -152,7 +152,7 @@ export default function HomePage() {
           </div>
 
           <FadeIn>
-            <div className="max-w-3xl">
+            <div className="max-w-3xl bg-gradient-to-r from-black/70 via-black/50 to-transparent p-6 md:p-8 rounded-2xl backdrop-blur-sm">
 
               <h1 className="text-4xl md:text-6xl font-extrabold leading-tight mb-6">
                 {presidentData?.hero_title || t("hero.title")}
