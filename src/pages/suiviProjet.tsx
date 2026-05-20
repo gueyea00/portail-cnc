@@ -43,19 +43,33 @@ export default function SuiviProjet() {
         queryFn: () => fetch("/api/parametres").then(res => res.json())
     });
 
-    // Query to fetch the complaint by reference
+    // Query to fetch the complaint by reference from MCI Service
     const { data: dossier, isLoading, error, refetch } = useQuery<PublicPlainte>({
         queryKey: ["suiviDossier", submittedRef],
         queryFn: async () => {
             if (!submittedRef) return null;
-            const res = await fetch(`/api/plaintes/suivi/${submittedRef.trim()}`);
+            // Appel vers le service-mci sur le port 5012
+            const res = await fetch(`http://148.230.124.48:5012/v1/dossiers/${submittedRef.trim()}`);
             if (res.status === 404) {
                 throw new Error("Aucun dossier trouvé avec cette référence.");
             }
             if (!res.ok) {
                 throw new Error("Une erreur est survenue lors de la recherche.");
             }
-            return res.json();
+            const data = await res.json();
+            
+            // Mapping des champs du service-mci vers l'interface PublicPlainte
+            return {
+                reference: data.reference,
+                nom: data.nom,
+                prenom: data.prenom,
+                type_pratique: data.sujet,
+                entreprise_concernee: data.cible,
+                secteur: data.secteur,
+                statut: data.status,
+                created_at: data.dateCreation,
+                updated_at: data.dateCreation // SQLite doesn't have updated_at in the current schema
+            };
         },
         enabled: !!submittedRef,
         retry: false
