@@ -170,7 +170,12 @@ export default function Header() {
 
             {/* CTA + burger */}
             <div className="flex items-center gap-3 sm:gap-4">
-              <LanguageSwitcher />
+            <Link
+  to="/suivi-projet"
+  className="hidden sm:inline-flex items-center px-4 py-2 rounded-md bg-primary text-white text-sm font-medium hover:opacity-90 transition"
+>
+  Suivi de dossier
+</Link>
 
               <button
                 className="lg:hidden p-2 rounded-md hover:bg-muted transition-colors"
