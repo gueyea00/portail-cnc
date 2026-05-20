@@ -221,7 +221,7 @@ export default function AdminDashboardPage() {
   const fetchMembres = async () => {
     setIsLoadingTab(true);
     try {
-      const res = await fetch("/api/membres");
+      const res = await authFetch("/api/membres/admin/all");
       const data = await res.json();
       setMembres(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -260,7 +260,7 @@ export default function AdminDashboardPage() {
   const fetchMissions = async () => {
     setIsLoadingTab(true);
     try {
-      const res = await fetch("/api/missions");
+      const res = await authFetch("/api/missions/admin/all");
       const data = await res.json();
       setMissions(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -299,7 +299,7 @@ export default function AdminDashboardPage() {
   const fetchFaq = async () => {
     setIsLoadingTab(true);
     try {
-      const res = await fetch("/api/faq");
+      const res = await authFetch("/api/faq/admin/all");
       const data = await res.json();
       setFaq(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -312,7 +312,7 @@ export default function AdminDashboardPage() {
   const fetchServices = async () => {
     setIsLoadingTab(true);
     try {
-      const res = await fetch("/api/services");
+      const res = await authFetch("/api/services/admin/all");
       const data = await res.json();
       setServices(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -522,7 +522,7 @@ export default function AdminDashboardPage() {
   const fetchDocuments = async () => {
     setIsLoadingTab(true);
     try {
-      const res = await fetch("/api/documents");
+      const res = await authFetch("/api/documents/admin/all");
       const data = await res.json();
       setDocuments(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -562,7 +562,7 @@ export default function AdminDashboardPage() {
   const fetchParametres = async () => {
     setIsLoadingTab(true);
     try {
-      const res = await fetch("/api/parametres");
+      const res = await authFetch("/api/parametres/admin/all");
       const data = await res.json();
 
       // On s'assure que toutes les clés importantes sont présentes pour l'admin
@@ -635,7 +635,7 @@ export default function AdminDashboardPage() {
   const fetchLiens = async () => {
     setIsLoadingTab(true);
     try {
-      const res = await fetch("/api/liens");
+      const res = await authFetch("/api/liens/admin/all");
       const data = await res.json();
       setLiens(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -717,7 +717,7 @@ export default function AdminDashboardPage() {
     e.preventDefault();
     setIsLoadingTab(true);
     try {
-      const url = editingMission ? `/api/missions/${editingMission.id}` : "/api/missions";
+      const url = editingMission ? `/api/missions/admin/${editingMission.id}` : "/api/missions/admin";
       const method = editingMission ? "PUT" : "POST";
       const res = await authFetch(url, {
         method,
@@ -738,7 +738,7 @@ export default function AdminDashboardPage() {
   const handleDeleteMission = async (id: number) => {
     if (!confirm("Supprimer cette mission ?")) return;
     try {
-      const res = await authFetch(`/api/missions/${id}`, { method: "DELETE" });
+      const res = await authFetch(`/api/missions/admin/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Erreur suppression");
       toast.success("Mission supprimée");
       fetchMissions();
@@ -852,7 +852,7 @@ export default function AdminDashboardPage() {
     e.preventDefault();
     setIsLoadingTab(true);
     try {
-      const url = editingFaq ? `/api/faq/${editingFaq.id}` : "/api/faq";
+      const url = editingFaq ? `/api/faq/admin/${editingFaq.id}` : "/api/faq/admin";
       const method = editingFaq ? "PUT" : "POST";
       const res = await authFetch(url, {
         method,
@@ -873,7 +873,7 @@ export default function AdminDashboardPage() {
   const handleDeleteFaq = async (id: number) => {
     if (!confirm("Supprimer cette FAQ ?")) return;
     try {
-      const res = await authFetch(`/api/faq/${id}`, { method: "DELETE" });
+      const res = await authFetch(`/api/faq/admin/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Erreur suppression");
       toast.success("Supprimée");
       fetchFaq();
