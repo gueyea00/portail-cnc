@@ -129,6 +129,7 @@ export default function HomePage() {
         }}
       >
         <div className="absolute inset-0 bg-black/40 z-0" />
+        <div className="absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-black/70 via-black/50 to-transparent z-0" />
         <div className="absolute inset-0 opacity-20 z-0">
           <div className="absolute top-10 right-10 w-64 h-64 rounded-full bg-secondary/30 blur-3xl animate-pulse" />
           <div className="absolute bottom-10 left-10 w-48 h-48 rounded-full bg-destructive/20 blur-3xl animate-pulse" />
@@ -152,7 +153,7 @@ export default function HomePage() {
           </div>
 
           <FadeIn>
-            <div className="max-w-3xl bg-gradient-to-r from-black/70 via-black/50 to-transparent p-6 md:p-8 rounded-2xl backdrop-blur-sm">
+            <div className="max-w-3xl p-6 md:p-8">
 
               <h1 className="text-4xl md:text-6xl font-extrabold leading-tight mb-6">
                 {presidentData?.hero_title || t("hero.title")}
