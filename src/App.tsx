@@ -41,7 +41,7 @@ const router = createBrowserRouter(
         { path: "/actualites/:slug", element: <ArticleDetailPage /> },
         { path: "/documents", element: <DocumentsPage /> },
         { path: "/services", element: <ServicesPage /> },
-        { path: "/suivi-projet", element: <SuiviProjet /> },
+        { path: "/suivi-dossier", element: <SuiviProjet /> },
         { path: "/plainte", element: <PlaintePage /> },
         { path: "/signalement", element: <SignalementPage /> },
         { path: "/contact", element: <ContactPage /> },
