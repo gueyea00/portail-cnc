@@ -84,10 +84,18 @@ export default function Header() {
               <span>{parametres?.horaires_ouverture || "Lun – Ven 7h30 – 15h30"}</span>
             </div>
           </div>
-          <div className="flex items-center gap-2 font-bold text-slate-900">
-            <Phone className="w-4 h-4 text-primary" />
-            <span>{parametres?.contact_telephone || "+235 22 52 12 34"}</span>
-          </div>
+   <div className="flex items-center gap-4">
+  {/* Sélecteur de langue */}
+  <div className="flex items-center">
+    <LanguageSwitcher />
+  </div>
+
+  {/* Téléphone */}
+  <div className="flex items-center gap-2 font-bold text-slate-900">
+    <Phone className="w-4 h-4 text-primary" />
+    <span>{parametres?.contact_telephone || "+235 22 52 12 34"}</span>
+  </div>
+</div>
         </div>
 
         {/* Main Header */}
