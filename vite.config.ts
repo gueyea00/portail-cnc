@@ -14,26 +14,26 @@ export default defineConfig(({ mode }) => ({
     proxy: {
       // Remote VPS (masked for local dev)
       // "/api": {
-      //   target: "http://148.230.124.48:5010",
+      //   target: "http://localhost:5010",
       //   changeOrigin: true,
       // },
       // "/admin": {
-      //   target: "http://148.230.124.48:5010",
+      //   target: "http://localhost:5010",
       //   changeOrigin: true,
       // },
       // "/uploads": {
-      //   target: "http://148.230.124.48:5010",
+      //   target: "http://localhost:5010",
       //   changeOrigin: true,
       // },
 
       // Local backend
       "/api": {
-        target: "http://148.230.124.48:5010",
+        target: "http://localhost:5010",
         changeOrigin: true,
       },
 
       "/uploads": {
-        target: "http://148.230.124.48:5010",
+        target: "http://localhost:5010",
         changeOrigin: true,
       },
     },

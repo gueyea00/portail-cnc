@@ -8,7 +8,7 @@
     "dev:frontend": "vite",
     "dev:backend": "npm run dev --prefix ccn-backend",
     "dev:tchad": "node tchad-service/server.js",
-    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\" \"npm run dev:tchad\"",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",

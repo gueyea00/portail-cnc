@@ -18,7 +18,12 @@ export default function Header() {
     queryFn: () => fetch("/api/parametres").then(res => res.json())
   });
 
-  const navItems = [
+  const { data: menuItemsFromDb = [] } = useQuery({
+    queryKey: ["menu_items"],
+    queryFn: () => fetch("/api/menu").then(res => res.json())
+  });
+
+  const navItems = menuItemsFromDb.length > 0 ? menuItemsFromDb : [
     { label: t("nav.accueil"), path: "/" },
     {
       label: t("nav.presentation"),

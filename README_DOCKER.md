@@ -18,9 +18,9 @@ docker-compose up --build -d
 ```
 
 ## Accès
-- **Site Public** : [http://148.230.124.48](http://148.230.124.48)
-- **Interface Admin** : [http://148.230.124.48/admin](http://148.230.124.48/admin)
-- **API Health** : [http://148.230.124.48/api/health](http://148.230.124.48/api/health) (via proxy Nginx) ou [http://148.230.124.48:5010/health](http://148.230.124.48:5010/health) (accès direct)
+- **Site Public** : [http://localhost](http://localhost)
+- **Interface Admin** : [http://localhost/admin](http://localhost/admin)
+- **API Health** : [http://localhost/api/health](http://localhost/api/health) (via proxy Nginx) ou [http://localhost:5010/health](http://localhost:5010/health) (accès direct)
 
 ## Variables d'environnement
 Elles sont configurées par défaut dans `docker-compose.yml`. Si vous souhaitez les modifier (ex: mot de passe DB), vous pouvez le faire directement dans ce fichier ou créer un fichier `.env`.

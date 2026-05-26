@@ -19,6 +19,7 @@ import missionsRoutes from './routes/missions.js';
 import faqRoutes from './routes/faq.js';
 import servicesRoutes from './routes/services.js';
 import liensRoutes from './routes/liens.js';
+import menuRoutes from './routes/menu.js';
 
 dotenv.config();
 
@@ -77,6 +78,7 @@ app.use('/api/missions', missionsRoutes);
 app.use('/api/faq', faqRoutes);
 app.use('/api/services', servicesRoutes);
 app.use('/api/liens', liensRoutes);
+app.use('/api/menu', menuRoutes);
 
 // Admin — routes protégées supplémentaires
 app.use('/api/articles', articlesRoutes);
