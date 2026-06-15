@@ -20,7 +20,7 @@ services:
     restart: always
     environment:
       NODE_ENV: production
-      PORT: 5010
+      PORT: 3184
       DB_HOST: db
       DB_PORT: 5432
       DB_USER: postgres
@@ -31,7 +31,7 @@ services:
     depends_on:
       - db
     ports:
-      - "5010:5010"
+      - "3184:3184"
     volumes:
       - ./ccn-backend/uploads:/app/uploads
 
