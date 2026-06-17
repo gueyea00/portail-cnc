@@ -36,16 +36,6 @@ export default function Header() {
     { label: t("nav.actualites"), path: "/actualites" },
     { label: t("nav.documents"), path: "/documents" },
     { label: t("nav.galerie"), path: "/galerie" },
-    {
-      label: t("nav.services"),
-      path: "/services",
-      children: [
-        { label: "Tous les services", path: "/services" },
-        { label: "Déposer une plainte", path: "/plainte" },
-        { label: "Signalement anonyme", path: "/signalement" },
-        { label: "Suivi de dossier", path: "/suivi-projet" },
-      ],
-    },
     { label: t("nav.contact"), path: "/contact" },
   ];
 
@@ -99,10 +89,18 @@ export default function Header() {
               <span>{parametres?.horaires_ouverture || "Lun – Ven 7h30 – 15h30"}</span>
             </div>
           </div>
-          <div className="flex items-center gap-2 font-bold text-slate-900">
-            <Phone className="w-4 h-4 text-primary" />
-            <span>{parametres?.contact_telephone || "+235 22 52 12 34"}</span>
-          </div>
+   <div className="flex items-center gap-4">
+  {/* Sélecteur de langue */}
+  <div className="flex items-center">
+    <LanguageSwitcher />
+  </div>
+
+  {/* Téléphone */}
+  <div className="flex items-center gap-2 font-bold text-slate-900">
+    <Phone className="w-4 h-4 text-primary" />
+    <span>{parametres?.contact_telephone || "+235 22 52 12 34"}</span>
+  </div>
+</div>
         </div>
 
         {/* Main Header */}
@@ -184,7 +182,12 @@ export default function Header() {
 
             {/* CTA + burger */}
             <div className="flex items-center gap-3 sm:gap-4">
-              <LanguageSwitcher />
+            <Link
+  to="/suivi-dossier"
+  className="hidden sm:inline-flex items-center px-4 py-2 rounded-md bg-primary text-white text-sm font-medium hover:opacity-90 transition"
+>
+  Suivi de dossier
+</Link>
 
               <button
                 className="lg:hidden p-2 rounded-md hover:bg-muted transition-colors"

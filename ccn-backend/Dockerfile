@@ -7,8 +7,8 @@ RUN npm install --production
 
 COPY . .
 
-ENV PORT=5010
-EXPOSE 5010
+ENV PORT=5003
+EXPOSE 5003
 
 # Lancer l'initialisation de la DB puis démarrer le serveur
 CMD ["sh", "-c", "npm run db:init && npm start"]
