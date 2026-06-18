@@ -1,4 +1,4 @@
-import { useParams, Link } from "react-router-dom";
+﻿import { useParams, Link } from "react-router-dom";
 import Breadcrumb from "@/components/layout/Breadcrumb";
 import { ArrowLeft, Calendar, Tag, Share2, Facebook, Linkedin, Twitter, Mail, Send, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -24,7 +24,7 @@ export default function ArticleDetailPage() {
   const { data: article, isLoading, error } = useQuery({
     queryKey: ["article", slug],
     queryFn: async () => {
-      const res = await fetch(`/api/articles/${slug}`);
+      const res = await fetch(`http://188.165.77.237:5003/api/articles/${slug}`);
       if (!res.ok) throw new Error("Article non trouvé");
       return res.json();
     }
@@ -32,7 +32,7 @@ export default function ArticleDetailPage() {
 
   const { data: recentArticles = [] } = useQuery({
     queryKey: ["articles", "recent"],
-    queryFn: () => fetch("/api/articles?limit=5").then(res => res.json())
+    queryFn: () => fetch("http://188.165.77.237:5003/api/articles?limit=5").then(res => res.json())
   });
 
   if (isLoading) {

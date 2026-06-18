@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+﻿import { useQuery } from "@tanstack/react-query";
 import Breadcrumb from "@/components/layout/Breadcrumb";
 import { Shield, GitMerge, Scale, FileText, BarChart3, Users, Globe, Heart, Search, Target, CheckCircle, Zap } from "lucide-react";
 const iconMap: Record<string, React.ReactNode> = {
@@ -17,16 +17,16 @@ const iconMap: Record<string, React.ReactNode> = {
 export default function MissionsPage() {
   const { data: missionsApi = [] } = useQuery({
     queryKey: ["missions"],
-    queryFn: () => fetch("/api/missions").then(res => res.json())
+    queryFn: () => fetch("http://188.165.77.237:5003/api/missions").then(res => res.json())
   });
   const { data: etapesApi = [] } = useQuery({
     queryKey: ["etapes-intervention"],
-    queryFn: () => fetch("/api/missions/etapes").then(res => res.json())
+    queryFn: () => fetch("http://188.165.77.237:5003/api/missions/etapes").then(res => res.json())
   });
   const sortedEtapes = Array.isArray(etapesApi) ? [...etapesApi].sort((a: any, b: any) => (a.ordre || 0) - (b.ordre || 0)) : [];
   const { data: pageConfig } = useQuery({
     queryKey: ["parametres"],
-    queryFn: () => fetch("/api/parametres").then(res => res.json())
+    queryFn: () => fetch("http://188.165.77.237:5003/api/parametres").then(res => res.json())
   });
   return (
     <div>

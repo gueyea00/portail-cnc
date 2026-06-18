@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import Breadcrumb from "@/components/layout/Breadcrumb";
 import { ChevronDown, HelpCircle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
@@ -11,12 +11,12 @@ export default function FaqPage() {
 
   const { data: pageConfig } = useQuery({
     queryKey: ["parametres"],
-    queryFn: () => fetch("/api/parametres").then(res => res.json())
+    queryFn: () => fetch("http://188.165.77.237:5003/api/parametres").then(res => res.json())
   });
 
   const { data: faqApi = [] } = useQuery({
     queryKey: ["faq"],
-    queryFn: () => fetch("/api/faq").then(res => res.json())
+    queryFn: () => fetch("http://188.165.77.237:5003/api/faq").then(res => res.json())
   });
 
   const filtered = filtre === "Tous" ? faqApi : faqApi.filter((q: any) => q.theme === filtre);

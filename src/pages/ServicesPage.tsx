@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+﻿import { Link } from "react-router-dom";
 import Breadcrumb from "@/components/layout/Breadcrumb";
 import { FileWarning, ShieldAlert, ClipboardList, MessageSquare, BookOpen, Calendar, ArrowRight, Laptop, Search, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -19,12 +19,12 @@ const iconMap: Record<string, React.ReactNode> = {
 export default function ServicesPage() {
   const { data: pageConfig } = useQuery({
     queryKey: ["parametres"],
-    queryFn: () => fetch("/api/parametres").then(res => res.json())
+    queryFn: () => fetch("http://188.165.77.237:5003/api/parametres").then(res => res.json())
   });
 
   const { data: servicesApi = [] } = useQuery({
     queryKey: ["services"],
-    queryFn: () => fetch("/api/services").then(res => res.json())
+    queryFn: () => fetch("http://188.165.77.237:5003/api/services").then(res => res.json())
   });
 
   const sortedServices = (servicesApi || []).sort((a: any, b: any) => (a.ordre || 0) - (b.ordre || 0));

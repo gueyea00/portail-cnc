@@ -1,16 +1,16 @@
-import { Link } from "react-router-dom";
+﻿import { Link } from "react-router-dom";
 import { Facebook, Linkedin, Mail, Phone, MapPin, Send, ChevronRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
 export default function Footer() {
   const { data: parametres } = useQuery({
     queryKey: ["parametres_footer"],
-    queryFn: () => fetch("/api/parametres").then(res => res.json())
+    queryFn: () => fetch("http://188.165.77.237:5003/api/parametres").then(res => res.json())
   });
 
   const { data: liens = [] } = useQuery({
     queryKey: ["liens_footer"],
-    queryFn: () => fetch("/api/liens").then(res => res.json())
+    queryFn: () => fetch("http://188.165.77.237:5003/api/liens").then(res => res.json())
   });
 
   const getImgUrl = (path: string | null | undefined, fallback: string) => {

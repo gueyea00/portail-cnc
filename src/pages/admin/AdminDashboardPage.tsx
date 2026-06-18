@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import {
   LayoutDashboard,
   FileText,
@@ -208,7 +208,7 @@ export default function AdminDashboardPage() {
   const fetchArticles = async () => {
     setIsLoading(true);
     try {
-      const res = await authFetch("/api/articles/admin/all");
+      const res = await authfetch("http://188.165.77.237:5003/api/articles/admin/all");
       const data = await res.json();
       setArticles(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -221,7 +221,7 @@ export default function AdminDashboardPage() {
   const fetchMembres = async () => {
     setIsLoadingTab(true);
     try {
-      const res = await authFetch("/api/membres/admin/all");
+      const res = await authfetch("http://188.165.77.237:5003/api/membres/admin/all");
       const data = await res.json();
       setMembres(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -234,7 +234,7 @@ export default function AdminDashboardPage() {
   const fetchGalerie = async () => {
     setIsLoadingTab(true);
     try {
-      const res = await authFetch("/api/galerie/admin/all");
+      const res = await authfetch("http://188.165.77.237:5003/api/galerie/admin/all");
       const data = await res.json();
       setGalerie(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -247,7 +247,7 @@ export default function AdminDashboardPage() {
   const fetchPlaintes = async () => {
     setIsLoadingTab(true);
     try {
-      const res = await authFetch("/api/plaintes/admin/all");
+      const res = await authfetch("http://188.165.77.237:5003/api/plaintes/admin/all");
       const data = await res.json();
       setPlaintes(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -260,7 +260,7 @@ export default function AdminDashboardPage() {
   const fetchMissions = async () => {
     setIsLoadingTab(true);
     try {
-      const res = await authFetch("/api/missions/admin/all");
+      const res = await authfetch("http://188.165.77.237:5003/api/missions/admin/all");
       const data = await res.json();
       setMissions(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -273,7 +273,7 @@ export default function AdminDashboardPage() {
   const fetchHistorique = async () => {
     setIsLoadingTab(true);
     try {
-      const res = await authFetch("/api/missions/admin/historique");
+      const res = await authfetch("http://188.165.77.237:5003/api/missions/admin/historique");
       const data = await res.json();
       setHistorique(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -286,7 +286,7 @@ export default function AdminDashboardPage() {
   const fetchEtapes = async () => {
     setIsLoadingTab(true);
     try {
-      const res = await authFetch("/api/missions/admin/etapes");
+      const res = await authfetch("http://188.165.77.237:5003/api/missions/admin/etapes");
       const data = await res.json();
       setEtapes(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -299,7 +299,7 @@ export default function AdminDashboardPage() {
   const fetchFaq = async () => {
     setIsLoadingTab(true);
     try {
-      const res = await authFetch("/api/faq/admin/all");
+      const res = await authfetch("http://188.165.77.237:5003/api/faq/admin/all");
       const data = await res.json();
       setFaq(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -312,7 +312,7 @@ export default function AdminDashboardPage() {
   const fetchServices = async () => {
     setIsLoadingTab(true);
     try {
-      const res = await authFetch("/api/services/admin/all");
+      const res = await authfetch("http://188.165.77.237:5003/api/services/admin/all");
       const data = await res.json();
       setServices(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -384,7 +384,7 @@ export default function AdminDashboardPage() {
   const handleDeleteMembre = async (id: number) => {
     if (!confirm("Supprimer ce membre ?")) return;
     try {
-      const res = await authFetch(`/api/membres/admin/${id}`, { method: "DELETE" });
+      const res = await authfetch(`http://188.165.77.237:5003/api/membres/admin/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Erreur suppression");
       toast.success("Membre supprimé");
       fetchMembres();
@@ -447,7 +447,7 @@ export default function AdminDashboardPage() {
   const handleDeleteGalerie = async (id: number) => {
     if (!confirm("Supprimer cet élément ?")) return;
     try {
-      const res = await authFetch(`/api/galerie/admin/${id}`, { method: "DELETE" });
+      const res = await authfetch(`http://188.165.77.237:5003/api/galerie/admin/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Erreur suppression");
       toast.success("Élément supprimé");
       fetchGalerie();
@@ -510,7 +510,7 @@ export default function AdminDashboardPage() {
   const handleDeleteDocument = async (id: number) => {
     if (!confirm("Supprimer ce document ?")) return;
     try {
-      const res = await authFetch(`/api/documents/admin/${id}`, { method: "DELETE" });
+      const res = await authfetch(`http://188.165.77.237:5003/api/documents/admin/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Erreur suppression");
       toast.success("Document supprimé");
       fetchDocuments();
@@ -522,7 +522,7 @@ export default function AdminDashboardPage() {
   const fetchDocuments = async () => {
     setIsLoadingTab(true);
     try {
-      const res = await authFetch("/api/documents/admin/all");
+      const res = await authfetch("http://188.165.77.237:5003/api/documents/admin/all");
       const data = await res.json();
       setDocuments(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -534,7 +534,7 @@ export default function AdminDashboardPage() {
 
   const handleUpdatePlainteStatut = async (id: number, statut: string) => {
     try {
-      const res = await authFetch(`/api/plaintes/admin/${id}/statut`, {
+      const res = await authfetch(`http://188.165.77.237:5003/api/plaintes/admin/${id}/statut`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ statut }),
@@ -550,7 +550,7 @@ export default function AdminDashboardPage() {
   const handleDeletePlainte = async (id: number) => {
     if (!confirm("Supprimer cette plainte ?")) return;
     try {
-      const res = await authFetch(`/api/plaintes/admin/${id}`, { method: "DELETE" });
+      const res = await authfetch(`http://188.165.77.237:5003/api/plaintes/admin/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Erreur suppression");
       toast.success("Plainte supprimée");
       fetchPlaintes();
@@ -562,7 +562,7 @@ export default function AdminDashboardPage() {
   const fetchParametres = async () => {
     setIsLoadingTab(true);
     try {
-      const res = await authFetch("/api/parametres/admin/all");
+      const res = await authfetch("http://188.165.77.237:5003/api/parametres/admin/all");
       const data = await res.json();
 
       // On s'assure que toutes les clés importantes sont présentes pour l'admin
@@ -612,7 +612,7 @@ export default function AdminDashboardPage() {
       if (logoFile) formData.append("logo_file", logoFile);
       if (armoiriesFile) formData.append("armoiries_file", armoiriesFile);
 
-      const res = await authFetch("/api/parametres/admin", {
+      const res = await authfetch("http://188.165.77.237:5003/api/parametres/admin", {
         method: "PUT",
         body: formData,
       });
@@ -635,7 +635,7 @@ export default function AdminDashboardPage() {
   const fetchLiens = async () => {
     setIsLoadingTab(true);
     try {
-      const res = await authFetch("/api/liens/admin/all");
+      const res = await authfetch("http://188.165.77.237:5003/api/liens/admin/all");
       const data = await res.json();
       setLiens(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -693,7 +693,7 @@ export default function AdminDashboardPage() {
   const handleDeleteLien = async (id: number) => {
     if (!confirm("Supprimer ce lien ?")) return;
     try {
-      const res = await authFetch(`/api/liens/admin/${id}`, { method: "DELETE" });
+      const res = await authfetch(`http://188.165.77.237:5003/api/liens/admin/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Erreur suppression");
       toast.success("Lien supprimé");
       fetchLiens();
@@ -738,7 +738,7 @@ export default function AdminDashboardPage() {
   const handleDeleteMission = async (id: number) => {
     if (!confirm("Supprimer cette mission ?")) return;
     try {
-      const res = await authFetch(`/api/missions/admin/${id}`, { method: "DELETE" });
+      const res = await authfetch(`http://188.165.77.237:5003/api/missions/admin/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Erreur suppression");
       toast.success("Mission supprimée");
       fetchMissions();
@@ -783,7 +783,7 @@ export default function AdminDashboardPage() {
   const handleDeleteHistorique = async (id: number) => {
     if (!confirm("Supprimer cet élément ?")) return;
     try {
-      const res = await authFetch(`/api/missions/admin/historique/${id}`, { method: "DELETE" });
+      const res = await authfetch(`http://188.165.77.237:5003/api/missions/admin/historique/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Erreur suppression");
       toast.success("Supprimé");
       fetchHistorique();
@@ -828,7 +828,7 @@ export default function AdminDashboardPage() {
   const handleDeleteEtape = async (id: number) => {
     if (!confirm("Supprimer cette étape ?")) return;
     try {
-      const res = await authFetch(`/api/missions/admin/etapes/${id}`, { method: "DELETE" });
+      const res = await authfetch(`http://188.165.77.237:5003/api/missions/admin/etapes/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Erreur suppression");
       toast.success("Supprimée");
       fetchEtapes();
@@ -873,7 +873,7 @@ export default function AdminDashboardPage() {
   const handleDeleteFaq = async (id: number) => {
     if (!confirm("Supprimer cette FAQ ?")) return;
     try {
-      const res = await authFetch(`/api/faq/admin/${id}`, { method: "DELETE" });
+      const res = await authfetch(`http://188.165.77.237:5003/api/faq/admin/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Erreur suppression");
       toast.success("Supprimée");
       fetchFaq();
@@ -918,7 +918,7 @@ export default function AdminDashboardPage() {
   const handleDeleteService = async (id: number) => {
     if (!confirm("Supprimer ce service ?")) return;
     try {
-      const res = await authFetch(`/api/services/admin/${id}`, { method: "DELETE" });
+      const res = await authfetch(`http://188.165.77.237:5003/api/services/admin/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Erreur suppression");
       toast.success("Supprimé");
       fetchServices();
@@ -978,7 +978,7 @@ export default function AdminDashboardPage() {
   const handleDeleteArticle = async (id: number) => {
     if (!confirm("Supprimer cet article ?")) return;
     try {
-      const res = await authFetch(`/api/articles/admin/${id}`, { method: "DELETE" });
+      const res = await authfetch(`http://188.165.77.237:5003/api/articles/admin/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Erreur suppression");
       toast.success("Article supprimé");
       fetchArticles();

@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import Breadcrumb from "@/components/layout/Breadcrumb";
 import { Camera, Search, X, ChevronLeft, ChevronRight, Download, FileImage, Users, Megaphone, Handshake, CalendarDays, LayoutGrid } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -107,12 +107,12 @@ export default function GaleriePage() {
 
   const { data: pageConfig } = useQuery({
     queryKey: ["parametres"],
-    queryFn: () => fetch("/api/parametres").then(res => res.json())
+    queryFn: () => fetch("http://188.165.77.237:5003/api/parametres").then(res => res.json())
   });
 
   const { data: galerieItems = [], isLoading } = useQuery({
     queryKey: ["galerie"],
-    queryFn: () => fetch("/api/galerie").then(res => res.json())
+    queryFn: () => fetch("http://188.165.77.237:5003/api/galerie").then(res => res.json())
   });
 
   const filtered =

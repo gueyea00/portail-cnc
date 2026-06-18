@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import Breadcrumb from "@/components/layout/Breadcrumb";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -42,7 +42,7 @@ export default function PlaintePage() {
 
   const { data: pageConfig } = useQuery({
     queryKey: ["parametres"],
-    queryFn: () => fetch("/api/parametres").then(res => res.json())
+    queryFn: () => fetch("http://188.165.77.237:5003/api/parametres").then(res => res.json())
   });
 
   const form1 = useForm<Etape1Data>({ resolver: zodResolver(etape1Schema), defaultValues: data1 || {} });
@@ -73,7 +73,7 @@ export default function PlaintePage() {
         formData.append("fichiers", file);
       });
 
-      const response = await fetch("/api/plaintes", {
+      const response = await fetch("http://188.165.77.237:5003/api/plaintes", {
         method: "POST",
         body: formData,
       });

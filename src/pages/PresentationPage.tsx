@@ -1,4 +1,4 @@
-import { useRef } from "react";
+﻿import { useRef } from "react";
 import Breadcrumb from "@/components/layout/Breadcrumb";
 import { useQuery } from "@tanstack/react-query";
 import { Info, ChevronLeft, ChevronRight } from "lucide-react";
@@ -23,17 +23,17 @@ export default function PresentationPage() {
   };
   const { data: membres = [], isLoading: isLoadingMembres } = useQuery({
     queryKey: ["membres"],
-    queryFn: () => fetch("/api/membres").then(res => res.json())
+    queryFn: () => fetch("http://188.165.77.237:5003/api/membres").then(res => res.json())
   });
 
   const { data: presidentData } = useQuery({
     queryKey: ["president"],
-    queryFn: () => fetch("/api/parametres").then(res => res.json())
+    queryFn: () => fetch("http://188.165.77.237:5003/api/parametres").then(res => res.json())
   });
 
   const { data: historique = [] } = useQuery({
     queryKey: ["historique"],
-    queryFn: () => fetch("/api/missions/historique").then(res => res.json())
+    queryFn: () => fetch("http://188.165.77.237:5003/api/missions/historique").then(res => res.json())
   });
 
   const sortedHistory = Array.isArray(historique) ? [...historique].sort((a: any, b: any) => (a.ordre || 0) - (b.ordre || 0)) : [];

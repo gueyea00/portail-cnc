@@ -1,4 +1,4 @@
-import Breadcrumb from "@/components/layout/Breadcrumb";
+﻿import Breadcrumb from "@/components/layout/Breadcrumb";
 import { Download, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
@@ -32,12 +32,12 @@ export default function DocumentsPage() {
   const { currentLang } = useGoogleTranslate();
   const { data: pageConfig } = useQuery({
     queryKey: ["parametres"],
-    queryFn: () => fetch("/api/parametres").then(res => res.json())
+    queryFn: () => fetch("http://188.165.77.237:5003/api/parametres").then(res => res.json())
   });
 
   const { data: documents = [], isLoading } = useQuery({
     queryKey: ["documents"],
-    queryFn: () => fetch("/api/documents").then(res => res.json())
+    queryFn: () => fetch("http://188.165.77.237:5003/api/documents").then(res => res.json())
   });
 
   // Filtrer les documents selon la langue choisie

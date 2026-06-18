@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+﻿import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import { Shield, GitMerge, Scale, FileText, BarChart3, Users, ArrowRight, Quote, Camera, ExternalLink, PenSquare, Gavel, FileSignature, ShieldAlert, Clock, MapPin } from "lucide-react";
@@ -62,7 +62,7 @@ export default function HomePage() {
   const { data: recentArticles = [], isLoading: isLoadingArticles, isError: isErrorArticles } = useQuery({
     queryKey: ["articles", "home"],
     queryFn: async () => {
-      const res = await fetch("/api/articles?limit=3");
+      const res = await fetch("http://188.165.77.237:5003/api/articles?limit=3");
       if (!res.ok) throw new Error("Erreur serveur");
       return res.json();
     }
@@ -70,27 +70,27 @@ export default function HomePage() {
 
   const { data: galeriePreview = [] } = useQuery({
     queryKey: ["galerie", "home"],
-    queryFn: () => fetch("/api/galerie").then(res => res.json()).then(data => data.slice(0, 6))
+    queryFn: () => fetch("http://188.165.77.237:5003/api/galerie").then(res => res.json()).then(data => data.slice(0, 6))
   });
 
   const { data: presidentData } = useQuery({
     queryKey: ["president"],
-    queryFn: () => fetch("/api/parametres").then(res => res.json())
+    queryFn: () => fetch("http://188.165.77.237:5003/api/parametres").then(res => res.json())
   });
 
   const { data: missionsApi = [] } = useQuery({
     queryKey: ["missions"],
-    queryFn: () => fetch("/api/missions").then(res => res.json())
+    queryFn: () => fetch("http://188.165.77.237:5003/api/missions").then(res => res.json())
   });
 
   const { data: servicesApi = [] } = useQuery({
     queryKey: ["services"],
-    queryFn: () => fetch("/api/services").then(res => res.json())
+    queryFn: () => fetch("http://188.165.77.237:5003/api/services").then(res => res.json())
   });
 
   const { data: liens = [] } = useQuery({
     queryKey: ["liens"],
-    queryFn: () => fetch("/api/liens").then(res => res.json())
+    queryFn: () => fetch("http://188.165.77.237:5003/api/liens").then(res => res.json())
   });
 
   const containerRef = useRef<HTMLDivElement>(null);
