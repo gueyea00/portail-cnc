@@ -161,6 +161,11 @@ export default function HomePage() {
               <p className="text-lg md:text-2xl opacity-90 mb-10 leading-relaxed font-light">
                 {presidentData?.hero_subtitle || t("hero.subtitle")}
               </p>
+              {presidentData?.hero_slogan && (
+                <p className="text-md md:text-xl text-primary font-medium mb-10">
+                  {presidentData.hero_slogan}
+                </p>
+              )}
               <div className="flex flex-wrap gap-4">
                 <Link to="/plainte">
                   <Button size="lg" className="bg-destructive text-destructive-foreground hover:bg-destructive/90 font-semibold gap-2 shadow-lg shadow-destructive/20">

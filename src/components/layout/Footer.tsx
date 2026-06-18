@@ -92,6 +92,8 @@ export default function Footer() {
               {[
                 { label: "Présentation", path: "/presentation" },
                 { label: "Missions & Attributions", path: "/missions" },
+                { label: "Réglementation", path: "/reglementation" },
+                { label: "Enquêtes", path: "/enquetes" },
                 { label: "Actualités", path: "/actualites" },
                 { label: "Ressources & Documents", path: "/documents" },
                 { label: "Foire Aux Questions", path: "/faq" },

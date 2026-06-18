@@ -23,11 +23,13 @@ export async function seedDatabase(client) {
     'footer_telephone': '+235 22 52 12 34',
     'footer_email': 'contact@cnc-tchad.td',
     'footer_adresse': 'Avenue Charles de Gaulle, N\'Djamena, Tchad',
-    'hero_title': 'Réguler pour une économie prospère au Tchad',
-    'hero_subtitle': 'Le garant de la saine concurrence et de la protection des consommateurs sur le marché national.',
+    'hero_title': 'Conseil National de la Concurrence (CNC)',
+    'hero_subtitle': 'Loi N°014/PR/2015',
+    'hero_slogan': 'Le garant de la saine concurrence et de la protection des consommateurs.',
     'horaires_ouverture': '07h30 – 15h30',
     'siege_social': 'N\'Djamena, Tchad',
-    'presentation_p1': 'Le Conseil National de la Concurrence (CNC) de la République du Tchad est une autorité administrative indépendante chargée de veiller au respect des règles de concurrence sur le marché national.',
+    'presentation_p1': 'Le CNC est l\'organe central de régulation économique au Tchad, veillant au respect des règles de concurrence sur le marché national.',
+    'origine_organe': 'Le CNC est issu de la volonté de moderniser l\'économie tchadienne et s\'est imposé comme une autorité administrative indépendante essentielle.',
     'presentation_p2': 'Le CNC intervient pour prévenir, détecter et sanctionner les pratiques anticoncurrentielles telles que les ententes illicites, les abus de position dominante et les pratiques restrictives de concurrence.',
     'presentation_p3': 'Créé dans le cadre des réformes visant à moderniser l\'économie tchadienne, le CNC s\'est progressivement imposé comme un acteur clé dans la régulation économique.',
     'footer_description': 'Autorité administrative indépendante chargée de veiller au respect des règles de la concurrence en République du Tchad.'
@@ -84,12 +86,12 @@ export async function seedDatabase(client) {
   // 7. Missions
   const missions = [
     ["Contrôle des pratiques anticoncurrentielles", "Identifier et sanctionner les ententes illicites entre entreprises, les abus de position dominante et les pratiques commerciales déloyales qui nuisent à l'économie.", "Shield", 1],
-    ["Régulation des concentrations", "Examiner les projets de fusions, d'acquisitions et de regroupements d'entreprises pour prévenir la création de monopoles nuisibles à la concurrence.", "GitMerge", 2],
+    ["Régulation des concentrations", "Examiner les projets de fusions, d'acquisitions et de regroupements d'entreprises pour prévenir la création de monopoles nuisibles à la concurrence. Cette mission est cruciale pour maintenir un marché ouvert.", "GitMerge", 2],
     ["Lutte contre la concurrence déloyale", "Combattre les pratiques abusives telles que le dénigrement, la désorganisation ou la confusion visant à détourner la clientèle d'un concurrent.", "Scale", 3],
-    ["Avis consultatifs", "Émettre des avis sur les projets de textes législatifs ou réglementaires ayant un impact sur la concurrence et conseiller le Gouvernement sur ces questions.", "FileText", 4],
+    ["Avis consultatifs", "Émettre des avis experts et objectifs sur les projets de textes législatifs ou réglementaires ayant un impact sur la concurrence, afin d'orienter le Gouvernement.", "FileText", 4],
     ["Études de marché", "Réaliser des analyses approfondies sur le fonctionnement de secteurs spécifiques de l'économie pour identifier d'éventuels dysfonctionnements concurrentiels.", "BarChart3", 5],
     ["Sensibilisation et promotion", "Informer les opérateurs économiques et les consommateurs sur les règles de la concurrence et promouvoir une culture de loyauté commerciale au Tchad.", "Users", 6],
-    ["Protection des consommateurs", "Veiller à ce que les consommateurs bénéficient d'un choix diversifié de produits et services à des prix compétitifs grâce à un marché dynamique et ouvert.", "CheckCircle", 7],
+    ["Protection des consommateurs", "Veiller à ce que les consommateurs bénéficient d'un choix diversifié de produits et services à des prix compétitifs, en assurant un marché dynamique et ouvert.", "CheckCircle", 7],
     ["Enquêtes et investigations", "Mener des enquêtes d'office ou sur saisine pour constater les infractions aux règles de la concurrence et recueillir les preuves nécessaires aux procédures.", "Search", 8]
   ];
   for (const m of missions) {

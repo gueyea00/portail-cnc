@@ -7,6 +7,8 @@ import Layout from "@/components/layout/Layout";
 import HomePage from "./pages/HomePage";
 import PresentationPage from "./pages/PresentationPage";
 import MissionsPage from "./pages/MissionsPage";
+import ReglementationPage from "./pages/ReglementationPage";
+import EnquetesPage from "./pages/EnquetesPage";
 import ActualitesPage from "./pages/ActualitesPage";
 import ArticleDetailPage from "./pages/ArticleDetailPage";
 import DocumentsPage from "./pages/DocumentsPage";
@@ -37,6 +39,8 @@ const router = createBrowserRouter(
         { path: "/", element: <HomePage /> },
         { path: "/presentation", element: <PresentationPage /> },
         { path: "/missions", element: <MissionsPage /> },
+        { path: "/reglementation", element: <ReglementationPage /> },
+        { path: "/enquetes", element: <EnquetesPage /> },
         { path: "/actualites", element: <ActualitesPage /> },
         { path: "/actualites/:slug", element: <ArticleDetailPage /> },
         { path: "/documents", element: <DocumentsPage /> },

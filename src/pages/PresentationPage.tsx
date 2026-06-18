@@ -79,6 +79,12 @@ export default function PresentationPage() {
               <p>
                 {presidentData?.presentation_p3 || "Créé dans le cadre des réformes visant à moderniser l'économie tchadienne, le CNC s'est progressivement imposé comme un acteur clé dans la régulation économique."}
               </p>
+              <p className="font-semibold text-primary">
+                Le Conseil National de la Concurrence compte un total de 16 membres, soit 1 Président et 15 conseillers nommés.
+              </p>
+              <p className="text-muted-foreground italic text-sm">
+                Note : Le CNC ne dispose pas encore d'expert attitré en interne.
+              </p>
             </div>
           </div>
         </section>

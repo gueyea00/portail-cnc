@@ -34,6 +34,8 @@ export default function Header() {
       ],
     },
     { label: t("nav.actualites"), path: "/actualites" },
+    { label: "Réglementation", path: "/reglementation" },
+    { label: "Enquêtes", path: "/enquetes" },
     { label: t("nav.documents"), path: "/documents" },
     { label: t("nav.galerie"), path: "/galerie" },
     { label: t("nav.contact"), path: "/contact" },
