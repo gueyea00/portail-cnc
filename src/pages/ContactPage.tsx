@@ -11,7 +11,7 @@ export default function ContactPage() {
 
   const { data: parametres } = useQuery({
     queryKey: ["parametres_contact"],
-    queryFn: () => fetch("http://188.165.77.237:5003/api/parametres").then(res => res.json())
+    queryFn: () => fetch("/api/parametres").then(res => res.json())
   });
 
   const onSubmit = (e: React.FormEvent) => {

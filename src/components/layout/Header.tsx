@@ -15,12 +15,12 @@ export default function Header() {
 
   const { data: parametres } = useQuery({
     queryKey: ["parametres_header"],
-    queryFn: () => fetch("http://188.165.77.237:5003/api/parametres").then(res => res.json())
+    queryFn: () => fetch("/api/parametres").then(res => res.json())
   });
 
   const { data: menuItemsFromDb = [] } = useQuery({
     queryKey: ["menu_items"],
-    queryFn: () => fetch("http://188.165.77.237:5003/api/menu").then(res => res.json())
+    queryFn: () => fetch("/api/menu").then(res => res.json())
   });
 
   const navItems = menuItemsFromDb.length > 0 ? menuItemsFromDb : [

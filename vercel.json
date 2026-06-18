@@ -9,6 +9,10 @@
       "destination": "http://188.165.77.237:5003/uploads/$1"
     },
     {
+      "source": "/v1/(.*)",
+      "destination": "http://188.165.77.237:5003/v1/$1"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

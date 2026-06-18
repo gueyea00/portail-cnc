@@ -107,12 +107,12 @@ export default function GaleriePage() {
 
   const { data: pageConfig } = useQuery({
     queryKey: ["parametres"],
-    queryFn: () => fetch("http://188.165.77.237:5003/api/parametres").then(res => res.json())
+    queryFn: () => fetch("/api/parametres").then(res => res.json())
   });
 
   const { data: galerieItems = [], isLoading } = useQuery({
     queryKey: ["galerie"],
-    queryFn: () => fetch("http://188.165.77.237:5003/api/galerie").then(res => res.json())
+    queryFn: () => fetch("/api/galerie").then(res => res.json())
   });
 
   const filtered =

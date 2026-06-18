@@ -21,6 +21,11 @@ export default defineConfig(({ mode }) => ({
         target: "http://188.165.77.237:5003",
         changeOrigin: true,
       },
+
+      "/v1": {
+        target: "http://188.165.77.237:5003",
+        changeOrigin: true,
+      },
     },
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),

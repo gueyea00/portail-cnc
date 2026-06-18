@@ -23,17 +23,17 @@ export default function PresentationPage() {
   };
   const { data: membres = [], isLoading: isLoadingMembres } = useQuery({
     queryKey: ["membres"],
-    queryFn: () => fetch("http://188.165.77.237:5003/api/membres").then(res => res.json())
+    queryFn: () => fetch("/api/membres").then(res => res.json())
   });
 
   const { data: presidentData } = useQuery({
     queryKey: ["president"],
-    queryFn: () => fetch("http://188.165.77.237:5003/api/parametres").then(res => res.json())
+    queryFn: () => fetch("/api/parametres").then(res => res.json())
   });
 
   const { data: historique = [] } = useQuery({
     queryKey: ["historique"],
-    queryFn: () => fetch("http://188.165.77.237:5003/api/missions/historique").then(res => res.json())
+    queryFn: () => fetch("/api/missions/historique").then(res => res.json())
   });
 
   const sortedHistory = Array.isArray(historique) ? [...historique].sort((a: any, b: any) => (a.ordre || 0) - (b.ordre || 0)) : [];

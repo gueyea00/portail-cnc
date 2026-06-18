@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import Breadcrumb from "@/components/layout/Breadcrumb";
 import { Button } from "@/components/ui/button";
 import {
@@ -40,7 +40,7 @@ export default function SuiviProjet() {
 
     const { data: pageConfig } = useQuery({
         queryKey: ["parametres"],
-        queryFn: () => fetch("http://188.165.77.237:5003/api/parametres").then(res => res.json())
+        queryFn: () => fetch("/api/parametres").then(res => res.json())
     });
 
     // Query to fetch the complaint by reference from MCI Service
@@ -49,7 +49,7 @@ export default function SuiviProjet() {
         queryFn: async () => {
             if (!submittedRef) return null;
             // Appel vers le service-mci sur le port 5012
-            const res = await fetch(`http://188.165.77.237:5003/v1/dossiers/${submittedRef.trim()}`);
+            const res = await fetch(`/v1/dossiers/${submittedRef.trim()}`);
             if (res.status === 404) {
                 throw new Error("Aucun dossier trouvé avec cette référence.");
             }

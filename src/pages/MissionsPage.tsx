@@ -17,16 +17,16 @@ const iconMap: Record<string, React.ReactNode> = {
 export default function MissionsPage() {
   const { data: missionsApi = [] } = useQuery({
     queryKey: ["missions"],
-    queryFn: () => fetch("http://188.165.77.237:5003/api/missions").then(res => res.json())
+    queryFn: () => fetch("/api/missions").then(res => res.json())
   });
   const { data: etapesApi = [] } = useQuery({
     queryKey: ["etapes-intervention"],
-    queryFn: () => fetch("http://188.165.77.237:5003/api/missions/etapes").then(res => res.json())
+    queryFn: () => fetch("/api/missions/etapes").then(res => res.json())
   });
   const sortedEtapes = Array.isArray(etapesApi) ? [...etapesApi].sort((a: any, b: any) => (a.ordre || 0) - (b.ordre || 0)) : [];
   const { data: pageConfig } = useQuery({
     queryKey: ["parametres"],
-    queryFn: () => fetch("http://188.165.77.237:5003/api/parametres").then(res => res.json())
+    queryFn: () => fetch("/api/parametres").then(res => res.json())
   });
   return (
     <div>

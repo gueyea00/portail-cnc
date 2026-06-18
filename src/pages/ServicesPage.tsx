@@ -19,12 +19,12 @@ const iconMap: Record<string, React.ReactNode> = {
 export default function ServicesPage() {
   const { data: pageConfig } = useQuery({
     queryKey: ["parametres"],
-    queryFn: () => fetch("http://188.165.77.237:5003/api/parametres").then(res => res.json())
+    queryFn: () => fetch("/api/parametres").then(res => res.json())
   });
 
   const { data: servicesApi = [] } = useQuery({
     queryKey: ["services"],
-    queryFn: () => fetch("http://188.165.77.237:5003/api/services").then(res => res.json())
+    queryFn: () => fetch("/api/services").then(res => res.json())
   });
 
   const sortedServices = (servicesApi || []).sort((a: any, b: any) => (a.ordre || 0) - (b.ordre || 0));

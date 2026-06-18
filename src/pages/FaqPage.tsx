@@ -11,12 +11,12 @@ export default function FaqPage() {
 
   const { data: pageConfig } = useQuery({
     queryKey: ["parametres"],
-    queryFn: () => fetch("http://188.165.77.237:5003/api/parametres").then(res => res.json())
+    queryFn: () => fetch("/api/parametres").then(res => res.json())
   });
 
   const { data: faqApi = [] } = useQuery({
     queryKey: ["faq"],
-    queryFn: () => fetch("http://188.165.77.237:5003/api/faq").then(res => res.json())
+    queryFn: () => fetch("/api/faq").then(res => res.json())
   });
 
   const filtered = filtre === "Tous" ? faqApi : faqApi.filter((q: any) => q.theme === filtre);

@@ -26,13 +26,13 @@ export default function ActualitesPage() {
 
   const { data: pageConfig } = useQuery({
     queryKey: ["parametres"],
-    queryFn: () => fetch("http://188.165.77.237:5003/api/parametres").then(res => res.json())
+    queryFn: () => fetch("/api/parametres").then(res => res.json())
   });
 
   const { data: articles = [], isLoading, isError } = useQuery({
     queryKey: ["articles"],
     queryFn: async () => {
-      const res = await fetch("http://188.165.77.237:5003/api/articles");
+      const res = await fetch("/api/articles");
       if (!res.ok) throw new Error("Erreur serveur");
       return res.json();
     }
