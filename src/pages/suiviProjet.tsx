@@ -40,7 +40,7 @@ export default function SuiviProjet() {
 
     const { data: pageConfig } = useQuery({
         queryKey: ["parametres"],
-        queryFn: () => fetch("/api/parametres").then(res => res.json())
+        queryFn: () => fetch("http://188.165.77.237:5003/api/parametres").then(res => res.json())
     });
 
     // Query to fetch the complaint by reference from MCI Service
