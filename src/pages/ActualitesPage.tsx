@@ -1,8 +1,9 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import Breadcrumb from "@/components/layout/Breadcrumb";
 import { ArrowRight, Calendar, Newspaper } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { FadeIn } from "@/components/ui/fade-in";
 
 const categories = ["Tous", "communique", "enquete", "evenement"];
 const categoryLabels: Record<string, string> = {
@@ -46,32 +47,36 @@ export default function ActualitesPage() {
     <div>
       <section className="page-hero">
         <div className="container-page">
-          <h1 className="text-3xl md:text-4xl font-bold flex items-center justify-center md:justify-start gap-4">
-            <Newspaper className="w-8 h-8 md:w-10 md:h-10 text-gold" />
-            {pageConfig?.news_hero_title || "Actualités & Communiqués"}
-          </h1>
-          <p className="mt-2 opacity-90 text-lg">{pageConfig?.news_hero_subtitle || "Suivez l'actualité du Conseil National de la Concurrence"}</p>
+          <FadeIn>
+            <h1 className="text-3xl md:text-4xl font-bold flex items-center justify-center md:justify-start gap-4">
+              <Newspaper className="w-8 h-8 md:w-10 md:h-10 text-gold" />
+              {pageConfig?.news_hero_title || "Actualités & Communiqués"}
+            </h1>
+            <p className="mt-2 opacity-90 text-lg">{pageConfig?.news_hero_subtitle || "Suivez l'actualité du Conseil National de la Concurrence"}</p>
+          </FadeIn>
         </div>
       </section>
       <Breadcrumb />
 
       <div className="container-page py-12">
         {/* Filtres */}
-        <div className="flex flex-wrap gap-2 mb-8">
-          {categories.map((c) => (
-            <button
-              key={c}
-              onClick={() => { setFiltre(c); setPage(1); }}
-              className={`px-4 py-2 text-sm rounded-full border transition-colors ${
-                filtre === c
-                  ? "bg-primary text-primary-foreground border-primary"
-                  : "bg-surface text-foreground border-border hover:border-primary"
-              }`}
-            >
-              {categoryLabels[c] || c}
-            </button>
-          ))}
-        </div>
+        <FadeIn>
+          <div className="flex flex-wrap gap-2 mb-8">
+            {categories.map((c) => (
+              <button
+                key={c}
+                onClick={() => { setFiltre(c); setPage(1); }}
+                className={`px-4 py-2 text-sm rounded-full border transition-all ${
+                  filtre === c
+                    ? "bg-primary text-primary-foreground border-primary shadow-md shadow-primary/20"
+                    : "bg-surface text-foreground border-border hover:border-primary hover:shadow-sm"
+                }`}
+              >
+                {categoryLabels[c] || c}
+              </button>
+            ))}
+          </div>
+        </FadeIn>
 
         {isLoading ? (
           <div className="text-center py-20 text-muted-foreground">
@@ -80,7 +85,7 @@ export default function ActualitesPage() {
           </div>
         ) : isError ? (
            <div className="text-center py-20 text-red-500 font-medium">
-             Une erreur est survenue lors de la récupération des actualités. Veuillez réessayer plus tard.
+             Une erreur est survenue lors de la récupération des actualités.
            </div>
         ) : filtered.length === 0 ? (
           <div className="text-center py-20 text-muted-foreground">Aucune actualité trouvée.</div>
@@ -89,54 +94,58 @@ export default function ActualitesPage() {
             {/* Grille */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {displayed.map((a: any, i: number) => (
-                <div key={a.slug || a.id} className="bg-surface rounded-2xl shadow-soft overflow-hidden group flex flex-col border border-border/50 hover:shadow-md transition-all">
-                  <Link to={`/actualites/${a.slug}`} className="block h-48 overflow-hidden relative bg-muted">
-                    <img 
-                      src={getImgUrl(a.image_path || a.image_url, `https://images.unsplash.com/photo-${i%3===0?'1507679799987-c7cf7ee3face':i%3===1?'1557804506-669a67965ba0':'1454165804606-c3d57bc86b40'}?auto=format&fit=crop&q=80&w=800`)}
-                      alt={a.titre} 
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
-                    />
-                    <div className="absolute top-3 right-3">
-                      <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-sm backdrop-blur-md bg-white/90 ${
-                        a.categorie === 'communique' ? 'text-green-700' :
-                        a.categorie === 'enquete' ? 'text-orange-700' : 'text-purple-700'
-                      }`}>
-                        {categoryLabels[a.categorie || 'autre']}
-                      </span>
-                    </div>
-                  </Link>
-                  <div className="p-6 flex flex-col flex-grow">
-                    <div className="flex items-center gap-2 mb-3 text-xs text-muted-foreground font-medium">
-                      <Calendar className="w-3.5 h-3.5" />
-                      <span>{new Date(a.date_publication || a.created_at).toLocaleDateString("fr-FR", { day: 'numeric', month: 'long', year: 'numeric' })}</span>
-                    </div>
-                    <h3 className="font-bold text-foreground mb-3 line-clamp-2 text-base leading-snug group-hover:text-primary transition-colors">
-                      <Link to={`/actualites/${a.slug}`}>{a.titre}</Link>
-                    </h3>
-                    <p className="text-sm text-muted-foreground line-clamp-3 mb-5 flex-grow">{a.extrait}</p>
-                    <Link to={`/actualites/${a.slug}`} className="text-sm font-semibold text-primary hover:text-secondary transition-colors inline-flex items-center gap-1.5 mt-auto">
-                      Lire l'article <ArrowRight className="w-4 h-4" />
+                <FadeIn key={a.slug || a.id} delay={i * 80} className="h-full">
+                  <div className="h-full bg-surface rounded-2xl shadow-soft overflow-hidden group flex flex-col border border-border/50 hover:shadow-md hover:border-primary/20 hover:-translate-y-1 transition-all duration-300">
+                    <Link to={`/actualites/${a.slug}`} className="block h-48 overflow-hidden relative bg-muted">
+                      <img 
+                        src={getImgUrl(a.image_path || a.image_url, `https://images.unsplash.com/photo-${i%3===0?'1507679799987-c7cf7ee3face':i%3===1?'1557804506-669a67965ba0':'1454165804606-c3d57bc86b40'}?auto=format&fit=crop&q=80&w=800`)}
+                        alt={a.titre} 
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+                      />
+                      <div className="absolute top-3 right-3">
+                        <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-sm backdrop-blur-md bg-white/90 ${
+                          a.categorie === 'communique' ? 'text-green-700' :
+                          a.categorie === 'enquete' ? 'text-orange-700' : 'text-purple-700'
+                        }`}>
+                          {categoryLabels[a.categorie || 'autre']}
+                        </span>
+                      </div>
                     </Link>
+                    <div className="p-6 flex flex-col flex-grow">
+                      <div className="flex items-center gap-2 mb-3 text-xs text-muted-foreground font-medium">
+                        <Calendar className="w-3.5 h-3.5" />
+                        <span>{new Date(a.date_publication || a.created_at).toLocaleDateString("fr-FR", { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                      </div>
+                      <h3 className="font-bold text-foreground mb-3 line-clamp-2 text-base leading-snug group-hover:text-primary transition-colors">
+                        <Link to={`/actualites/${a.slug}`}>{a.titre}</Link>
+                      </h3>
+                      <p className="text-sm text-muted-foreground line-clamp-3 mb-5 flex-grow">{a.extrait}</p>
+                      <Link to={`/actualites/${a.slug}`} className="text-sm font-semibold text-primary hover:text-secondary transition-colors inline-flex items-center gap-1.5 mt-auto">
+                        Lire l'article <ArrowRight className="w-4 h-4" />
+                      </Link>
+                    </div>
                   </div>
-                </div>
+                </FadeIn>
               ))}
             </div>
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="flex justify-center gap-2 mt-8">
-                {Array.from({ length: totalPages }, (_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setPage(i + 1)}
-                    className={`w-10 h-10 rounded-lg text-sm font-medium transition-colors ${
-                      page === i + 1 ? "bg-primary text-primary-foreground" : "bg-surface shadow-sm text-foreground hover:bg-muted"
-                    }`}
-                  >
-                    {i + 1}
-                  </button>
-                ))}
-              </div>
+              <FadeIn delay={300}>
+                <div className="flex justify-center gap-2 mt-8">
+                  {Array.from({ length: totalPages }, (_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setPage(i + 1)}
+                      className={`w-10 h-10 rounded-lg text-sm font-medium transition-colors ${
+                        page === i + 1 ? "bg-primary text-primary-foreground shadow-md" : "bg-surface shadow-sm text-foreground hover:bg-muted"
+                      }`}
+                    >
+                      {i + 1}
+                    </button>
+                  ))}
+                </div>
+              </FadeIn>
             )}
           </>
         )}
