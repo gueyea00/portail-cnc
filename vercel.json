@@ -2,11 +2,11 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "http://148.230.124.48:3184/api/$1"
+      "destination": "http://188.165.77.237:5003/api/$1"
     },
     {
       "source": "/uploads/(.*)",
-      "destination": "http://148.230.124.48:3184/uploads/$1"
+      "destination": "http://188.165.77.237:5003/uploads/$1"
     },
     {
       "source": "/(.*)",

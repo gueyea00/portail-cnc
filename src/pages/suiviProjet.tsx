@@ -49,7 +49,7 @@ export default function SuiviProjet() {
         queryFn: async () => {
             if (!submittedRef) return null;
             // Appel vers le service-mci sur le port 5012
-            const res = await fetch(`http://localhost:5012/v1/dossiers/${submittedRef.trim()}`);
+            const res = await fetch(`http://188.165.77.237:5003/v1/dossiers/${submittedRef.trim()}`);
             if (res.status === 404) {
                 throw new Error("Aucun dossier trouvé avec cette référence.");
             }
