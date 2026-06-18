@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import { Shield, GitMerge, Scale, FileText, BarChart3, Users, ArrowRight, Quote, Camera, ExternalLink, PenSquare, Gavel, FileSignature, ShieldAlert, Clock, MapPin } from "lucide-react";
@@ -162,7 +162,7 @@ export default function HomePage() {
                 {presidentData?.hero_subtitle || t("hero.subtitle")}
               </p>
               {presidentData?.hero_slogan && (
-                <p className="text-md md:text-xl text-primary font-medium mb-10">
+                <p className="text-md md:text-xl text-white font-medium mb-10">
                   {presidentData.hero_slogan}
                 </p>
               )}
