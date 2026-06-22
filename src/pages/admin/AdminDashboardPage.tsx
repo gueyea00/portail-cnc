@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   LayoutDashboard,
   FileText,
@@ -28,7 +28,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 
-type TabType = "dashboard" | "articles" | "membres" | "galerie" | "documents" | "plaintes" | "liens" | "missions" | "historique" | "etapes" | "faq" | "services" | "parametres" | "plugins";
+type TabType = "dashboard" | "articles" | "membres" | "galerie" | "documents" | "plaintes" | "liens" | "missions" | "historique" | "etapes" | "faq" | "services" | "parametres" | "plugins" | "navigation";
 
 
 export default function AdminDashboardPage() {
@@ -129,6 +129,12 @@ export default function AdminDashboardPage() {
   const [editingService, setEditingService] = useState<any>(null);
   const [serviceForm, setServiceForm] = useState({ titre: "", description: "", icone: "ShieldAlert", lien: "", ordre: 0 });
 
+  // Navigation menu state
+  const [menuItems, setMenuItems] = useState<any[]>([]);
+  const [showMenuForm, setShowMenuForm] = useState(false);
+  const [editingMenu, setEditingMenu] = useState<any>(null);
+  const [menuForm, setMenuForm] = useState({ label: "", path: "", ordre: 0, actif: true, parent_id: "" });
+
   const navigate = useNavigate();
   const admin = JSON.parse(localStorage.getItem("cnc_admin") || "{}");
   const token = localStorage.getItem("cnc_token");
@@ -150,6 +156,7 @@ export default function AdminDashboardPage() {
     if (activeTab === "faq") fetchFaq();
     if (activeTab === "services") fetchServices();
     if (activeTab === "parametres") fetchParametres();
+    if (activeTab === "navigation") fetchMenuItems();
 
   }, [activeTab]);
 
@@ -927,6 +934,81 @@ export default function AdminDashboardPage() {
     }
   };
 
+  // ---- Navigation Menu CRUD ----
+  const fetchMenuItems = async () => {
+    setIsLoadingTab(true);
+    try {
+      const res = await authFetch("/api/menu/admin/all");
+      const data = await res.json();
+      setMenuItems(Array.isArray(data) ? data : []);
+    } catch (error) {
+      toast.error("Erreur lors du chargement du menu");
+    } finally {
+      setIsLoadingTab(false);
+    }
+  };
+
+  const openMenuForm = (item: any = null) => {
+    if (item) {
+      setEditingMenu(item);
+      setMenuForm({ label: item.label, path: item.path, ordre: item.ordre || 0, actif: item.actif !== false, parent_id: item.parent_id || "" });
+    } else {
+      setEditingMenu(null);
+      setMenuForm({ label: "", path: "", ordre: menuItems.length, actif: true, parent_id: "" });
+    }
+    setShowMenuForm(true);
+  };
+
+  const handleSaveMenu = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoadingTab(true);
+    try {
+      const payload: any = { label: menuForm.label, path: menuForm.path, ordre: menuForm.ordre, actif: menuForm.actif };
+      if (menuForm.parent_id) payload.parent_id = menuForm.parent_id;
+      const url = editingMenu ? `/api/menu/admin/${editingMenu.id}` : "/api/menu/admin";
+      const method = editingMenu ? "PUT" : "POST";
+      const res = await authFetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error("Erreur enregistrement menu");
+      toast.success(editingMenu ? "Lien mis à jour" : "Lien ajouté");
+      setShowMenuForm(false);
+      setEditingMenu(null);
+      fetchMenuItems();
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setIsLoadingTab(false);
+    }
+  };
+
+  const handleToggleMenu = async (item: any) => {
+    try {
+      const res = await authFetch(`/api/menu/admin/${item.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...item, actif: !item.actif }),
+      });
+      if (!res.ok) throw new Error();
+      fetchMenuItems();
+    } catch {
+      toast.error("Erreur lors du changement de visibilité");
+    }
+  };
+
+  const handleDeleteMenu = async (id: number) => {
+    if (!confirm("Supprimer ce lien de navigation ?")) return;
+    try {
+      const res = await authFetch(`/api/menu/admin/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Erreur suppression");
+      toast.success("Lien supprimé");
+      fetchMenuItems();
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
 
   const handleSaveArticle = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -1030,12 +1112,13 @@ export default function AdminDashboardPage() {
     {
       label: "Configuration",
       items: [
+        { id: "navigation", label: "Navigation", icon: <Share2 className="w-4 h-4" /> },
         { id: "parametres", label: "Paramètres", icon: <Settings className="w-4 h-4" /> },
         { id: "plugins", label: "Plugins & Extensions", icon: <Puzzle className="w-4 h-4" /> },
       ]
     },
   ];
-  const menuItems = menuGroups.flatMap(g => g.items);
+  const sidebarMenuItems = menuGroups.flatMap(g => g.items);
 
   return (
     <div className="flex min-h-screen bg-slate-50">
@@ -1098,7 +1181,7 @@ export default function AdminDashboardPage() {
             <div className="w-1 h-6 bg-blue-600 rounded-full" />
             <div>
               <h1 className="text-base font-bold text-slate-800">
-                {menuItems.find(i => i.id === activeTab)?.label ?? 'Dashboard'}
+                {sidebarMenuItems.find(i => i.id === activeTab)?.label ?? 'Dashboard'}
               </h1>
               <p className="text-[11px] text-slate-400 font-medium">Portail CNC Tchad</p>
             </div>
@@ -3327,6 +3410,169 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
 
+            </div>
+          </div>
+        )}
+
+        {/* ===== NAVIGATION TAB ===== */}
+        {activeTab === "navigation" && (
+          <div className="space-y-6 animate-in fade-in duration-300">
+            {/* Header */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-xl font-black text-slate-800 tracking-tight">Navigation publique</h2>
+                <p className="text-xs text-muted-foreground mt-1">Gérez les liens du menu principal affiché sur le site public. Les modifications sont immédiates après enregistrement.</p>
+              </div>
+              <Button
+                onClick={() => openMenuForm()}
+                className="rounded-xl font-bold px-6 shadow-md shadow-primary/20 bg-primary hover:bg-primary/95 text-white gap-2"
+              >
+                <Plus className="w-4 h-4" /> Ajouter un lien
+              </Button>
+            </div>
+
+            {/* Formulaire */}
+            {showMenuForm && (
+              <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+                <h3 className="text-base font-bold text-slate-800 mb-5">{editingMenu ? "Modifier le lien" : "Nouveau lien de navigation"}</h3>
+                <form onSubmit={handleSaveMenu} className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">Libellé affiché *</label>
+                      <Input
+                        value={menuForm.label}
+                        onChange={e => setMenuForm(prev => ({ ...prev, label: e.target.value }))}
+                        placeholder="Ex: Actualités"
+                        required
+                        className="h-10 rounded-xl bg-slate-50 border-transparent focus:bg-white text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">Chemin URL *</label>
+                      <Input
+                        value={menuForm.path}
+                        onChange={e => setMenuForm(prev => ({ ...prev, path: e.target.value }))}
+                        placeholder="Ex: /actualites"
+                        required
+                        className="h-10 rounded-xl bg-slate-50 border-transparent focus:bg-white text-sm"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">Ordre d'affichage</label>
+                      <Input
+                        type="number"
+                        value={menuForm.ordre}
+                        onChange={e => setMenuForm(prev => ({ ...prev, ordre: Number(e.target.value) }))}
+                        className="h-10 rounded-xl bg-slate-50 border-transparent focus:bg-white text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">Parent (sous-menu, optionnel)</label>
+                      <select
+                        value={menuForm.parent_id}
+                        onChange={e => setMenuForm(prev => ({ ...prev, parent_id: e.target.value }))}
+                        className="w-full h-10 rounded-xl bg-slate-50 border-transparent focus:bg-white text-sm px-3"
+                      >
+                        <option value="">— Aucun (lien principal) —</option>
+                        {menuItems.filter(m => !m.parent_id && (!editingMenu || m.id !== editingMenu.id)).map((m: any) => (
+                          <option key={m.id} value={m.id}>{m.label}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="checkbox"
+                      id="menu_actif"
+                      checked={menuForm.actif}
+                      onChange={e => setMenuForm(prev => ({ ...prev, actif: e.target.checked }))}
+                      className="w-4 h-4 rounded text-primary cursor-pointer"
+                    />
+                    <label htmlFor="menu_actif" className="text-sm font-medium text-slate-600 cursor-pointer">Visible sur le site public</label>
+                  </div>
+                  <div className="flex gap-3 pt-2">
+                    <Button type="submit" disabled={isLoadingTab} className="rounded-xl font-bold px-6 bg-primary text-white">
+                      {isLoadingTab ? "Enregistrement..." : editingMenu ? "Mettre à jour" : "Ajouter"}
+                    </Button>
+                    <Button type="button" variant="outline" onClick={() => { setShowMenuForm(false); setEditingMenu(null); }} className="rounded-xl">
+                      Annuler
+                    </Button>
+                  </div>
+                </form>
+              </div>
+            )}
+
+            {/* Tableau des items */}
+            {isLoadingTab ? (
+              <div className="text-center py-16 text-muted-foreground">Chargement...</div>
+            ) : menuItems.length === 0 ? (
+              <div className="text-center py-16 bg-white rounded-2xl border border-dashed border-slate-200">
+                <Share2 className="w-10 h-10 mx-auto text-slate-300 mb-3" />
+                <p className="text-slate-500 font-medium">Aucun lien de navigation configuré.</p>
+                <p className="text-xs text-slate-400 mt-1">Le menu par défaut du site s'affiche tant qu'aucun lien n'est ajouté ici.</p>
+                <Button onClick={() => openMenuForm()} className="mt-4 rounded-xl" variant="outline">Ajouter le premier lien</Button>
+              </div>
+            ) : (
+              <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm">
+                {/* Légende */}
+                <div className="px-5 py-3 bg-slate-50 border-b border-slate-100 grid grid-cols-12 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                  <span className="col-span-1 text-center">Ordre</span>
+                  <span className="col-span-4">Libellé</span>
+                  <span className="col-span-3">Chemin</span>
+                  <span className="col-span-2">Parent</span>
+                  <span className="col-span-1 text-center">Visible</span>
+                  <span className="col-span-1 text-center">Actions</span>
+                </div>
+                {menuItems.map((item: any) => (
+                  <div key={item.id} className={`px-5 py-3.5 grid grid-cols-12 items-center border-b border-slate-50 last:border-0 hover:bg-slate-50/50 transition-colors ${item.parent_id ? 'pl-10 bg-slate-50/30' : ''}`}>
+                    <span className="col-span-1 text-center text-xs font-bold text-slate-400">{item.ordre ?? '-'}</span>
+                    <div className="col-span-4 flex items-center gap-2">
+                      {item.parent_id && <span className="text-slate-300 text-xs">↳</span>}
+                      <span className="text-sm font-semibold text-slate-800">{item.label}</span>
+                    </div>
+                    <span className="col-span-3 text-xs text-slate-500 font-mono truncate">{item.path}</span>
+                    <span className="col-span-2 text-xs text-slate-400">
+                      {item.parent_id ? menuItems.find((m: any) => m.id === item.parent_id)?.label || '—' : <span className="text-slate-300">—</span>}
+                    </span>
+                    <div className="col-span-1 flex justify-center">
+                      <button
+                        onClick={() => handleToggleMenu(item)}
+                        className={`w-9 h-5 rounded-full transition-all duration-200 relative ${
+                          item.actif ? 'bg-emerald-500' : 'bg-slate-200'
+                        }`}
+                        title={item.actif ? 'Cliquer pour masquer' : 'Cliquer pour afficher'}
+                      >
+                        <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-all duration-200 ${
+                          item.actif ? 'left-4' : 'left-0.5'
+                        }`} />
+                      </button>
+                    </div>
+                    <div className="col-span-1 flex justify-center gap-1.5">
+                      <button onClick={() => openMenuForm(item)} className="p-1.5 rounded-lg hover:bg-primary/10 text-primary transition-colors" title="Modifier">
+                        <Edit className="w-3.5 h-3.5" />
+                      </button>
+                      <button onClick={() => handleDeleteMenu(item.id)} className="p-1.5 rounded-lg hover:bg-red-50 text-red-500 transition-colors" title="Supprimer">
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Info banner */}
+            <div className="bg-blue-50 border border-blue-100 rounded-2xl p-5 flex gap-4 items-start">
+              <div className="p-2 bg-blue-100 rounded-lg shrink-0">
+                <Share2 className="w-4 h-4 text-blue-600" />
+              </div>
+              <div>
+                <p className="text-sm font-bold text-blue-800">Comment ça fonctionne ?</p>
+                <p className="text-xs text-blue-600 mt-1 leading-relaxed">
+                  Dès qu'au moins un lien est enregistré ici, le menu par défaut du site est remplacé par cette liste. Utilisez le champ <strong>Parent</strong> pour créer des sous-menus déroulants. Cochez <strong>Visible</strong> pour activer ou masquer un lien sans le supprimer.
+                </p>
+              </div>
             </div>
           </div>
         )}
