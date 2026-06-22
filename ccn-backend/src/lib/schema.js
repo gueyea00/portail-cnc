@@ -1,5 +1,18 @@
 export const schema = `
 -- ============================================================
+-- TABLE : menu_items
+-- ============================================================
+CREATE TABLE IF NOT EXISTS menu_items (
+  id              SERIAL PRIMARY KEY,
+  titre           TEXT UNIQUE NOT NULL,
+  url             TEXT NOT NULL,
+  ordre           INT DEFAULT 0,
+  parent_id       INT REFERENCES menu_items(id),
+  actif           BOOLEAN DEFAULT true,
+  created_at      TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ============================================================
 -- TABLE : admins
 -- ============================================================
 CREATE TABLE IF NOT EXISTS admins (
@@ -205,6 +218,7 @@ CREATE TABLE IF NOT EXISTS liens_institutionnels (
 -- INDEX UNIQUES (Sécurité pour le seeding)
 -- ============================================================
 CREATE UNIQUE INDEX IF NOT EXISTS idx_services_titre ON services(titre);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_menu_items_titre ON menu_items(titre);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_missions_titre ON missions(titre);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_membres_nom ON membres(nom);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_articles_slug ON articles(slug);

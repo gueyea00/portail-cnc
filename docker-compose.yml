@@ -33,6 +33,7 @@ services:
     ports:
       - "5003:5003"
     volumes:
+      - ./ccn-backend:/app
       - ./ccn-backend/uploads:/app/uploads
 
   frontend:
